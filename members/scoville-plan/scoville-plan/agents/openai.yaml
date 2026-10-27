@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scoville Plan"
+  short_description: "Maintain repository Plans, Work Items and Decisions"
+  default_prompt: "Use $scoville-plan to maintain the repository's Plans, Work Items and Decisions while preserving their scope, history and evidence."

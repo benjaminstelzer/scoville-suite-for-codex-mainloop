@@ -1,0 +1,14 @@
+# Bundled defaults; project overrides live in .scoville/config.json.
+schema_version = 2
+
+[main]
+model = "gpt-6.1-sol"
+reasoning = "high"
+
+[review]
+model = "gpt-6.1-sol"
+reasoning = "xhigh"
+
+[explore]
+model = "gpt-6.1-sol"
+reasoning = "high"

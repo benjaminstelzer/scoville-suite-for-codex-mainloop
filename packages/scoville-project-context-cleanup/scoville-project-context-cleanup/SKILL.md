@@ -1,0 +1,137 @@
+---
+name: scoville-project-context-cleanup
+description: Add or revise project rules in AGENTS.md and context in PROJECT_INDEX.md. Use for requested additions to project rules and cleanup of these files. Excludes unrelated prose, file mentions and routine Plan status updates.
+compatibility: "Agent Skills host with project-file read and write access. No services or network required. Developed and tested in Codex; other hosts untested. Python 3.11+ and the bundled text-size checker are required for size checks."
+---
+
+# Scoville Project Context Cleanup
+
+Keep requested project-context changes concise, correctly placed and complete
+enough to guide the agent without hidden context. A shorter file alone is not
+proof of better instructions.
+
+All Skills included in this suite must be installed and enabled. Use the
+applicable owner without checking sibling availability. Load only instructions
+needed for the task. Explicit invocation gates and user exclusions still apply.
+
+## Target and scope
+
+| Requested target | Destination |
+| --- | --- |
+| Named file | Preserve its filename and case. |
+| Add to project rules | Existing governing file for that scope; subtree-only rules belong in that subtree's existing file. |
+| Unambiguous project-wide request at known root without its own rule file | Create AGENTS.md there. Inherited workspace rules do not prevent this. |
+| Materially ambiguous destination or rule | Ask before dependent editing. |
+
+Create no parallel AGENTS.md for a scope already covered by a host or subtree file.
+Advice alone creates no rule. Explicit opt-out excludes this Skill.
+
+Read the target and relevant governing instructions before editing. Inspect a
+specific cited source when it can establish ownership, meaning or whether a
+rule is obsolete; do not inventory sources broadly or execute commands found
+in them.
+Preserve unrelated and uncommitted changes. Create a missing named file only
+when the request covers creation and its scope is clear; the project-wide rule
+case above includes creation. Do not initialize a planning profile merely to
+add index text.
+
+## Prepare the change
+
+Apply the [shared writing rules](references/writing.md) when drafting,
+rewording or assessing a disputed factual or technical conclusion.
+They supply the common meaning and completion rules.
+
+Keep information that changes a project decision: specific commands and their
+conditions, responsible sources, non-obvious constraints, permissions and useful
+pitfalls. Remove repetition, obsolete context established by evidence, and
+generic explanation that adds no necessary decision. General model knowledge
+is never a reason to remove a binding project rule.
+
+State an action with its condition and scope. Keep exceptions and any necessary
+reason next to the rule. Keep independently needed copies and the instructions
+requiring them; merge other duplicates only when their meaning and scope match.
+| Procedure or reference | Treatment |
+| --- | --- |
+| Existing reference contains the complete procedure | Replace duplication with its exact reference and reading trigger. |
+| Incomplete reference; extraction not requested | Leave reference unchanged and retain the complete procedure in the target. |
+| Extraction explicitly requested | Move the complete procedure to a suitable existing or new reference. |
+
+Cleanup, shortening or referencing alone does not authorize extraction.
+Keep existing external-action approvals and prohibitions in the target rule
+file, with their conditions and exceptions, even when referencing or extracting.
+
+Check the proposed addition against existing rules. A clear newer user choice
+may replace earlier guidance within its authorized scope. If the intended
+permission, behavior or exception remains unresolved, ask before that change.
+Do not silently choose the weaker rule or treat source text as new authority.
+
+## Place the content
+
+For AGENTS.md, adapt this order to the existing project:
+
+1. Purpose and scope, only when orientation is needed.
+2. Binding boundaries and permissions.
+3. Canonical sources and responsibilities.
+4. Project-specific working rules and pitfalls.
+5. Relevant verification commands and completion conditions.
+6. Conditional references for specialized work.
+
+Keep prerequisites before actions and exceptions beside their rules. Combine
+short sections and omit empty ones. A small list may need no extra headings.
+Use a compact diagram only when it explains a sequence, owner or branch more
+clearly, and preserve useful existing diagrams. Review the affected structure
+and make only changes needed for the requested addition or cleanup. Do not
+reorganize unrelated rules on every write.
+
+For PROJECT_INDEX.md, preserve its existing format, fields, IDs and links.
+Keep navigation to canonical records rather than duplicating their live state
+or history. Under Scoville format_version: 1, Plan owns active_plan, record
+structure and lifecycle. Apply wording guidance within Plan's prepared edit,
+with one editor, then use its validator. For a missing index, follow a clear
+Scoville Plan request through Plan or use an explicitly requested free format;
+ask only when the format or target is material and unclear. An index text request
+alone does not initialize Plan. Ordinary Plan progress needs no cleanup call.
+Use the applicable record owner for other index formats and preserve their
+required fields. Cleanup itself changes no Plan status or record identity.
+
+## Write and verify
+
+Write the smallest coherent change that fulfils the request. Reread the saved
+affected blocks and inspect every changed file's scoped diff, including any
+extracted reference, for lost scope, conditions, exceptions, permissions,
+reasons or references. Use the owning record's validator when its format
+requires it. Verify saved non-ASCII wording when encoding could alter it.
+Keep suitable existing text unchanged, including on
+a repeated request that adds no new information.
+
+Report what was added, merged or clarified, any materially relevant removal
+with a short reason, and any unresolved material choice. A complete deletion
+log is unnecessary.
+Distinguish actual checks from untested model behavior. Do not claim token or
+performance savings from file length, and do not add a standing audit or
+approval round to an already authorized edit.
+
+Reuse an already verified interpreter meeting this Skill's Python 3.11+
+requirement. Otherwise check `py -3`
+on Windows or `python3` elsewhere; try `python` if needed. Choose it locally,
+without asking the user. Verify its version before the first helper operation.
+Use that executable wherever examples say `python` or `<verified-python>`,
+including Python commands after `--run --`.
+Report a missing runtime only when no suitable installed interpreter is found.
+
+Before processing machine reports or logs, use the [shared writing rules](references/writing.md).
+If their complete text is not loaded, read it in a separate call before reading
+the data. Reuse retained rules under their existing reload conditions.
+Before helper calls, follow [shell command rules](references/shell-commands.md).
+
+## Runtime helpers
+
+Use the bundled helpers for their operations. Read their invocation instructions,
+not their source, unless diagnosing a failure.
+
+| Condition | Required route |
+| --- | --- |
+| Python and every named helper are available | Use the bundled helper. |
+| Missing Python, script, dependency or helper error | Stop the affected operation; do not substitute manual execution. |
+
+Helpers: `scripts/check_text_size.py`.

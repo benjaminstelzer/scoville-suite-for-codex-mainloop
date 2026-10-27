@@ -1,0 +1,6 @@
+interface:
+  display_name: "Scoville Workflow Codex"
+  short_description: "Plan and code here with independent review"
+  default_prompt: "Use $scoville-workflow-for-codex to execute the active Scoville Plan in this saved project. Plan, implement and check in this chat; delegate only read-only exploration and fresh reviews."
+policy:
+  allow_implicit_invocation: false

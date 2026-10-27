@@ -1,0 +1,509 @@
+# Changelog
+
+
+
+## Unreleased - 2026-10-27
+
+- Show successful helper preparation before native child calls in existing flows; clarify file/stdin context transport without growing the affected Skill texts.
+- Bound Explorer reuse to the same investigation; independent requests receive a fresh Explorer, with no new management mechanism.
+- Document the observed Sol workflow combination and the Luna/Medium delegation limit without promising model compliance.
+- Implement Mainloop planning, coding and required checks in the current thread; delegate only read-only Explorer and a fresh Reviewer for every review.
+- Replace implementation routing and context thresholds with fixed main/review/explore pairs; verify the own active main pair and retain complete Decision bindings.
+- Add explicit atomic Setup cleanup for old settings, preserving Ask and unrelated fields; retain independent Plan syntax and guarantees.
+- Integrate variant-owned runtime test assets through the existing builder and document the new loop in four diagrams. Original Suite, Shared and installations remain separate.
+
+- Create the separate Mainloop development target using the existing builder; import the approved architecture Plan without changing the original Suite or its installation targets.
+- Require code reviews to inspect simplicity, maintainability, foreseeable extension and clarity for later agents. Trace loops, recursion and scanning calls for avoidable nonlinear repeated work without requiring benchmarks.
+- Apply the same static review to UI construction, updates and the final source diff.
+- Supply the complete code-review policy to every fresh Reviewer without adding a review phase.
+- Include the complete code-review policy in native and Claude review prompts. Consultation prompts stay unchanged.
+
+## Unreleased - 2026-10-20
+
+- Keep required text complete when choosing how to read it. File size and metadata remain optional, and completed reads need no verification reread.
+- Ground defect claims in requested behavior or an independent contract. Reuse valid evidence, check meaningful preconditions and update superseded result summaries.
+- Separate source, geometry, visual and interaction evidence. Load the geometry reference before measuring and compare selected relationships in code before display.
+
+## Unreleased - 2026-10-19
+
+- Write reports as compact lists of checked scope, results and relevant gaps. Group equivalent outcomes and refer to existing evidence instead of retelling the run.
+- Apply one shared evidence rule in user and agent exchanges: defend supported conclusions, correct demonstrated errors, and respect user decisions without treating them as factual proof.
+- Fit reused pathways and review requirements to the requested operation while preserving shared guarantees.
+- Defend supported technical and adviser conclusions with decisive facts. Neutral exchanges preserve unresolved disagreement; revisions identify a demonstrated correction.
+
+## Unreleased - 2026-10-18
+
+- Keep implementation and its checks with the Executor, including changes through temporary scripts and requests to fix review findings.
+- Reuse retained agent results and narrow necessary native state queries. Keep completion, actual writer quiescence and the 50% subagent context check.
+
+## Unreleased - 2026-10-17
+
+- Raise the shared subagent context default from 45% to 50%.
+- Reuse successful Actions evidence for unchanged Python. Check configuration, documentation and build-tool changes locally without rerunning the platform matrix.
+- Move context checks into subagents. Keep one shared threshold, safe same-task handovers and complete review inputs; remove the manager's duplicate measurement.
+
+
+
+
+
+## Unreleased - 2026-10-16
+
+- Group equivalent checks in internal results while preserving checked scope, decisive values, deviations and closure coverage.
+- Follow Work Item control, Step review, agent selection and Explorer requests in four focused diagrams with explicit handoffs and correction paths.
+
+## Unreleased - 2026-10-15
+
+- Reuse applicable Decisions before adding new ones. Explicit maintenance can consolidate equivalent Decisions and retire proved temporary conditions and irrelevant links while preserving live constraints and historical review limits.
+- Process complete reports in code, including saved captures and failures. Load the rules before data, preserve required original text, and keep parser errors from echoing stored state. Evaluate producer output before display, retain one-time results, and distinguish saved captures from missing output.
+- Scoville Code recognizes fully loaded writing rules from the same build, including rules embedded in an assignment. Read them again only when a stated reload reason applies.
+
+## Unreleased - 2026-10-14
+
+- Compare nested report data in code and display only decisive results and necessary diagnostics, including structured state stored in text fields.
+- Keep the original kind of work and full verification scope during Plan cleanup. Check all linked Decisions before marking their binding sections for compact delivery. Cleanup removes demonstrably irrelevant Decision links from unstarted items and adds none.
+
+
+- Pass only self-contained binding sections of explicitly marked Decisions to fresh Workflow agents; preserve full unmarked sources and reuse context.
+- Interpret actual report values through their documented meaning. Allow equivalent wording while preserving exact contracts and unresolved outcomes.
+- Process machine reports through code before displaying results. Avoid redundant shared-rule reads and keep check reports focused on decisive evidence.
+- Parse machine reports completely and display checked facts and all in-scope deviations. Reuse fully read shared rules across Skills without hiding required inputs.
+- Recover a known Work Item directly; look up position when current records disagree or return directions matter.
+- Accept zero for no helper spend cap, preserve positive caps and request settings, and keep provider limits and timeouts.
+- Recover through scoped Plan selection while retaining assignments, results and completed effects.
+
+## Unreleased - 2026-10-13
+
+- Separate progress updates from authoring. Explicit maintenance can shorten old Goals and Decisions while preserving the choice, binding conditions and required checks.
+- Clarify WordPress ownership and version routing. Unknown runtimes require clarification, and older pins keep their tested fallback limits.
+- Load detailed command capture and full-file delivery only when needed. Keep complete output, failure diagnostics and role permissions.
+- Keep repeated assignments lean and wait for inactive agents before replacement. Preserve original Steps, model pairs and required reviews.
+- Give advisers the conditional delivery path and stop prompt creation when that required source is missing.
+
+- Exclude internal audit records from public source exports.
+
+- Use a shared 45% subagent context default, replacing 30%. The manager checks Git statistics
+  and paths; reviewers inspect technical diffs with risk-appropriate depth.
+- Keep one original Step and every required Step review. Simplify pre-dispatch
+  choices and compare supplied Decision identities without file-hash checks.
+
+- Require Git and a clean worktree before Workflow activation. Commit accepted
+  Steps with Plan progress; replace manual before/after reports with Git review
+  and keep generated-output checks tied to the task.
+
+- Use Sol 6.1 for all Workflow routes with matching Executor/Reviewer effort: Low, Medium, High, XHigh, XHigh. Explorer inherits execution defaults; use the shared context threshold.
+
+- Keep Executor continuation and correction inputs tied to the selected Step.
+  On Step advances, use needed source or artifact provenance instead of routinely
+  transferring earlier Finals and passed reviews. Preserve closure findings.
+
+- Keep saved oversized results out of Git status with `.scoville/temp/.gitignore`,
+  so they do not block clean Workflow starts or Step commits. Existing ignore
+  files and tracked files stay unchanged.
+- Simplify shared writing rules, Plan editing guidance and Workflow dispatch
+  and result checks with shorter lists and tables.
+
+## Unreleased - 2026-10-12
+
+- Return complete command output directly when it fits; save only oversized
+  captures. Verify supplied artifacts once and compare saved native Finals
+  directly, avoiding repeated hash checks for unchanged text.
+
+- Keep Decision bodies on fresh assignments; reuse their current canonical
+  identities and reread changed or uncertain sources. Keep manager detail reads
+  tied to its decisions and change evidence limited to necessary context.
+
+- Review only Steps that changed files, configuration or behavior; closure covers unchanged Steps. Keep retained Step effects and open reviews through existing result inputs.
+- Apply test-expectation criteria to affected existing assertions as well as new
+  tests, preserving independent contracts and required guarantees.
+- Keep tests open to equivalent implementations: justify internal-work bounds,
+  verify measurements and preserve exact contractual guarantees.
+
+- Write each Plan Step's own completion condition and checks; preserve them
+  during repair and cleanup without adding unrequested requirements.
+- Keep Executors within the selected original Step; full Work Item criteria
+  constrain it and do not authorize additional work.
+
+- Initialize Workflow agents once and send only task context on reuse for
+  Executor, Reviewer and Explorer. Keep both review levels available.
+- Use readable new-file content instead of copying it into Executor results;
+  preserve exact change attribution and modified/deleted-file evidence.
+- Make internal Workflow recipients and result fields concrete.
+- Keep declared private planning and test records out of public source exports.
+- Classify Plan profiles before proposal inventory, remove obsolete reading
+  instructions and fix the UI authored-unit link.
+- Preserve original change evidence through fresh or reused evidence follow-ups.
+- Review actual assignment changes and require direct evidence for preservation
+  criteria at Work Item closure.
+- Update the minimum-Python check after removing the reader; verify that its
+  selected runtime tests exist before publication.
+
+## Unreleased - 2026-10-11
+
+- Validate saved execution state in the dispatch helper before publishing an
+  Executor assignment; keep read-only assignments and valid corrections available.
+
+- Use the current user's language for all Workflow roles, including text in result fields. Keep required field names and literals unchanged.
+- Send selected Step texts unchanged with their binding Work Item fields. Keep other Steps and accumulated history out of Step assignments and reviews. Full context remains available for Work Item closure.
+- Review each finished Step and correction through the last executor's changed files. Reuse unchanged review coverage.
+- Check every Step and full Acceptance in a separate Work Item closure review. Missing required implementation is a correction finding.
+- Select generated review evidence through its current source owner and covered Acceptance. Keep decisive content and unresolved discrepancies in the diff.
+
+## Unreleased - 2026-10-10
+
+- Delegate planning preparation to the read-only Explorer; the manager writes authorized Plan changes.
+- Load command capture and large-result delivery only when needed; preserve complete outputs and role permissions.
+- Return Explorer results only through the native final answer, without a duplicate message.
+
+- Add read-only Explorer inquiries and independent explore routes in Setup, inheriting unspecified effective execute fields.
+
+- Run Workflow in the existing visible manager chat: scoped executor, independent review, necessary correction and Plan progress. Remove separate manager starts, automatic rollover and the mandatory run-report protocol.
+- Ignore obsolete Workflow manager/context/pin settings on reads; remove only those keys on authorized Setup saves and preserve other settings. Update Workflow README and flow diagram.
+- Keep agent messages and internal commentary compact. Reference readable source text instead of copying it; preserve required facts and exact controls.
+- Keep required child updates in minimal labelled fields, including before reading a file assignment. Preserve complete results and handoff facts.
+- Load the full reading procedure and host command guidance only when needed. Keep delivery permissions with their owning roles.
+- Check all member, Shared and packaged runtime tests before each source commit.
+
+## v2.4.19 - 2026-10-10
+
+- Reuse complete unchanged context reads and successful helper results; preserve required fresh checks and bind runtime evidence to protected dependencies and current package bytes.
+
+## v2.4.18 - 2026-10-10
+
+- Reject direct Python script capture before execution; permit one bounded correction for its explicit no-start diagnostic and use consistent verified-interpreter examples.
+
+## v2.4.17 - 2026-10-10
+
+- Save temporary read captures only when the current role and phase permit that specific file. Keep takeover and complete-reading safeguards.
+- Check exported Shared snapshots against canonical sources when present; keep isolated published builds self-contained.
+
+## v2.4.16 - 2026-10-09
+
+- Use exact search paths and keep filename patterns in rg's -g filters. Existing files, directories and regular expressions remain available.
+
+## v2.4.15 - 2026-10-09
+
+- Keep the verified Python interpreter and all required arguments when capturing a helper command. Small direct calls remain available.
+
+## v2.4.14 - 2026-10-09
+
+- Clarify the reader's two paths in Skill guidance and generated assignments: Python runs the checker; documents and source files are read through `--file`. Keep the complete command when continuing or switching documents.
+
+## v2.4.13 - 2026-10-09
+
+- Reuse completed work and passing checks when their inputs and requirements are unchanged. Preserve necessary first independent reviews and checks that answer a new question.
+- Retain running-command sessions, output chunks and final exit status. An outer script ending does not prove that its child process ended.
+- Keep reader commands intact between document parts or Skills, and limit guards to the requirements and failure risks they actually protect.
+
+## v2.4.12 - 2026-10-09
+
+- Start a new Workflow without requiring old agent IDs or proof that every earlier run stopped. Resolve concrete competing-writer evidence before writing, and preserve same-run recovery safeguards.
+
+## v2.4.11 - 2026-10-09
+
+- Finish Workflow with a brief summary and a link to the full run report. Keep important open limits visible without repeating the report in chat.
+
+## v2.4.10 - 2026-10-09
+
+- Use a complete reader command when continuing document reads, and an existing directory with a file filter when searching. Prefer direct shell commands for simple file inventories.
+- Distinguish initial manager startup from continuation, label role-specific checkpoint arguments, and use the generated reviewer contract for review assignments.
+
+## v2.4.9 - 2026-10-09
+
+- Preserve literal arguments and original failure status in generated reader commands. Restart complete reads at part 1 when a binding output limit changes, and redact secrets throughout handoff text.
+- Keep manager takeover separate from worker recovery, check new Plan IDs immediately before creation, and distinguish plugin page category from runtime and host ownership.
+
+## v2.4.8 - 2026-10-08
+
+- Make read, edit and manager-handoff prerequisites explicit in ordered instructions. Create usable handoff snapshots after permitted recovery while keeping missing facts visible and dependent receiver actions blocked.
+
+## v2.4.7 - 2026-10-08
+
+- Follow shorter ordered instructions for document reads, Plan edits, code changes and manager handoffs, with required context and ownership checks kept in place.
+
+## v2.4.6 - 2026-10-08
+
+- Return only the report path and completion status when Workflow finishes. Read the complete report separately when needed, without repeating a large report in the completion response.
+- Diagnose shortened output from the observed failing layer; a later shortened query does not prove that the original capture lost information.
+
+## v2.4.5 - 2026-10-08
+
+- Start only named .py files as Python programs and preserve complete output from running command sessions. Helper instructions consistently require Python 3.11+.
+- Let assigned field reviewers read the named Plan and Decision sources without granting maintenance or test permissions.
+- Preserve binding Acceptance conditions across owner changes and clarify Workflow roles, handoff stages and review cadence.
+
+## v2.4.4 - 2026-10-08
+
+- Read complete UTF-8 input in bounded parts and capture command output before display, including diagnostics and original failure status.
+- Tie stateful checks to the actual application store and keep evidence focused on decisions.
+- Keep reviewers from writing source captures, retain only relevant handoff facts and allow one effect-free builder correction after confirmed progress. Keep routine accepted-result bookkeeping with the manager.
+
+## v2.4.3 - 2026-10-07
+
+- Give Workflow reviewers the assigned requirements and factual worker results without a proposed verdict. Keep reported checks usable as evidence and identify the review boundary explicitly.
+- Reuse earlier checks and reviews only while their reviewed content, requirements and supporting conditions remain unchanged. Reassess only affected claims when those change.
+
+## v2.4.2 - 2026-10-07
+
+- Keep Acceptance focused on distinct required results and binding checks, without turning it into an implementation recipe or test catalog.
+- Let explicit Maintenance shorten Outcome, Acceptance and Step wording in started and completed Plans while preserving every requirement, action and historical meaning.
+
+## v2.4.1 - 2026-10-07
+
+- Keep Instructions and Evidence concise, clean old Plans through Maintenance and avoid extra workers or reviews for routine bookkeeping.
+- Reuse accepted results at manager takeover, inspect old reports only for a specific gap and return a short pass when a review finds no defects.
+- Provide directly usable size-check commands before file-backed assignments are read. Preserve nested PowerShell settings and correct Plan selection and recovery guidance.
+## v2.4.0 - 2026-10-07
+
+- Keep development ahead of bookkeeping. Reuse decisive evidence and test observable results instead of freezing incidental wording in source files.
+- Add read-only Plan ID and start-condition queries, with actionable errors and warnings for likely text-decoding damage.
+- Deliver complete native assignments and answers through compaction or hashed temporary files. Workflow preserves Plan exclusions in every assignment and finishes its report and completion message in one call.
+- Start Workflow only on an explicit request, preserve agent takeover order, and continue unfinished work without rebuilding a completed assignment.
+- Resolve Claude adviser requests against their selected project and preserve Unicode settings piped from PowerShell.
+- Keep Codex packages on AGENTS.md, require their packaged helpers, and remove unused writing-depth settings.
+- Keep long Project and Plan history menus scrollable and their last entries selectable in Plan Viewer 1.4.3.
+
+## v2.3.11 - 2026-10-03
+
+- Allow Context Cleanup with the tested Luna 6 Medium baseline instead of requiring a recommended frontier model.
+
+- Let Workflow dispatch and report progress for large Plan contexts with an explicit output budget. Report the required size and allow one corrected call before starting an agent or sending progress, without truncating context.
+- Validate an explicitly named current section while preserving other historically started Plan Steps.
+
+## v2.3.10 - 2026-10-03
+
+- Resume a paused Plan point before Workflow begins its authorized reconciliation or preparation. Distinguish selection from actual work and preserve existing Step progress.
+
+## v2.3.9 - 2026-10-03
+
+- Keep configuration and workarounds in the right place when building Skill READMEs. Preserve shared fragments needed by the suite so filtered exports build on their own.
+
+## v2.3.8 - 2026-10-02
+
+- Let Workflow correct a known dispatch-argument mistake once before raising a blocker. Missing evidence and uncertain agent starts still stop the operation.
+- Make review inputs explicit so a missing worker result does not derail the next handoff.
+
+## v2.3.7 - 2026-10-02
+
+- Configure Workflow's manager and reasoning through Setup, retaining the chosen pair across handoffs. Keep progress and questions clear in the original chat.
+- Prepare Claude questions and follow-ups from text files with retained settings and clearer input errors.
+- Improve Code, Plan, UI, Handoff and project-rule cleanup with the same changes as the general edition.
+
+## v2.3.6 - 2026-10-02
+
+- Show necessary Workflow questions and blockers in the visible chat with the affected Plan, Step, reason and waiting state.
+- Display the actually started Step when work advances within a larger assignment. Preserve steering and decision answers during manager takeover.
+
+## v2.3.5 - 2026-10-01
+
+- Keep Workflow progress and verified manager handoffs tied to the actual Plan state.
+- Remove automatic capacity cleanup and retry from Workflow and Ask. Preserve diagnostics, results and continuation. Recommend a Codex per-session limit of 256 for multiple Workflows.
+- Accept complete Ask adviser finals without startup acknowledgements and keep incomplete answers available for exact-handle follow-up.
+- Show Plan Viewer 1.4.2 progress and current work in a compact, collapsible overview. Clarify Code, Cleanup and UI checks at their existing owners.
+
+## v2.3.4 - 2026-10-01
+
+- Record active Work Items and Steps before worker execution, and keep progress current inside sequential assignments.
+- Preserve unstarted work on stop, record authorized pauses and resume from the actual remaining work.
+- Filter paused and cancelled Plan points directly in Plan Viewer 1.4.1.
+- Name the Workflow chat `SC-WFL PLAN-NNNN` at startup, using its actual Plan ID.
+- Give each new native agent a unique name automatically, including repeated reviews of one worker.
+
+
+
+## v2.3.1 - 2026-10-01
+
+Known limit: a targeted Handoff test promoted a preference to a requirement.
+Check that distinction when resuming from a generated prompt.
+
+## v2.3.0 - 2026-10-01
+
+- Add Project Context Cleanup for requested edits to project rules and index text, preserving their meaning and record ownership.
+- Record Step progress and additional instructions in Plan. Select the written position without guessing unknown progress, and repair proven progress from Evidence and actual results.
+- Ship Plan Viewer 1.4.0 for all four platforms with matching Step progress, active groups, Instructions and open Decisions.
+
+- Run Workflow and Ask through native agents, retaining exact handles for necessary follow-ups and ending completed turns without routine messages.
+- Show Workflow position only when it changes, preserve the assigned Scope and finish with the run report. The report retains user questions and problems needing attention, with an explicit clean-run result when none occurred.
+- Allow one bounded cleanup and unchanged retry after a definite native capacity refusal. Other errors and uncertain starts keep their existing blocked or pending state.
+- Update configured routing pairs and keep the runner within its coordination role.
+
+
+## v2.2.1 - 2026-09-29
+
+- Check runtime and memory costs before and after code changes. Prefer simpler algorithms, use suitable existing caches correctly and obtain the user's decision before adding a new cache unless already authorized.
+
+- Continue waiting for native Ask reviews after a wait timeout and return the complete result in the calling chat. Keep consultation references distinct from reviewed scopes during follow-up.
+
+
+## v2.2.0 - 2026-09-29
+
+- Keep manual no-Python procedures separately loadable in the general edition. Codex requires the packaged helpers, with concrete diagnostics for invalid calls.
+- Continue explicitly requested Plan execution through eligible work while preserving recorded stops and unresolved Decisions.
+
+- Build Workflow assignments and rollover prompts with consistent project titles, the manager's own model settings and an exact report destination. Successors take over before reading and do not repeat an inherited checkpoint boundary.
+- Keep complete worker and reviewer results in the message to the manager, with a short delivery confirmation in the child chat. Finished assignments return without another checkpoint.
+- Keep Ask advisers available for follow-up. The caller collects native answers and owns the closing question, while Claude follow-ups retain the same session.
+- Add separate Setup switches for Ask and Workflow chat pinning, both enabled by default.
+
+
+
+## v2.1.9 - 2026-09-28
+
+- Recognize explicit requests to run Scoville Workflow without requiring the dollar-prefixed Skill name. Generic plan execution, mentions and questions still do not start it.
+- Keep coordination in the calling chat from the first dispatch, with its manager title set before a worker starts.
+
+
+
+## v2.1.8 - 2026-09-28
+
+- Explicitly end Workflow when its requested scope is complete. Later requests return to normal assistance until Workflow is explicitly activated again.
+
+
+
+## v2.1.7 - 2026-09-28
+
+- Continue unfinished Workflow tasks with only the remaining work, relevant constraints and retained evidence, instead of resending the complete Work Item.
+
+
+
+## v2.1.6 - 2026-09-28
+
+- Rename the Workflow coordinator before its first worker starts and use clear chat titles such as SC · MNGR · 1 · PLAN-0001.
+- Use the same middle-dot separators in worker, reviewer and Ask chat titles, without hash signs before counters.
+
+
+
+## v2.1.5 - 2026-09-28
+
+- Start Workflow from its Skill entry prompt in the current chat, without a setup gate or a separate launcher coordinator. Setup remains optional for inspecting or changing settings.
+
+
+## v2.1.3 - 2026-09-28
+
+- Keep Code safeguards proportionate to actual consequences and preserve useful output when a later step fails.
+- Give UI ownership of interface wording, terminology and unsettled task structure.
+- Check the affected composition and responsive behavior after UI changes.
+
+
+## v2.1.2 - 2026-09-28
+
+- Deliver rollover confirmations and coordination requests to their intended chats through native messages.
+
+
+## v2.1.1 - 2026-09-28
+
+
+- Start Workflow directly in a saved project after installing the suite, without a project setup step or an AGENTS.md block.
+- Check coordinator context at worker handoffs and split oversized unfinished Steps without changing their acceptance criteria.
+- Review completed product fixes before dependent work and reuse earlier reviews for unchanged code.
+
+- Split unfinished Plan Steps without changing scope, acceptance criteria or completed evidence.
+- Keep pure visual concepts outside the WordPress implementation adapter.
+
+## v2.1.0 - 2026-09-27
+
+- Run Workflow through direct handoffs and ordinary worker results. Review findings start a new worker, and chat numbers identify the reviewed work.
+- Explain invalid helper inputs with the expected value and a concrete correction.
+- Keep Plans and handoffs focused on the facts needed to execute, verify or continue.
+
+## v2.0.6 - 2026-09-27
+
+- Review completed Workflow Work Items at the project-defined boundary and reuse available workers for corrections.
+- Keep formal Plan updates and related test repairs within their existing Work Item, with concise evidence and retained history.
+
+## v2.0.4 - 2026-09-27
+
+- Set Codex Workflow rollover defaults to 40% for coordinators and 60% for workers, reviewers and fixers.
+- Check context before commands expected to add substantial context, keep full logs and exit status, and read large output selectively.
+- Group related coordinator state updates while preserving dispatch and rollover recovery.
+
+## v2.0.3 - 2026-09-27
+
+- Archive blocked Workflow workers when they are replaced. Keep a worker open when it will continue after clarification.
+
+## v2.0.2 - 2026-09-26
+
+- Keep per-unit Workflow role numbering, stop work at context handoff, and preserve message authorization and exact return identities.
+- Separate Handoff preferences from requirements and name blocking Plan decisions before the action they prevent.
+- Preserve existing file encoding and line endings, report individual check failures, and keep Workflow cursors and delegated ownership current.
+- Clarify Handoff recovery, final Plan completion, UI evidence ownership and Workflow context boundaries.
+- Resolve explicit Ask adviser presets and retain precise mismatch and Claude-timeout recovery state.
+- Reuse the unchanged Plan Viewer v1.3.3 binaries and checksums for the compatible Plan package.
+
+## v2.0.1 - 2026-09-26
+
+- Preserve existing user authorization through native Workflow and Ask handoffs, and report answers that could not be delivered.
+- Respect host-required progress waits while keeping internal coordination free of extra polling and archival checks.
+
+## v2.0.0 - 2026-09-25
+
+- Group related consecutive Workflow Steps, receive results through native messages and continue unfinished work through compact context handoffs.
+- Keep native Ask advisers in separate chats with S-ASK model titles, without a lifecycle helper between Codex and its task tools.
+- Bundle Plan Viewer v1.3.3 and build its Windows, Linux and macOS assets with one checksum manifest from the suite workflow.
+- Replace the old Code and UI package names, combine Ask variants, add Setup and simplify Plan and Workflow configuration.
+- Install General and Codex suites through short migration prompts that remove only listed old Skills before a fresh complete installation.
+
+## v1.1.0 - 2026-09-24
+
+- Build general and Codex suites from one manifest. Keep Python replacement procedures only in the general edition.
+- Require complete suite installations from their own packages. Standalone Skills remain independent.
+- Add shared writing profiles with independent Plan and Workflow configuration.
+- Preserve exact plan-point text and bind additional context and writing rules into Workflow dispatches.
+- Bundle the compatible Plan v1.8.0 and Workflow v0.5.0 pair. Plan Viewer v1.3.2 remains unchanged.
+
+## v1.0.10 - 2026-09-24
+
+- Keep High risk classification for concrete planning or risk review of high-impact operations, even when execution is deferred.
+- Make Workflow operation routing and helper use explicit for the coordinator.
+
+## v1.0.9 - 2026-09-23
+
+- Resolve WORK and REVIEW pairs from the configurable route table and raise the second and third repair attempts along its WORK rows.
+- Bundle project-contract and coordinator-guard verification with bounded Work Item selection in one preflight helper.
+- Require Python 3.11+ during suite installation; Workflow stops an affected operation when a required helper cannot run.
+- Document Plan's no-Python dispatch-unit selection and Decision-batch hashing routes.
+
+## v1.0.7 - 2026-09-23
+
+- Route new high-class Workflow work to SOL 6 XHigh with Astra 6 High review, and raise ultra-high work and review to Astra 6 High and XHigh.
+
+## v1.0.6 - 2026-09-23
+
+- Route new Workflow work through SOL 6 and Astra 6 with the updated reasoning levels for every class.
+
+## v1.0.5 - 2026-09-23
+
+- Route new low-class Workflow execution to Luna 6 High and its review to SOL 6 Low.
+
+## v1.0.4 - 2026-09-23
+
+- Recognize a verified parking prompt and the complete writer assignment when Codex delivers both in one native turn, while blocking duplicate or conflicting assignments.
+
+## v1.0.3 - 2026-09-23
+
+- Keep Workflow's dispatch binding stable when the writer moves from pending to active, while retaining the separate target and guard checks.
+
+## v1.0.2 - 2026-09-23
+
+- Route new Workflow tasks through Luna 6, SOL 6, and Astra 6. Remove Terra from the default routing table.
+- Verify builder assignments after the native task envelope escapes HTML characters or removes the final newline.
+
+## v1.0.1 - 2026-09-23
+
+- Stop Workflow workers before project access unless their native task carries
+  the complete builder-generated dispatch contract for the assigned role and
+  execution unit.
+- Let established codebases keep their local conventions. For Greenfield work,
+  start with the smallest coherent responsibility-based layout without
+  prescribing an architecture or directory tree.
+
+## v1.0.0 - 2026-09-22
+
+- Install the Scoville Skills together from one suite or use individual
+  distributions for the concerns you need.
+- Include Scoville Workflow as a Codex-only Beta, available only in the suite.
+  It coordinates Plan execution, reviews, repairs and context handovers.
+- Include the renamed WordPress UI Backend specialist. Replace an existing
+  `wordpress-backend-ui` installation with
+  `scoville-wordpress-ui-backend-anti-ai-slop`.
+- Bundle runtime helpers inside each Skill so installed packages need neither
+  the suite source tree nor a shared directory.

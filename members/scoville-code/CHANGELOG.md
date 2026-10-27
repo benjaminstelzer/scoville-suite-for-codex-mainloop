@@ -1,0 +1,406 @@
+# Changelog
+
+## Unreleased - 2026-10-27
+
+- Require code reviews to inspect simplicity, maintainability, foreseeable extension and clarity for later agents. Trace loops, recursion and scanning calls for avoidable nonlinear repeated work without requiring benchmarks.
+
+## Unreleased - 2026-10-20
+
+- Keep required text complete when choosing how to read it. File size and metadata remain optional, and completed reads need no verification reread.
+- Ground defect claims in requested behavior or an independent contract. Reuse valid evidence, check meaningful preconditions and update superseded result summaries.
+
+## Unreleased - 2026-10-19
+
+- Write reports as compact lists of checked scope, results and relevant gaps. Group equivalent outcomes and refer to existing evidence instead of retelling the run.
+- Apply one shared evidence rule in user and agent exchanges: defend supported conclusions, correct demonstrated errors, and respect user decisions without treating them as factual proof.
+- Define when an existing pathway fits the requested operation. Preserve shared guarantees without importing conditions from a different purpose.
+- Apply the same scope in reviews. Defend supported findings with decisive facts and revise them only for a demonstrated correction to their basis.
+
+## Unreleased - 2026-10-18
+
+- Reuse known results and request only the scope the next decision needs. Narrow direct tool requests before display when code preprocessing is unavailable.
+
+## Unreleased - 2026-10-15
+
+- Process complete reports in code, including saved captures and failures. Load the rules before data, preserve required original text, and keep parser errors from echoing stored state. Evaluate producer output before display, retain one-time results, and distinguish saved captures from missing output.
+
+- Recognize fully loaded writing rules from the same build, including rules embedded in an assignment. Read them again only when a stated reload reason applies.
+
+
+
+## Unreleased - 2026-10-14
+
+- Compare nested report data in code and display only decisive results and necessary diagnostics, including structured state stored in text fields.
+
+
+- Interpret actual report values through their documented meaning. Allow equivalent wording while preserving exact contracts and unresolved outcomes.
+- Process machine reports through code before displaying results. Avoid redundant shared-rule reads and keep check reports focused on decisive evidence.
+- Parse machine reports completely and display checked facts and all in-scope deviations. Reuse fully read shared rules across Skills without hiding required inputs.
+
+## Unreleased - 2026-10-13
+
+- Load detailed command capture and full-file delivery only when needed. Keep complete output, failure diagnostics and role permissions.
+
+- Check ordinary generated and copied outputs through current creation and
+  expected results; use content or hash comparisons for an actual requirement
+  or concrete defect, not as a routine gate.
+
+- Keep saved oversized results out of Git status with `.scoville/temp/.gitignore`;
+  existing ignore files and tracked files stay unchanged.
+- Send oversized results as a file path only; recipients read the whole file
+  without hash checks. Save composed text without a separate verification pass.
+- Simplify shared writing rules; command-specific size details now live in the
+  shell-command rules.
+
+## Unreleased - 2026-10-12
+
+- Return complete command output directly when it fits; save only oversized
+  captures. Verify supplied artifacts once and compare saved native Finals
+  directly, avoiding repeated hash checks for unchanged text.
+
+- Apply test-expectation criteria to affected existing assertions as well as
+  new tests; revise unjustified implementation pins without weakening guarantees.
+
+- Derive test expectations from the required behavior. Use justified bounds for
+  internal work and valid measurement; preserve exact contractual guarantees.
+
+## Unreleased - 2026-10-11
+
+- Read required files completely with an agent-chosen method. Remove the document-reading helper and multipart protocol; keep output capture and result delivery separate.
+
+## Unreleased - 2026-10-10
+
+- Load command capture and large-result delivery only when needed; preserve complete outputs and role permissions.
+- Remove the obsolete Workflow runner restriction; keep normal Skill selection and role permissions. Load material cost/cache and implementation-review guidance only when relevant.
+- Keep agent messages and internal commentary compact. Reference readable source text instead of copying it; preserve required facts and exact controls.
+- Keep the full reading procedure in one reference and load host command details when needed. Preserve complete reads and existing permissions.
+
+## v2.1.15 - 2026-10-10
+
+- Reject direct Python script capture before execution with an actionable no-start diagnostic; preserve explicit interpreter calls and source reads.
+
+## v2.1.14 - 2026-10-10
+
+- Save temporary read captures only when the current role and phase permit that specific file. Keep takeover and complete-reading safeguards.
+
+## v2.1.13 - 2026-10-09
+
+- Use exact search paths and keep filename patterns in rg's -g filters. Existing files, directories and regular expressions remain available.
+
+## v2.1.12 - 2026-10-09
+
+- Keep the verified Python interpreter and all required arguments when capturing a helper command. Small direct calls remain available.
+
+## v2.1.11 - 2026-10-09
+
+- Clarify which path runs the reader and which document it reads, including source files from another Skill.
+
+## v2.1.10 - 2026-10-09
+
+- Reuse completed work, unchanged reviewed content and complete passing results. Repeat affected checks only for a relevant change, an unanswered question or a binding protocol.
+- Keep process sessions and final failure status visible, preserve reader commands between document parts, and limit guards to their supported scope without weakening required guarantees.
+
+## v2.1.9 - 2026-10-09
+
+- Use a complete reader command when continuing document reads, and an existing directory with a file filter when searching. Prefer direct shell commands for simple file inventories.
+
+## v2.1.8 - 2026-10-09
+
+- Preserve literal arguments and failure status when reading required context. Changed output limits restart the complete read instead of skipping part of the input.
+
+## v2.1.7 - 2026-10-08
+
+- Make scope selection, implementation and proportionate validation easier to follow, with prerequisites and failure stops explicit.
+
+## v2.1.6 - 2026-10-08
+
+- Use a short ordered sequence to locate the relevant code, choose a proportionate check and implement the change.
+
+## v2.1.5 - 2026-10-08
+
+- Diagnose shortened output from the observed failing layer; a later shortened query does not prove that the original capture lost information.
+
+## v2.1.4 - 2026-10-08
+
+- Distinguish Python program files from document inputs and preserve complete output from running command sessions.
+- Keep safeguards and validation focused on the actual failure risk. Use Plan field rules for assigned reviews of native planning records.
+
+## v2.1.3 - 2026-10-08
+
+- Read complete bounded UTF-8 text before using it. Capture full command output and its original status before display.
+- Verify stateful behavior against the actual application store through its factory and participating processes. Report counts only when they affect a decision.
+
+## v2.1.2 - 2026-10-07
+
+- Keep standalone acceptance focused on distinct necessary results. Put implementation and test execution in subordinate steps while preserving methods and checks explicitly required for acceptance.
+
+## v2.1.1 - 2026-10-07
+
+- Keep Instructions and Evidence focused on future work. Remove duplicated Steps and review transcripts, and handle routine Plan closure without another bookkeeping worker.
+- Check complete text before large reads and preserve Python launcher arguments when invoking the size checker.
+
+## v2.1.0 - 2026-10-07
+
+- Keep development ahead of bookkeeping and stop validation after decisive evidence unless a changed behavior or concrete concern calls for more.
+- Test observable results. Use source-content checks only for an actual external contract, not to freeze incidental instruction wording.
+- Preserve complete text through compaction or a hashed temporary file when it exceeds the known output limit. Offer the separate manual helper procedure only without Python.
+- Follow the applicable Codex or Claude Code project rules without copying rules between hosts.
+
+## v2.0.9 - 2026-10-02
+
+- Keep fixes and validation proportionate to the requested result. Reassess repeated failed corrections and add caching only for a concrete benefit.
+- Let Handoff own explicitly requested continuation prompts when active, while keeping Code independently usable.
+
+## v2.0.8 - 2026-10-01
+
+- Keep the Change route for high-risk work even when the current request only classifies future work. Reading the route does not authorize implementation.
+- Allow bounded local diagnosis while keeping external or durable effects within the user's authorization. Run broad validation only when the task or project requires it.
+- Guide new projects through dependency identity, a usable README and focused checks without replacing an existing project's organization.
+
+## v2.0.7 - 2026-10-01
+
+- Recognize Project Context Cleanup as the active owner for requested edits to project rules and index text. Keep engineering work within Code's existing scope.
+
+## v2.0.6 - 2026-09-29
+
+- Check runtime and memory costs before and after implementation, including repeated searches, I/O and recursive work. Keep bounded quadratic work when suitable and prefer simpler alternatives before proposing a cache.
+- Use existing caches through their validity and isolation contracts. Ask before adding a new result cache unless already authorized, while allowing ordinary traversal-local indexes.
+
+## v2.0.4 - 2026-09-28
+
+- Scale safeguards to actual consequences and prefer the simplest sufficient failure handling.
+- Separate saved results from resumable execution, and keep useful recovery output available without claiming successful persistence.
+- Require meaningful safeguard checks at the affected boundary and actionable diagnostics.
+
+## v2.0.3 - 2026-09-27
+
+- Remove the blanket network-access claim from the compatibility description.
+
+## v2.0.1 - 2026-09-26
+
+- Preserve unrelated encoding and line endings during edits, and evaluate each validation command by its own exit status.
+
+## v2.0.0 - 2026-09-25
+
+- Rename the Skill and installation directory to scoville-code.
+
+## v1.0.36 - 2026-09-24
+
+- Keep concrete planning and risk review for high-impact operations in the High risk class when execution is deferred.
+- Use Scoville Plan as the record owner only when it is independently available and applicable.
+
+## v1.0.35 - 2026-09-23
+
+- Follow established project conventions for existing code unless they
+  conflict with the requested outcome, safety or a binding contract.
+- Start Greenfield code with the smallest coherent responsibility-based layout
+  and split at real domain, I/O, integration or state boundaries. Keep the
+  2,000-line default as a backstop, not an architecture target.
+
+## v1.0.34 - 2026-09-22
+
+- Apply engineering guardrails to Plan entries even when no code changes.
+- Make reference selection explicit for implementation, validation and
+  risk classification without granting permission to perform deferred work.
+
+## v1.0.33 - 2026-09-20
+
+- Simplify operation routing and stop dependent work when a material decision
+  remains unresolved.
+
+## v1.0.32 - 2026-09-20
+
+- Make repository authority, Develop-mode retention, material-choice blocking,
+  and durable completion requirements explicit.
+- Clarify that discovering another family Skill does not activate it, while
+  independently authorized work continues and a user opt-out applies only to
+  the excluded Skill.
+
+## v1.0.31 - 2026-09-19
+
+- Bound broad reads before content is returned, and filter required large
+  sources locally instead of draining truncated output or listing an entire
+  tree.
+- Derive boundary expectations from an agreed contract or independent
+  consumer, prove negative tests reach the named failure operation, and cover
+  every independently affected consumer variant without inventorying unrelated
+  neighbors.
+
+## v1.0.26 - 2026-09-12
+
+- Bound source searches and recover only relevant missing output after truncation. Explicitly requested traces and generated sources remain in scope.
+
+## v1.0.25 - 2026-09-11
+
+- Classify purely editorial work by its actual effects even when the request calls it a migration. Real migrations, including audits and dry runs, retain their High risk classification.
+
+## v1.0.23 - 2026-09-10
+
+- Allow a demonstrated cause to justify inspection of related inputs, state, or
+  consumers without turning a contained change into a broad rewrite.
+- Keep mocked behavior separate from evidence for an actual integration
+  boundary.
+- Diagnose repeated causal failures across checks without weakening stop rules,
+  permissions, or acceptance criteria.
+
+## v1.0.18 - 2026-09-01
+
+- Added a 2,000-line ceiling for hand-written source files, with project
+  precedence and exceptions for generated, declarative, vendored, or narrowly
+  patched legacy files.
+- Added language-independent guidance for domain boundaries, subsystem
+  directories, dependency direction, state and resource ownership, runtime
+  compatibility, and evidence-based abstraction.
+- Reject metric gaming, fake file splits, and unrequested refactors whose only
+  purpose is to satisfy a size number.
+
+## v1.0.11 - 2026-08-11
+
+- Made every Scoville Skill optional and independently usable. Discovering a
+  sibling does not install or activate it.
+
+## v1.0.6 - 2026-08-08
+
+- Let Scoville Plan own durable Plans, Work Items, and Decisions when it is
+  independently available and applicable.
+- Keep the repository's existing record owner when Plan is absent or
+  inapplicable.
+- Do not cross an explicit proposal-acceptance boundary through an unattended
+  implementation assumption.
+
+## v1.0.3 - 2026-08-06
+
+- Generalized planning language so Code works with any authoritative project
+  plan without depending on one planning product.
+- Map independently resumable outcomes to Work Items while keeping
+  implementation, review, testing, and documentation steps inside the same
+  behavior-complete item.
+- Reduce repeated large diagnostics to a stable failure signature and the
+  meaningful delta after the first complete capture.
+- Treat aggregate evidence as stale when later code, tests, or harness changes
+  affect the completion claim.
+- Require decisive checks to cover every explicit acceptance behavior and each
+  concrete coupling that can make a required path behave differently.
+
+## v1.0.1 - 2026-08-03
+
+### Rename to Scoville Code Anti-AI-Slop
+
+- Renamed the Skill from `scoville-anti-ai-coding-slop` to
+  `scoville-code-anti-ai-slop`.
+
+### Migration
+
+- Replace an installation under `scoville-anti-ai-coding-slop/` with
+  `scoville-code-anti-ai-slop/`. Do not keep both names installed.
+
+### Runtime-neutral operation and validation floor - 2026-07-26
+
+- Keep internal modes, risk flags, and framing questions out of user-facing
+  output.
+- When a changed symbol is used elsewhere, require at least one check through a
+  real use instead of validating only its owner.
+- Allow one documented setup step after an infrastructure failure before one
+  substitute check.
+- In projects without version control, read before overwriting and preserve
+  unrelated content because edits may be irreversible.
+- Ask one specific material question after all independent work is complete. In
+  unattended work, state the necessary assumption instead of blocking.
+- Inspect the complete scoped change and working-tree state once before
+  completion, using the facilities available in the current runtime.
+
+### Durable handoff and local code style - 2026-07-22
+
+- Preserve binding constraints and unrecorded material decisions in compacted
+  or handed-off work, then reconcile the record with current instructions and
+  version-control state when resuming.
+- Match the surrounding code's naming, idioms, error handling, comments,
+  annotations, and test style.
+- Comment only when the code cannot express an important constraint. Do not
+  narrate the edit or address a reviewer through comments.
+- Report unrelated pre-existing findings only when they could change the user's
+  next action.
+
+### Validation stop semantics - 2026-07-21
+
+- After one infrastructure failure, allow one different substitute check. If it
+  cannot prove the behavior, stop and report the result as unverified.
+- Treat decisive evidence as terminal unless another changed behavior, named
+  risk, or higher-priority requirement remains open.
+- Open another validation cycle only when the final inspection finds a concrete
+  defect that is then fixed.
+
+### Goal-first rewrite - 2026-07-20
+
+- Rebuilt the Skill around the requested observable outcome. Correctness,
+  structure, and validation constrain delivery but do not replace it.
+- Added Advise, Review, Explore, Develop, and Harden modes while keeping
+  structural and high-risk flags independent of change size.
+- Presume failed checks are substantive and caused by the change until evidence
+  shows otherwise.
+- Stop after two failed attempts against the same check, reread the owner
+  contract, and change or narrow the approach.
+- Treat retained experiments as Develop work and validate them accordingly.
+- Removed Skill-owned fallback plan and decision files. Existing project records
+  remain canonical.
+
+### Runtime and user precedence - 2026-07-18
+
+- Resolve planning through user instructions, runtime facilities, and project
+  conventions before considering a temporary fallback.
+- Keep subagent planning ephemeral when the subagent cannot access the caller's
+  plan owner.
+- Skip written plans for tiny work unless the user or runtime requires one.
+
+### Bounded discovery and validation - 2026-07-16
+
+- Add broader validation only for a named structural or high-risk concern, an
+  explicit project rule, or a user requirement.
+- Do not rerun an unchanged failed command or continue similar checks after
+  decisive evidence.
+- Use exact task paths and targeted symbol or filename searches first. Expand
+  only when inspected evidence leaves a material owner, boundary, or validation
+  question unresolved.
+- Stop locating once the source and directly relevant test establish the
+  canonical owner.
+
+### Adaptive, risk-proportionate workflow - 2026-07-13
+
+- Inherit user and repository workflows concern by concern and use fallback
+  rules only where the project is silent.
+- Separate change size from structural and high-risk classification so small
+  edits stay lightweight without weakening safety or evidence requirements.
+- Organize work around behavior-complete outcomes, real stop conditions,
+  focused evidence, final review, and explicit residual risk.
+
+### Structural execution and review gate - 2026-07-10
+
+- Added explicit Change, Review, Advisory, and Non-engineering operations for
+  code and engineering artifacts.
+- Added structural checks for misleading wrappers, silent fallbacks, lossy
+  boundaries, state published before durable work, duplicate owners,
+  responsibility growth, speculative abstraction, mode creep,
+  implementation-mirroring tests, and incomplete scaffolding.
+- Added owner, boundary, atomicity, dependency, failure, completion, and
+  residual-risk gates.
+
+### Structural quality beyond green tests - 2026-07-07
+
+- Added pre-edit and post-edit structural review so passing tests alone cannot
+  approve a harmful change.
+- Added whole-diff review for atomicity, boundary loss, misleading wrappers,
+  file-growth signals, and failure-mode coverage.
+
+### Execution-focused quality gate - 2026-07-03
+
+- Replaced the original checklist with an execution loop for locating the
+  canonical owner, making a scoped change, validating behavior, inspecting the
+  result, and reporting remaining risk.
+- Added read-before-edit, conflict detection, dependency approval, fail-first
+  defect proof, narrow-to-broad checks, and repository-owned version-control
+  policy.
+
+## v1.0.0 - 2026-06-29
+
+- Added the first goal-oriented engineering quality gate for AI-assisted code
+  changes and reviews.

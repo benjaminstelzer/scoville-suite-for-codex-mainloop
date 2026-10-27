@@ -1,0 +1,187 @@
+# Changelog
+
+## Unreleased - 2026-10-27
+
+- Require code reviews to inspect simplicity, maintainability, foreseeable extension and clarity for later agents. Trace loops, recursion and scanning calls for avoidable nonlinear repeated work without requiring benchmarks.
+- Include the complete code-review policy in native and Claude review prompts. Consultation prompts stay unchanged.
+
+## Unreleased - 2026-10-20
+
+- Keep required text complete when choosing how to read it. File size and metadata remain optional, and completed reads need no verification reread.
+
+## Unreleased - 2026-10-19
+
+- Write reports as compact lists of checked scope, results and relevant gaps. Group equivalent outcomes and refer to existing evidence instead of retelling the run.
+- Apply one shared evidence rule in user and agent exchanges: defend supported conclusions, correct demonstrated errors, and respect user decisions without treating them as factual proof.
+- Defend supported adviser conclusions with decisive facts across native and Claude consultations. Revisions name the demonstrated correction; confidence or pressure to agree does not establish a fact.
+- Exchange disputed claims neutrally and preserve unresolved disagreements and valid alternatives.
+
+## Unreleased - 2026-10-18
+
+- Retain canonical adviser paths and complete answers. Narrow uncertain native-state queries and match actual messages to the current question; a wait summary is no answer.
+- Scope direct tool requests before display when code preprocessing is unavailable.
+
+## Unreleased - 2026-10-15
+
+- Process complete reports in code, including saved captures and failures. Load the rules before data, preserve required original text, and keep parser errors from echoing stored state. Evaluate producer output before display, retain one-time results, and distinguish saved captures from missing output.
+
+## Unreleased - 2026-10-14
+
+- Compare nested report data in code and display only decisive results and necessary diagnostics, including structured state stored in text fields.
+
+
+- Interpret actual report values through their documented meaning. Allow equivalent wording while preserving exact contracts and unresolved outcomes.
+- Process machine reports through code before displaying results. Avoid redundant shared-rule reads and keep check reports focused on decisive evidence.
+- Parse machine reports completely and display checked facts and all in-scope deviations. Reuse fully read shared rules across Skills without hiding required inputs.
+- Accept zero for no helper spend cap, preserve positive caps and request settings, and keep provider limits and timeouts.
+
+## Unreleased - 2026-10-13
+
+- Give advisers the conditional delivery path and stop prompt creation when that required source is missing.
+- Load detailed command capture and full-file delivery only when needed. Keep complete output, failure diagnostics and role permissions.
+
+- Keep saved oversized results out of Git status with `.scoville/temp/.gitignore`;
+  existing ignore files and tracked files stay unchanged.
+- Send oversized results as a file path only; recipients read the whole file
+  without hash checks. Save composed text without a separate verification pass.
+- Simplify shared writing rules; command-specific size details now live in the
+  shell-command rules.
+
+## Unreleased - 2026-10-12
+
+- Return complete command output directly when it fits; save only oversized
+  captures. Verify supplied artifacts once and compare saved native Finals
+  directly, avoiding repeated hash checks for unchanged text.
+
+## Unreleased - 2026-10-11
+
+- Order native answer preparation, delivery and collection before dependent use.
+
+- Read required files completely with an agent-chosen method. Remove the document-reading helper and multipart protocol; keep output capture and result delivery separate.
+
+## Unreleased - 2026-10-10
+
+- Load command capture and large-result delivery only when needed; preserve complete outputs and role permissions.
+- Keep agent messages and internal commentary compact. Reference readable source text instead of copying it; preserve required facts and exact controls.
+- Keep the full reading procedure in one reference and load host command details when needed. Preserve complete reads and existing permissions.
+
+## v1.4.14 - 2026-10-10
+
+- Reject direct Python script capture before execution with an actionable no-start diagnostic; preserve explicit interpreter calls and source reads.
+
+## v1.4.13 - 2026-10-10
+
+- Save temporary read captures only when the current role and phase permit that specific file. Keep takeover and complete-reading safeguards.
+
+## v1.4.12 - 2026-10-09
+
+- Use exact search paths and keep filename patterns in rg's -g filters. Existing files, directories and regular expressions remain available.
+
+## v1.4.11 - 2026-10-09
+
+- Keep the verified Python interpreter and all required arguments when capturing a helper command. Small direct calls remain available.
+
+## v1.4.10 - 2026-10-09
+
+- Clarify the reader's program and document paths in adviser instructions, including source files read as text.
+
+## v1.4.9 - 2026-10-09
+
+- Preserve command sessions, all output chunks and final exit status through adviser work. Keep the verified reader path unchanged between document parts or Skills.
+
+## v1.4.8 - 2026-10-09
+
+- Use a complete reader command when continuing document reads, and an existing directory with a file filter when searching. Prefer direct shell commands for simple file inventories.
+
+## v1.4.7 - 2026-10-09
+
+- Keep adviser inputs on the bounded reader route and deliver the adviser result separately. Preserve literal reader arguments, output limits and failure status.
+
+## v1.4.6 - 2026-10-08
+
+- Make independent adviser dispatch and return handling easier to follow, with complete input and role boundaries preserved.
+
+## v1.4.5 - 2026-10-08
+
+- Clarify the shared writing and document-reading instructions so the next action and its prerequisites are easier to identify.
+
+## v1.4.4 - 2026-10-08
+
+- Diagnose shortened output from the observed failing layer; a later shortened query does not prove that the original capture lost information.
+
+## v1.4.3 - 2026-10-08
+
+- Bind native adviser instructions to the reader and its document input, with complete output and command-session handling.
+- Use valid native task names and keep adviser roles and transfer boundaries explicit.
+
+## v1.4.2 - 2026-10-08
+
+- Give native advisers complete bounded UTF-8 read commands for assignments and references. Keep source reads read-only and preserve necessary oversized-result delivery. The Claude delivery route is unchanged.
+
+## v1.4.1 - 2026-10-07
+
+- Allow native advisers to check input size before large reads. Preserve Python launcher arguments in the shared size-check command and keep the Claude delivery route unchanged.
+
+## v1.4.0 - 2026-10-07
+
+- Deliver complete native adviser answers through compaction or a hashed temporary file when they exceed the known output limit. Keep the Claude answer-delivery route unchanged.
+- Execute prepared Claude requests against their selected project instead of reading configuration from an unrelated shell directory.
+- Report unreadable request files and invalid directories with the affected argument and exact path, without partial success output.
+
+## v1.3.0 - 2026-10-02
+
+- Prepare Claude questions and follow-ups directly from text files, retaining saved settings and explicit overrides.
+- Catch invalid workspaces and adviser settings before starting a consultation, with the bad value and its source in the diagnostic.
+- Check native adviser availability through the host. The unused model-catalog helper has been removed.
+
+## v1.2.1 - 2026-10-01
+
+- Accept a complete native adviser final without a separate startup acknowledgement. Keep incomplete results open and route necessary follow-ups to the same exact handle.
+- Remove automatic capacity cleanup and retry. Keep completed answers, pending advisers and the actual failure diagnostic.
+- Keep Claude consultations available for an explicitly requested follow-up without an automatic closing question.
+
+## v1.2.0 - 2026-10-01
+
+- Use native Codex agents for independent advisers and collect their complete final answers in the caller. Separate sidebar chats are no longer required.
+- Retain the same adviser handle for necessary follow-ups. End completed turns without queued routine acknowledgements.
+- After a definite capacity refusal with no agent created, allow one bounded cleanup of eligible completed advisers and one unchanged retry. Preserve answers, pending questions and actual failure diagnostics.
+- Build directly usable native dispatch arguments and prompts with the packaged helpers. Claude CLI keeps its existing session route.
+
+## v1.1.1 - 2026-09-29
+
+- Keep the calling chat waiting after native wait timeouts so completed reviews are collected without another user message.
+- Preserve consultation references separately from reviewed scopes in clarifications and result matching.
+
+## v1.1.0 - 2026-09-29
+
+- Build adviser requests with consistent SC-ASK-MODEL titles and collect native answers in the calling chat.
+- Keep follow-up questions in the same native chat or Claude session. The caller asks whether the consultation should remain open and handles closure.
+- Configure automatic adviser pinning through Scoville Setup, enabled by default.
+- Remove obsolete separate authorization fields from Claude requests.
+
+## v1.0.5 - 2026-09-28
+
+- Name adviser chats SC · ASK · MODEL · Caller title, keeping technical model IDs and follow-up identities unchanged.
+
+## v1.0.3 - 2026-09-27
+
+- Explain invalid adviser settings and project configuration with concrete correction guidance.
+
+## v1.0.2 - 2026-09-26
+
+- Carry complete adviser instructions and existing reply authorization in mixed consultations, with task IDs separate from host identifiers.
+- Preserve explicitly selected adviser presets when defaults name another adviser.
+- Require matching sender, reference and reviewed scope before accepting an answer.
+- Keep Claude timeout state separate from native return destinations and require explicit authority to resume.
+
+## v1.0.1 - 2026-09-26
+
+- Make separate adviser chats explicit in the Skill invocation so host task rules do not redirect Ask into subagents.
+- Carry existing user authorization into native adviser assignments instead of treating the dispatch as permission to reply.
+- Report undelivered answers with their destination and retain the complete answer for recovery. Respect host-required progress waits.
+
+## v1.0.0 - 2026-09-25
+
+- Combine adviser selection, native tasks and Claude CLI in Scoville Ask for Codex.
+- Use S-ASK titles with the uppercase model ID and exact caller title without changing sidebar placement.
+- Create native adviser chats directly and collect their answers through native messages. Keep the Claude CLI route unchanged.

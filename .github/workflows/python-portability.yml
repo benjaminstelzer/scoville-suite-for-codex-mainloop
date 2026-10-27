@@ -1,0 +1,26 @@
+name: Python portability
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  helpers:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        python: ['3.11', '3.x']
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: scoville-suite
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: scoville-suite
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Arrange bundled shared sources as the development sibling
+        run: python -c "import shutil; shutil.copytree('development/shared', '../shared')"
+      - name: Run source or exported-suite portability checks
+        run: python -B ../shared/build/run_portability.py --root . --shared ../shared

@@ -1,0 +1,316 @@
+from pathlib import Path
+import os
+import json
+import importlib.util
+import subprocess
+import sys
+import tempfile
+import unittest
+import shutil
+
+
+SUITE = Path(__file__).resolve().parents[4]
+_spec = importlib.util.spec_from_file_location('ask_prompt_test_build', SUITE / 'development/build_suite.py')
+_builder = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_builder)
+_package_temp = tempfile.TemporaryDirectory(prefix='ask-prompt-tests-', ignore_cleanup_errors=True)
+_config = _builder.load(SUITE, 'codex')
+_member = next(m for m in _config['members'] if m['name'] == 'scoville-ask-for-codex')
+for _name, _content in _builder.payload(SUITE, _member, _config).items():
+    _target = Path(_package_temp.name) / _name
+    _target.parent.mkdir(parents=True, exist_ok=True)
+    _target.write_bytes(_content)
+PACKAGE = Path(_package_temp.name) / 'scoville-ask-for-codex'
+SCRIPT = PACKAGE / "scripts/build_adviser_prompt.py"
+
+
+class AdviserPromptTests(unittest.TestCase):
+    SPAWN = ['--format', 'spawn', '--task-name', 'ask_custom_sol_1',
+             '--model', 'gpt-6-sol', '--effort', 'high']
+
+    def run_prompt(self, question="Prüfe café ✓ ohne Änderungen.", extra=(), script=None, mode="review"):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "question.txt"
+            source.write_text(question, encoding="utf-8")
+            env = dict(os.environ)
+            # Agent dispatch must not depend on a valid calling chat identity.
+            env["CODEX_THREAD_ID"] = "not-a-chat-uuid"
+            return subprocess.run(
+                [sys.executable, str(script or SCRIPT), "--question-file", str(source),
+                 "--workspace-root", directory, "--adviser-id", "custom-sol",
+                 "--mode", mode, "--scope", "Patch ä", "--reference", "review-1", *extra],
+                env=env, capture_output=True, text=True, encoding="utf-8", check=False,
+            )
+
+    def test_spawn_arguments_preserve_settings_identity_and_read_only_contract(self):
+        result = self.run_prompt(extra=self.SPAWN)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        data = json.loads(result.stdout)
+        self.assertEqual(set(data), {'task_name', 'message', 'fork_turns', 'model', 'reasoning_effort'})
+        self.assertEqual(data['task_name'], 'ask_custom_sol_1')
+        self.assertEqual(data['fork_turns'], 'none')
+        self.assertEqual(data['model'], 'gpt-6-sol')
+        self.assertEqual(data['reasoning_effort'], 'high')
+        self.assertIn('adviser_id: custom-sol', data['message'])
+        self.assertIn('consultation_reference: review-1', data['message'])
+        self.assertIn('scope: Patch ä', data['message'])
+        self.assertIn('Prüfe café ✓', data['message'])
+        self.assertIn((PACKAGE / 'references/adviser.md').read_text(encoding='utf-8'), data['message'])
+        self.assertNotIn('calling_thread_id:', data['message'])
+        self.assertNotIn('not-a-chat-uuid', data['message'])
+
+    def test_named_delivery_tools_feed_complete_file_consumer_without_repair(self):
+        with tempfile.TemporaryDirectory(prefix='Ask Prüfung mit Leerzeichen ') as directory:
+            root = Path(directory)
+            copy = root / 'Ask Skill ä'
+            shutil.copytree(PACKAGE, copy)
+            question = root / 'Frage ä.txt'
+            question.write_text('Review only; preserve necessary facts.', encoding='utf-8')
+            command = [sys.executable, str(copy / 'scripts/build_adviser_prompt.py'),
+                       '--question-file', str(question), '--workspace-root', str(root),
+                       '--adviser-id', 'sol', '--mode', 'review', '--scope', 'Consumer',
+                       '--reference', 'native-tools', *self.SPAWN]
+            produced = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
+            self.assertEqual(0, produced.returncode, produced.stderr)
+            prompt = json.loads(produced.stdout)['message']
+            fields = {key: next(line.split(': ', 1)[1] for line in prompt.splitlines()
+                                if line.startswith(key + ': '))
+                      for key in ('python', 'text_size_checker', 'workspace_root')}
+            self.assertEqual(sys.executable, fields['python'])
+            self.assertEqual((copy / 'scripts/check_text_size.py').resolve(), Path(fields['text_size_checker']))
+            self.assertTrue(Path(fields['text_size_checker']).is_file())
+            delivery_field = next(line.split(': ', 1)[1] for line in prompt.splitlines()
+                                  if line.startswith('output_delivery_rules: '))
+            delivery = Path(delivery_field.split(';', 1)[0])
+            self.assertEqual((copy / 'references/output-delivery.md').resolve(), delivery)
+            self.assertTrue(delivery.is_file())
+            self.assertNotIn(delivery.read_text(encoding='utf-8'), prompt)
+            planned = root / 'Vollständige Rückgabe.txt'
+            complete = ('Required café 漢字 facts.\n' * 220 + 'FINAL_REQUIRED_FACT\n').encode('utf-8')
+            planned.write_bytes(complete)
+            checker = [fields['python'], fields['text_size_checker'], '--file', str(planned),
+                       '--max-output-tokens', '3000', '--publish-full',
+                       '--project-root', fields['workspace_root']]
+            invalid = checker.copy()
+            invalid[invalid.index('--file') + 1] = str(root / 'missing.txt')
+            failed = subprocess.run(invalid, capture_output=True, text=True, encoding='utf-8')
+            self.assertNotEqual(0, failed.returncode)
+            self.assertEqual('', failed.stdout)
+            self.assertIn('--file', failed.stderr)
+            self.assertIn(str(root / 'missing.txt'), failed.stderr)
+            self.assertIn('UTF-8', failed.stderr)
+            delivered = subprocess.run(checker, capture_output=True, text=True, encoding='utf-8')
+            self.assertEqual(0, delivered.returncode, delivered.stderr)
+            metadata = json.loads(delivered.stdout)
+            published = Path(metadata['full_file'])
+            self.assertEqual('complete_file', metadata['status'])
+            self.assertEqual((root / '.scoville/temp').resolve(), published.parent)
+            self.assertEqual(complete, published.read_bytes())
+
+    def test_missing_named_checker_has_no_partial_prompt_then_intact_package_works(self):
+        with tempfile.TemporaryDirectory() as directory:
+            copy = Path(directory) / PACKAGE.name
+            shutil.copytree(PACKAGE, copy)
+            checker = copy / 'scripts/check_text_size.py'
+            data = checker.read_bytes()
+            checker.unlink()
+            script = copy / 'scripts/build_adviser_prompt.py'
+            invalid = self.run_prompt(extra=self.SPAWN, script=script)
+            self.assertNotEqual(0, invalid.returncode)
+            self.assertEqual('', invalid.stdout)
+            self.assertIn(str(checker.resolve()), invalid.stderr)
+            checker.write_bytes(data)
+            corrected = self.run_prompt(extra=self.SPAWN, script=script)
+            self.assertEqual(0, corrected.returncode, corrected.stderr)
+            self.assertIn(str(checker.resolve()), json.loads(corrected.stdout)['message'])
+
+    def test_conditional_shell_reference_is_required_and_absolute(self):
+        with tempfile.TemporaryDirectory() as directory:
+            copy = Path(directory) / PACKAGE.name
+            shutil.copytree(PACKAGE, copy)
+            shell = copy / 'references/shell-commands.md'
+            original = shell.read_bytes()
+            shell.unlink()
+            script = copy / 'scripts/build_adviser_prompt.py'
+            failed = self.run_prompt(extra=self.SPAWN, script=script)
+            self.assertNotEqual(0, failed.returncode)
+            self.assertEqual('', failed.stdout)
+            self.assertIn(str(shell.resolve()), failed.stderr)
+            shell.write_bytes(original)
+            corrected = self.run_prompt(extra=self.SPAWN, script=script)
+            self.assertEqual(0, corrected.returncode, corrected.stderr)
+            prompt = json.loads(corrected.stdout)['message']
+            self.assertIn(f'shell_command_rules: {shell.resolve()};', prompt)
+            self.assertNotIn(shell.read_text(encoding='utf-8'), prompt)
+
+    def test_conditional_delivery_reference_missing_then_restored_is_consumable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            copy = Path(directory) / PACKAGE.name
+            shutil.copytree(PACKAGE, copy)
+            delivery = copy / 'references/output-delivery.md'
+            original = delivery.read_bytes()
+            delivery.unlink()
+            script = copy / 'scripts/build_adviser_prompt.py'
+            failed = self.run_prompt(extra=self.SPAWN, script=script)
+            self.assertNotEqual(0, failed.returncode)
+            self.assertEqual('', failed.stdout)
+            self.assertIn(str(delivery.resolve()), failed.stderr)
+            self.assertIn('usage:', failed.stderr)
+            delivery.write_bytes(original)
+            corrected = self.run_prompt(extra=self.SPAWN, script=script)
+            self.assertEqual(0, corrected.returncode, corrected.stderr)
+            prompt = json.loads(corrected.stdout)['message']
+            supplied = next(line.split(': ', 1)[1].split(';', 1)[0]
+                            for line in prompt.splitlines()
+                            if line.startswith('output_delivery_rules: '))
+            self.assertEqual(delivery.resolve(), Path(supplied))
+            self.assertEqual(original, Path(supplied).read_bytes())
+            self.assertNotIn(original.decode('utf-8'), prompt)
+
+    def test_missing_spawn_fields_name_argument_and_corrected_call_succeeds(self):
+        for flag in ('--task-name', '--model', '--effort'):
+            args = self.SPAWN.copy()
+            index = args.index(flag)
+            del args[index:index + 2]
+            with self.subTest(flag=flag):
+                invalid = self.run_prompt(extra=args)
+                self.assertNotEqual(invalid.returncode, 0)
+                self.assertEqual(invalid.stdout, '')
+                self.assertIn(flag, invalid.stderr)
+                self.assertIn('usage:', invalid.stderr)
+                corrected = self.run_prompt(extra=self.SPAWN)
+                self.assertEqual(corrected.returncode, 0, corrected.stderr)
+                self.assertEqual(json.loads(corrected.stdout)['fork_turns'], 'none')
+
+    def test_prompt_preserves_complete_request_and_each_packaged_rule_once(self):
+        request = "Prüfe café ✓ ohne Änderungen.\nErhalt: [x] und `code`."
+        result = self.run_prompt(request)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(request, result.stdout)
+        self.assertIn('workspace_root:', result.stdout)
+        for name in ('adviser.md', 'writing.md', 'code-review.md', 'native-delivery.md'):
+            rules = (PACKAGE / 'references' / name).read_text(encoding='utf-8')
+            self.assertEqual(result.stdout.count(rules), 1)
+
+    def test_review_requires_quality_policy_but_consultation_does_not_load_it(self):
+        with tempfile.TemporaryDirectory() as directory:
+            copy = Path(directory) / PACKAGE.name
+            shutil.copytree(PACKAGE, copy)
+            policy = copy / 'references/code-review.md'
+            original = policy.read_bytes()
+            script = copy / 'scripts/build_adviser_prompt.py'
+            policy.unlink()
+            failed = self.run_prompt(script=script)
+            self.assertNotEqual(0, failed.returncode)
+            self.assertEqual('', failed.stdout)
+            self.assertIn(str(policy.resolve()), failed.stderr)
+            consultation = self.run_prompt(script=script, mode='consultation')
+            self.assertEqual(0, consultation.returncode, consultation.stderr)
+            self.assertNotIn(original.decode('utf-8'), consultation.stdout)
+            policy.write_bytes(original)
+            corrected = self.run_prompt(script=script)
+            self.assertEqual(0, corrected.returncode, corrected.stderr)
+            self.assertEqual(1, corrected.stdout.count(original.decode('utf-8')))
+
+    def test_missing_writing_contract_fails_then_restored_package_is_consumable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            copy = Path(directory) / PACKAGE.name
+            shutil.copytree(PACKAGE, copy)
+            writing = copy / 'references/writing.md'
+            content = writing.read_bytes()
+            script = copy / 'scripts/build_adviser_prompt.py'
+            for invalid in (None, b'\xff'):
+                if invalid is None:
+                    writing.unlink()
+                else:
+                    writing.write_bytes(invalid)
+                failed = self.run_prompt(extra=self.SPAWN, script=script)
+                self.assertNotEqual(0, failed.returncode)
+                self.assertEqual('', failed.stdout)
+                self.assertIn(str(writing.resolve()), failed.stderr)
+                self.assertIn('UTF-8', failed.stderr)
+                self.assertIn('usage:', failed.stderr)
+            writing.write_bytes(content)
+            question = 'Exact question: A/B; "quoted"\nKeep this unchanged.\n'
+            fixed = self.run_prompt(question, self.SPAWN, script)
+            self.assertEqual(0, fixed.returncode, fixed.stderr)
+            payload = json.loads(fixed.stdout)
+            self.assertEqual(1, payload['message'].count(content.decode('utf-8')))
+            self.assertTrue(payload['message'].endswith(question))
+            def consume(*, task_name, message, fork_turns, model, reasoning_effort):
+                self.assertEqual(fork_turns, 'none')
+                self.assertEqual(task_name, self.SPAWN[3])
+                self.assertTrue(message.endswith(question))
+                for name in ('adviser.md', 'writing.md', 'code-review.md', 'native-delivery.md'):
+                    self.assertIn((copy / 'references' / name).read_text(encoding='utf-8'), message)
+            consume(**payload)
+
+    def test_resolved_selected_advisers_feed_prompt_builder_without_repair(self):
+        with tempfile.TemporaryDirectory() as project:
+            resolved = subprocess.run([sys.executable, str(PACKAGE / 'scripts/ask.py'),
+                '--project-root', project, '--adviser', 'sol', '--adviser', 'astra'],
+                capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(resolved.returncode, 0, resolved.stderr)
+        advisers = json.loads(resolved.stdout)['config']['advisers']
+        self.assertEqual([a['id'] for a in advisers], ['sol', 'astra'])
+        for adviser in advisers:
+            with self.subTest(adviser=adviser['id']):
+                result = self.run_prompt(extra=['--format', 'spawn', '--task-name', 'ask_' + adviser['id'],
+                    '--adviser-id', adviser['id'], '--model', adviser['model'], '--effort', adviser['effort']])
+                self.assertEqual(result.returncode, 0, result.stderr)
+                arguments = json.loads(result.stdout)
+                self.assertEqual(arguments['model'], adviser['model'])
+                self.assertEqual(arguments['reasoning_effort'], adviser['effort'])
+                self.assertIn('adviser_id: ' + adviser['id'], arguments['message'])
+                self.assertEqual(arguments['fork_turns'], 'none')
+
+    def test_host_owns_model_availability_without_helper_substitution(self):
+        result = self.run_prompt(extra=self.SPAWN + ['--model', 'unavailable-host-model'])
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['model'], 'unavailable-host-model')
+
+    def test_invalid_input_never_emits_partial_assignment_and_corrected_call_works(self):
+        for kwargs, diagnostic in (
+            ({'question': '  '}, 'must contain the request'),
+            ({'extra': ['--scope', 'a\nb']}, 'single-line'),
+            ({'extra': ['--reference', '']}, 'single-line'),
+            ({'extra': ['--adviser-id', 'Custom-Sol']}, 'lowercase adviser ID'),
+            ({'extra': ['--workspace-root', 'relative-project']}, 'existing absolute directory'),
+            ({'extra': ['--mode', 'execute']}, 'invalid choice'),
+            ({'extra': self.SPAWN + ['--task-name', 'ask-wrong']}, '--task-name'),
+            ({'extra': self.SPAWN + ['--model', 'two words']}, '--model'),
+            ({'extra': self.SPAWN + ['--effort', 'unsupported']}, 'invalid choice'),
+            ({'extra': ['--model', 'gpt-6-sol']}, 'require --format spawn'),
+        ):
+            with self.subTest(kwargs=kwargs):
+                result = self.run_prompt(**kwargs)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(result.stdout, '')
+                self.assertIn(diagnostic, result.stderr)
+                self.assertIn('usage:', result.stderr)
+                corrected = self.run_prompt(extra=self.SPAWN)
+                self.assertEqual(corrected.returncode, 0, corrected.stderr)
+                self.assertEqual(json.loads(corrected.stdout)['task_name'], 'ask_custom_sol_1')
+
+    def test_missing_question_is_diagnostic_then_corrected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / 'question Ä 中文.txt'
+            for invalid in (None, b'\xff'):
+                if invalid is not None:
+                    source.write_bytes(invalid)
+                result = self.run_prompt(extra=['--question-file', str(source), *self.SPAWN])
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(result.stdout, '')
+                self.assertIn('--question-file', result.stderr)
+                self.assertIn(str(source), result.stderr)
+                self.assertIn('UTF-8', result.stderr)
+                self.assertIn('usage:', result.stderr)
+            question = 'Preserve the full request: Ä 中文, "quotes" and `literal`.\n'
+            source.write_text(question, encoding='utf-8', newline='\n')
+            corrected = self.run_prompt(extra=['--question-file', str(source), *self.SPAWN])
+            self.assertEqual(corrected.returncode, 0, corrected.stderr)
+            self.assertTrue(json.loads(corrected.stdout)['message'].endswith(question))
+
+
+if __name__ == '__main__':
+    unittest.main()

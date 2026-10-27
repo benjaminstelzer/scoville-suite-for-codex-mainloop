@@ -1,0 +1,159 @@
+"""Exercise shipped Setup, legacy config migration and real route consumers."""
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[4]
+spec = importlib.util.spec_from_file_location('setup_builder', ROOT / 'development/build_suite.py')
+builder = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(builder)
+
+
+class SetupTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.base = Path(self.temporary.name)
+        config = builder.load(ROOT, 'codex', 'suite')
+        for name in ('scoville-setup', 'scoville-ask-for-codex', 'scoville-workflow-for-codex'):
+            member = next(m for m in config['members'] if m['name'] == name)
+            for relative, data in builder.payload(ROOT, member, config).items():
+                target = self.base / name / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(data)
+        self.project = self.base / 'Projekt Ä 中文'
+        self.project.mkdir()
+        self.path = self.project / '.scoville/config.json'
+        self.helper = self.base / 'scoville-setup/scoville-setup/scripts/setup.py'
+        self.workflow = self.base / 'scoville-workflow-for-codex/scoville-workflow-for-codex/scripts'
+
+    def save(self, value):
+        self.path.parent.mkdir(exist_ok=True)
+        self.path.write_text(json.dumps(value, ensure_ascii=False) + '\n', encoding='utf-8')
+
+    def run_setup(self, operation, patch=None, raw=None):
+        result = subprocess.run([sys.executable, '-B', str(self.helper), operation,
+                                 '--project-root', str(self.project)],
+                                input=raw if raw is not None else json.dumps(patch, ensure_ascii=False).encode('utf-8'),
+                                capture_output=True)
+        return result.returncode, json.loads(result.stdout.decode('utf-8'))
+
+    def test_show_diagnoses_legacy_fields_without_writing(self):
+        status, shown = self.run_setup('show')
+        self.assertEqual(0, status)
+        self.assertFalse(self.path.parent.exists())
+        self.save({'workflow': {'context': {'worker_percent': 'obsolete'}, 'manager': {'model': False}, 'pin_threads': 'obsolete'}, 'unrelated': {'keep': 'Ä 中文'}})
+        before = self.path.read_bytes()
+        status, shown = self.run_setup('show')
+        self.assertEqual(0, status)
+        self.assertTrue(shown['effective']['workflow']['cleanup_required'])
+        self.assertFalse(shown['saved'])
+        self.assertEqual(before, self.path.read_bytes())
+
+    def test_authorized_fixed_save_preserves_ask_and_foreign_values(self):
+        before = {'workflow': {'main': {'reasoning': 'high'}}, 'ask': {'pin_threads': True, 'claude': {'timeout_seconds': 2400}}, 'other_tool': {'keep': [1, 2, 'Ä 中文']}}
+        self.save(before)
+        status, saved = self.run_setup('set', {'workflow': {'review': {'reasoning': 'medium'}}})
+        self.assertEqual(0, status, saved)
+        after = json.loads(self.path.read_text(encoding='utf-8'))
+        self.assertEqual(before['ask'], after['ask'])
+        self.assertEqual(before['other_tool'], after['other_tool'])
+        self.assertEqual({'reasoning': 'medium'}, after['workflow']['review'])
+        resolved = subprocess.run([sys.executable, '-B', str(self.workflow / 'resolve_model_pair.py'), '--project-root', str(self.project), '--role', 'reviewer'], capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(0, resolved.returncode, resolved.stderr)
+        self.assertEqual('medium', json.loads(resolved.stdout)['thinking'])
+        ask = self.base / 'scoville-ask-for-codex/scoville-ask-for-codex/scripts/ask.py'
+        request = {'operation': 'resolve', 'project_root': str(self.project), 'overrides': {'advisers': ['fable']}}
+        resolved = subprocess.run([sys.executable, '-B', str(ask)], input=json.dumps(request), capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(0, resolved.returncode, resolved.stderr)
+        self.assertTrue(json.loads(resolved.stdout)['config']['pin_threads'])
+
+    def test_rejected_patches_preserve_every_saved_byte(self):
+        self.save({'workflow': {'context': {'worker_percent': 60}}, 'other': {'keep': True}})
+        before = self.path.read_bytes()
+        invalid = [ {'workflow': {key: {}}} for key in ('context', 'manager', 'pin_threads') ]
+        invalid += [{'workflow': {'context_threshold_percent': value}} for value in (True, False, 0, 101, 50.0, '50', {})]
+        invalid += [{'ask': {'claude': {'max_budget_usd': value}}}
+                    for value in (-1, True, False, None, '0', float('nan'), float('inf'), -float('inf'))]
+        invalid += [{'workflow': {'unknown': {}}}, {'ask': {'pin_threads': False}},
+                    {'ask': {'claude': {'timeout_seconds': 0}}},
+                    {'workflow': {'execute': {'low': {'reasoning': 'bad'}}}},
+                    {'workflow': {'execute': {'low': {'model': False}}}}]
+        for patch in invalid:
+            with self.subTest(patch=patch):
+                status, failed = self.run_setup('set', patch)
+                self.assertNotEqual(status, 0)
+                self.assertFalse(failed['ok'])
+                self.assertTrue(failed['diagnostic'])
+                self.assertEqual(self.path.read_bytes(), before)
+        for raw in (b'', b'{\n"workflow":', b'\xff'):
+            status, failed = self.run_setup('set', raw=raw)
+            self.assertNotEqual(status, 0)
+            self.assertFalse(failed['ok'])
+            self.assertEqual(self.path.read_bytes(), before)
+        choices = {key: {'model': 'gpt-6.1-sol', 'reasoning': 'high'} for key in ('main', 'review', 'explore')}
+        status, saved = self.run_setup('cleanup', {'workflow': choices})
+        self.assertEqual(status, 0, saved)
+        self.assertNotIn('context', json.loads(self.path.read_text())['workflow'])
+
+    def test_supported_special_levels_survive_unrelated_save(self):
+        for level in ('none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'):
+            status, saved = self.run_setup('set', {'workflow': {'main': {'reasoning': level}}})
+            self.assertEqual(0, status, saved)
+        value = json.loads(self.path.read_text())
+        value['ask'] = {'presets': {'astra': {'effort': 'ultra'}}}
+        self.save(value)
+        status, saved = self.run_setup('set', {'ask': {'claude': {'timeout_seconds': 2400}}})
+        self.assertEqual(0, status, saved)
+        self.assertEqual('ultra', json.loads(self.path.read_text())['workflow']['main']['reasoning'])
+        self.assertEqual('ultra', saved['effective']['ask']['presets']['astra']['effort'])
+
+    def test_unknown_saved_workflow_key_does_not_become_ignored(self):
+        self.save({'workflow': {'unknown': True}})
+        before = self.path.read_bytes()
+        status, failed = self.run_setup('show')
+        self.assertNotEqual(status, 0)
+        self.assertFalse(failed['ok'])
+        self.assertEqual(self.path.read_bytes(), before)
+
+    def test_explorer_override_is_saved_without_materializing_default_fields(self):
+        self.save({'workflow': {'main': {'model': 'main-only-model'}}})
+        status, saved = self.run_setup('set', {'workflow': {'explore': {'reasoning': 'medium'}}})
+        self.assertEqual(0, status, saved)
+        self.assertEqual({'reasoning': 'medium'}, json.loads(self.path.read_text())['workflow']['explore'])
+        self.assertEqual('gpt-6.1-sol', saved['effective']['workflow']['explore']['model'])
+        resolved = subprocess.run([sys.executable, '-B', str(self.workflow / 'resolve_model_pair.py'), '--project-root', str(self.project), '--role', 'explorer'], capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(0, resolved.returncode, resolved.stderr)
+        self.assertEqual('medium', json.loads(resolved.stdout)['thinking'])
+
+
+    def test_zero_claude_budget_is_saved_shown_and_resolved_by_ask(self):
+        self.save({'other': {'keep': 'Ä 中文'}})
+        status, saved = self.run_setup('set', {'ask': {'claude': {'max_budget_usd': 0}}})
+        self.assertEqual(status, 0, saved)
+        self.assertEqual(json.loads(self.path.read_text(encoding='utf-8')),
+                         {'other': {'keep': 'Ä 中文'}, 'ask': {'claude': {'max_budget_usd': 0}}})
+        before = self.path.read_bytes()
+        status, shown = self.run_setup('show')
+        self.assertEqual(status, 0, shown)
+        self.assertEqual(shown['effective']['ask']['claude']['max_budget_usd'], 0)
+        self.assertEqual(self.path.read_bytes(), before)
+        helper = self.base / 'scoville-ask-for-codex/scoville-ask-for-codex/scripts/ask.py'
+        resolved = subprocess.run([sys.executable, str(helper), '--project-root', str(self.project)],
+                                  capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(resolved.returncode, 0, resolved.stdout + resolved.stderr)
+        self.assertEqual(json.loads(resolved.stdout)['config']['claude']['max_budget_usd'], 0)
+
+    def test_setup_is_codex_suite_only(self):
+        for profile, layout, expected in [('codex', 'suite', True), ('codex', 'standalone', False),
+                                          ('general', 'suite', False)]:
+            config = builder.load(ROOT, profile, layout)
+            self.assertEqual(any(m['name'] == 'scoville-setup' for m in config['members']), expected)
+
+
+if __name__ == '__main__':
+    unittest.main()

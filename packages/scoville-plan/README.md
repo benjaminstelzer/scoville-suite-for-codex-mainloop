@@ -1,0 +1,138 @@
+# Scoville Plan
+
+Scoville Plan keeps goals, decisions and progress in the repository so longer
+work survives the next conversation. You can see what is done, what remains
+and why a choice was made without reconstructing it from chat history.
+
+Use it for work with dependencies or several sessions. Settle the requirements
+and acceptance criteria before implementation, get independent advice where
+useful, and revise the Plan when the facts change. A contained fix can stay small.
+
+Scoville measures chili heat. Plan keeps the direction from being diluted by
+one more perfectly reasonable detour.
+
+[Plan Viewer](https://github.com/benjaminstelzer/scoville-plan-viewer/releases/latest)
+shows these records on Windows, macOS and Linux.
+
+## How it works
+
+- Use the repository's existing planning system and relevant Plan, Work Items and Decisions.
+- Check current sources before starting the next item.
+- Edit Markdown and YAML records with observed Step progress and any additional Instructions.
+- Record concise acceptance results before completion and validate the records.
+
+## What it enforces
+
+- **Resumable work.** Goals, ordered Steps, dependencies and the current position
+  stay explicit in the project's records.
+- **Decisions with an owner.** Confirmed choices are recorded. Open questions
+  remain proposals and block only the work that depends on them.
+- **Evidence before completion.** Finished means acceptance was checked.
+  Changes of direction preserve completed work, binding constraints and material decisions.
+
+Edit records from one session at a time. Concurrent edits need reconciliation.
+See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex/blob/main/packages/scoville-plan/scoville-plan/SKILL.md).
+
+## What it costs
+
+- Maintaining records takes tokens and time. It pays for continuity on dependent work. A small fix rarely needs a large Plan.
+
+## How it was developed
+
+Real project records shaped the resumable work units and progress checks.
+The useful lesson was to keep decisions and accepted results close to the
+work they explain, without turning routine updates into more work items.
+
+## Compatibility
+
+Requires Codex, repository read/write access and Python 3.11+ for the bundled helpers. Fable, Astra, SOL or Opus (5.0+) are recommended. Luna 6 with High reasoning passed the selected comprehension and functional checks in Codex. Other routes and hosts remain unverified.
+
+## Install
+
+Install and enable every Skill in the suite. Each applies to its own task scope.
+
+### Install this Skill
+
+Use [the suite's own packages](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/packages).
+Keep all members from the same suite. If any member is missing or incompatible,
+report the incomplete installation rather than claiming the suite is ready.
+
+The host needs permission to write to its Skills directory. The
+[Codex Skills guide](https://learn.chatgpt.com/docs/build-skills) lists where to install it.
+
+
+
+## Configuration
+
+### Model choices for Workflow
+
+When using Scoville Workflow for Codex, you can request a model and reasoning
+level for a Step. Otherwise Workflow uses its configured routing. Scoville
+Setup shows or saves those settings. Unsupported model/effort combinations
+stop the affected operation instead of silently changing your choice.
+
+## How to use
+
+```text
+Use Scoville Plan to create an implementation plan for migrating the billing schema, including dependencies and acceptance criteria.
+```
+
+```text
+Create a detailed repository-owned implementation plan for the billing migration so workers can execute each point without this conversation.
+```
+
+State the result you want and the constraints that matter. Plan records the
+work, dependencies and acceptance criteria. It does not dispatch agents. New Plans use
+your task language; related records follow the Plan. An unrelated question does
+not change an existing record's language.
+
+### Progress and decisions
+
+New Plan points use ordered Steps with explicit progress:
+
+```text
+1. [status: done] Write the draft.
+2. [status: in_progress] Review it against the brief.
+3. [status: todo] Deliver the reviewed text.
+```
+
+The agent records observed progress, keeps open decisions visible and asks
+before dependent work. Older unmarked Steps remain valid, with unknown progress.
+Completed Steps still need the Plan point's acceptance checks.
+
+To correct an existing record, ask: "Review and correct PLAN-0001." The agent
+checks the evidence and actual result before changing progress. Inspection
+without a correction request stays read-only.
+
+### Companion app
+
+[Plan Viewer downloads](https://github.com/benjaminstelzer/scoville-plan-viewer/releases/latest)
+include a portable EXE and installers for Windows x64, DMGs and zipped apps for
+macOS Apple Silicon and Intel, and a portable binary, AppImage, DEB and RPM for
+Linux x64.
+
+Open a project containing `PROJECT_INDEX.md`, `docs/plans` and `docs/decisions`.
+The read-only Viewer shows current work, Step progress and decisions, refreshing
+automatically while active. Removing a project from its list leaves the
+repository untouched.
+
+Portable copies keep the project list in `scoville-plan-viewer.xml` beside the
+application. An installed copy in a read-only folder uses the platform's user
+configuration directory. Skill and Viewer updates are independent; use a
+Viewer that supports the progress fields in your Plan records.
+
+The [authoring guide](scoville-plan/references/authoring.md) covers Step annotations,
+field formats and helper commands. Plan uses `format_version: 1`.
+
+## Sources
+
+- [Agent Skills specification](https://agentskills.io/specification) for the
+  portable package and progressive disclosure.
+- [OpenAI coding-agent best practices](https://developers.openai.com/codex/learn/best-practices)
+  for explicit outcomes, constraints, planning, and completion evidence.
+- [Michael Nygard's architecture decision records](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
+  for durable decisions and rationale in reviewable project files.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

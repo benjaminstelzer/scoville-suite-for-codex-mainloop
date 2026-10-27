@@ -1,0 +1,959 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import json
+import os
+import re
+import stat
+import sys
+from dataclasses import dataclass
+from pathlib import Path, PurePosixPath
+
+_MARKDOWN_PATH = Path(__file__).resolve().with_name("markdown_structure.py")
+_MARKDOWN_IMPORT_ERROR: Exception | None = None
+try:
+    _markdown_spec = importlib.util.spec_from_file_location("markdown_structure", _MARKDOWN_PATH)
+    _markdown_module = importlib.util.module_from_spec(_markdown_spec)
+    _markdown_spec.loader.exec_module(_markdown_module)
+    mask_fenced_code = _markdown_module.mask_fenced_code
+except Exception as error:  # Report startup failures through the helper's diagnostic contract.
+    _MARKDOWN_IMPORT_ERROR = error
+
+
+PLAN_ID_RE = re.compile(r"PLAN-[0-9]{4}\Z")
+WORK_ID_RE = re.compile(r"W-[0-9]{3}\Z")
+UNIT_RE = re.compile(
+    r"(?P<work_item>W-[0-9]{3})(?:/step-(?P<step>[1-9][0-9]*)|/steps-(?P<first>[1-9][0-9]*)-(?P<last>[1-9][0-9]*))?\Z"
+)
+DECISION_ID_RE = re.compile(r"ADR-[0-9]{4}\Z")
+PLAN_FILE_RE = re.compile(r"([0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md\Z")
+DECISION_FILE_RE = re.compile(r"([0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md\Z")
+WORK_HEADING_RE = re.compile(r"^### (W-[0-9]{3}) [^\n]+$", re.MULTILINE)
+MARKDOWN_HEADING_RE = re.compile(r"^#{1,6} [^\n]+$", re.MULTILINE)
+FRONTMATTER_ENTRY_RE = re.compile(r"([a-z_]+): (.*)\Z")
+REPARSE_POINT = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+DEFAULT_MAX_OUTPUT_BYTES = 65_536
+
+
+class SelectorError(Exception):
+    def __init__(
+        self,
+        code: str,
+        message: str,
+        *,
+        path: str | None = None,
+        expected: object | None = None,
+        observed: object | None = None,
+        exit_code: int = 1,
+    ) -> None:
+        super().__init__(message)
+        self.code = code
+        self.message = message
+        self.path = path
+        self.expected = expected
+        self.observed = observed
+        self.exit_code = exit_code
+
+
+class JsonArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        raise SelectorError("USAGE_ERROR", message, exit_code=2)
+
+
+@dataclass(frozen=True)
+class ParsedRecord:
+    frontmatter: dict[str, str]
+    raw_frontmatter: str
+    body: str
+    newline: str = "\n"
+
+
+@dataclass(frozen=True)
+class WorkItem:
+    item_id: str
+    block: str
+    status: str
+    dependencies: list[str]
+    decisions: list[str]
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = JsonArgumentParser(
+        description="Select deterministic read-only Scoville Plan context."
+    )
+    parser.add_argument("--root", required=True, help="Project root containing PROJECT_INDEX.md.")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument(
+        "--work-item",
+        help="Optional W-NNN item from the active or named Plan; defaults to current_item.",
+    )
+    selection.add_argument(
+        "--unit",
+        help="Exact dispatch unit: W-NNN, W-NNN/step-N, or W-NNN/steps-N-M.",
+    )
+    selection.add_argument('--next-id', choices=('work-item', 'plan', 'decision'),
+                           help='Read highest ID/file number plus one; work-item requires --plan. No reservation or writes.')
+    selection.add_argument('--check-start', metavar='W-NNN',
+                           help='Return structural start facts for a named item; no selection, authorization or writes.')
+    parser.add_argument(
+        "--max-output-bytes",
+        type=int,
+        default=DEFAULT_MAX_OUTPUT_BYTES,
+        help=f"Maximum UTF-8 success payload size; default {DEFAULT_MAX_OUTPUT_BYTES}.",
+    )
+    parser.add_argument("--plan", help="Named PLAN-NNNN instead of the active Plan.")
+    parser.add_argument("--position", action="store_true", help="Return current Work Item, written active Steps and next known Step without guessing unmarked progress.")
+    parser.add_argument("--proposals", action="store_true", help="List all proposed Decisions with ID, title, scope and path; independent of the active Plan.")
+    parser.add_argument("--format", choices=("json",), default="json")
+    return parser
+
+
+def is_redirect(info: os.stat_result) -> bool:
+    attributes = getattr(info, "st_file_attributes", 0)
+    return stat.S_ISLNK(info.st_mode) or bool(attributes & REPARSE_POINT)
+
+
+def resolve_root(value: str) -> Path:
+    raw = Path(os.path.abspath(os.path.expanduser(value)))
+    try:
+        info = os.lstat(raw)
+    except FileNotFoundError as error:
+        raise SelectorError(
+            "ROOT_MISSING", "--root must be an existing directory; pass the actual readable non-redirected project directory",
+            path=str(raw), observed=value, expected="existing readable non-symlink project directory", exit_code=2
+        ) from error
+    except OSError as error:
+        raise SelectorError(
+            "ROOT_UNREADABLE",
+            f"--root could not be inspected ({type(error).__name__}); pass the actual readable non-redirected project directory",
+            path=str(raw), observed=value, expected="existing readable non-symlink project directory",
+            exit_code=2,
+        ) from error
+    if is_redirect(info) or not stat.S_ISDIR(info.st_mode):
+        raise SelectorError(
+            "ROOT_INVALID",
+            "--root must be a regular non-symlink directory; pass the actual readable non-redirected project directory",
+            path=str(raw), observed=value, expected="existing readable non-symlink project directory",
+            exit_code=2,
+        )
+    return raw.resolve(strict=True)
+
+
+def normalized_relative_path(value: str) -> PurePosixPath:
+    if not value or "\\" in value or ":" in value:
+        raise SelectorError("PATH_INVALID", "canonical path must use repository-relative forward slashes")
+    relative = PurePosixPath(value)
+    if (
+        relative.is_absolute()
+        or relative.as_posix() != value
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
+        raise SelectorError("PATH_INVALID", "canonical path must be normalized and root-contained")
+    return relative
+
+
+def inspect_path(root: Path, relative: PurePosixPath) -> tuple[Path, os.stat_result]:
+    current = root
+    info: os.stat_result | None = None
+    for part in relative.parts:
+        current /= part
+        try:
+            info = os.lstat(current)
+        except FileNotFoundError as error:
+            raise SelectorError(
+                "PATH_MISSING", "canonical path does not exist", path=relative.as_posix(), exit_code=2
+            ) from error
+        except OSError as error:
+            raise SelectorError(
+                "PATH_UNREADABLE",
+                f"canonical path could not be inspected ({type(error).__name__})",
+                path=relative.as_posix(),
+                exit_code=2,
+            ) from error
+        if is_redirect(info):
+            raise SelectorError(
+                "PATH_REDIRECTED",
+                "canonical path must not traverse a symlink or reparse point",
+                path=relative.as_posix(),
+                exit_code=2,
+            )
+    assert info is not None
+    try:
+        resolved = current.resolve(strict=True)
+    except OSError as error:
+        raise SelectorError(
+            "PATH_UNREADABLE",
+            f"canonical path could not be resolved ({type(error).__name__})",
+            path=relative.as_posix(),
+            exit_code=2,
+        ) from error
+    if not resolved.is_relative_to(root):
+        raise SelectorError(
+            "PATH_ESCAPES_ROOT",
+            "canonical path escapes the project root",
+            path=relative.as_posix(),
+            exit_code=2,
+        )
+    return current, info
+
+
+def safe_directory_entries(root: Path, relative_value: str) -> list[str]:
+    relative = normalized_relative_path(relative_value)
+    directory, before = inspect_path(root, relative)
+    if not stat.S_ISDIR(before.st_mode):
+        raise SelectorError(
+            "PATH_NOT_DIRECTORY", "canonical path must be a directory", path=relative_value, exit_code=2
+        )
+    try:
+        names = sorted(entry.name for entry in os.scandir(directory))
+    except OSError as error:
+        raise SelectorError(
+            "PATH_UNREADABLE",
+            f"canonical directory could not be listed ({type(error).__name__})",
+            path=relative_value,
+            exit_code=2,
+        ) from error
+    return names
+
+
+def safe_read_text(root: Path, relative_value: str) -> str:
+    relative = normalized_relative_path(relative_value)
+    candidate, path_info = inspect_path(root, relative)
+    if not stat.S_ISREG(path_info.st_mode):
+        raise SelectorError(
+            "PATH_NOT_FILE", "canonical path must be a regular file", path=relative_value, exit_code=2
+        )
+    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        descriptor = os.open(candidate, flags)
+    except OSError as error:
+        raise SelectorError(
+            "FILE_UNREADABLE",
+            f"canonical file could not be opened ({type(error).__name__})",
+            path=relative_value,
+            exit_code=2,
+        ) from error
+    try:
+        opened = os.fstat(descriptor)
+        if is_redirect(opened) or not stat.S_ISREG(opened.st_mode):
+            raise SelectorError(
+                "FILE_CHANGED_DURING_READ",
+                "canonical file changed during inspection",
+                path=relative_value,
+                exit_code=2,
+            )
+        chunks: list[bytes] = []
+        while chunk := os.read(descriptor, 1024 * 1024):
+            chunks.append(chunk)
+    except SelectorError:
+        raise
+    except OSError as error:
+        raise SelectorError(
+            "FILE_UNREADABLE",
+            f"canonical file could not be read ({type(error).__name__})",
+            path=relative_value,
+            exit_code=2,
+        ) from error
+    finally:
+        try:
+            os.close(descriptor)
+        except OSError:
+            pass
+    raw = b"".join(chunks)
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raise SelectorError(
+            "FILE_BOM_FORBIDDEN",
+            f'Canonical file "{candidate}" must be UTF-8 without a BOM. Remove only the BOM, '
+            'preserve the complete decoded text, then rerun the selector with the same --root.',
+            path=relative_value, expected="UTF-8 without BOM", observed="UTF-8 BOM")
+    try:
+        text = raw.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as error:
+        raise SelectorError(
+            "FILE_UTF8_INVALID",
+            f'Canonical file "{candidate}" must be valid UTF-8. Restore the complete intended authored text '
+            'as UTF-8 without guessing damaged content, then rerun the selector with the same --root.',
+            path=relative_value, expected="valid UTF-8",
+            observed=f"decode error at byte {error.start}") from error
+    if "\r" in text.replace("\r\n", "") or ("\r\n" in text and "\n" in text.replace("\r\n", "")):
+        raise SelectorError(
+            "FILE_LINE_ENDING_INVALID",
+            f'Canonical file "{candidate}" must use consistent LF or CRLF line endings. '
+            'Convert line endings to LF without changing text content, then rerun the selector with the same --root.',
+            path=relative_value, expected="consistent LF or CRLF", observed="bare CR or mixed line endings")
+    return text
+
+
+def parse_record(text: str, relative_path: str) -> ParsedRecord:
+    newline = "\r\n" if "\r\n" in text else "\n"
+    text = text.replace("\r\n", "\n")
+    if not text.startswith("---\n"):
+        raise SelectorError("FRONTMATTER_OPEN_MISSING", "record must start with frontmatter", path=relative_path)
+    closing = re.compile(r"\n---(?:\n|\Z)").search(text, 4)
+    if closing is None:
+        raise SelectorError("FRONTMATTER_CLOSE_MISSING", "record frontmatter is not closed", path=relative_path)
+    close = closing.start()
+    raw_frontmatter = text[: closing.end()]
+    entries: dict[str, str] = {}
+    for line in text[4:close].split("\n"):
+        match = FRONTMATTER_ENTRY_RE.fullmatch(line)
+        if match is None:
+            raise SelectorError("FRONTMATTER_ENTRY_INVALID", "frontmatter entry is malformed", path=relative_path)
+        key, value = match.groups()
+        if key in entries:
+            raise SelectorError("FRONTMATTER_KEY_DUPLICATE", f"frontmatter key is repeated: {key}", path=relative_path)
+        entries[key] = value
+    return ParsedRecord(entries, raw_frontmatter.replace("\n", newline), text[closing.end() :], newline)
+
+
+def require_format_version(record: ParsedRecord, relative_path: str) -> None:
+    if record.frontmatter.get("format_version") != "1":
+        raise SelectorError(
+            "FORMAT_VERSION_UNSUPPORTED",
+            "record format_version must be 1",
+            path=relative_path,
+            expected="1",
+            observed=record.frontmatter.get("format_version"),
+        )
+
+
+def project_decision_context(text: str) -> str:
+    """Project explicitly self-contained binding sections; otherwise retain all text."""
+    try:
+        record = parse_record(text, "Decision")
+        require_format_version(record, "Decision")
+    except SelectorError:
+        return text
+    prefix = len(record.raw_frontmatter)
+    body = text[prefix:]
+    structure = mask_fenced_code(body)
+    headings = list(re.finditer(r"^(#{1,2}) ([^\r\n]+)\r?$", structure, re.M))
+    expected = {"Decision", "Problem", "Drivers", "Considered alternatives",
+                "Consequences", "Confirmation", "Revisit when"}
+    if (len(headings) != 8 or headings[0][1] != "#"
+            or any(h[1] != "##" for h in headings[1:])
+            or {h[2] for h in headings[1:]} != expected
+            or body[:headings[0].start()].strip()
+            or body[headings[0].end():headings[1].start()].strip()):
+        return text
+    sections = [(h, headings[i + 1].start() if i + 1 < len(headings) else len(body))
+                for i, h in enumerate(headings) if i]
+    decision, end = next((h, end) for h, end in sections if h[2] == "Decision")
+    lines = body[decision.end():end].splitlines()
+    first = next((line for line in lines if line.strip()), "")
+    if first != "Binding sections: complete":
+        return text
+    binding = {"Decision", "Consequences", "Confirmation", "Revisit when"}
+    return (text[:prefix] + body[:headings[1].start()]
+            + "".join(body[h.start():end] for h, end in sections if h[2] in binding))
+
+
+def find_record_path(
+    root: Path,
+    directory: str,
+    record_id: str,
+    id_pattern: re.Pattern[str],
+    filename_pattern: re.Pattern[str],
+) -> str:
+    if id_pattern.fullmatch(record_id) is None:
+        raise SelectorError("RECORD_ID_INVALID", f"invalid record ID: {record_id}")
+    number = record_id.split("-", 1)[1]
+    matches = [
+        name
+        for name in safe_directory_entries(root, directory)
+        if filename_pattern.fullmatch(name) is not None and name.startswith(number + "-")
+    ]
+    if len(matches) != 1:
+        raise SelectorError(
+            "RECORD_RESOLUTION_INVALID",
+            f"record {record_id} must resolve to exactly one canonical file",
+            path=directory,
+            expected=1,
+            observed=len(matches),
+        )
+    return f"{directory}/{matches[0]}"
+
+
+def parse_inline_ids(value: str, pattern: re.Pattern[str], field: str, relative_path: str) -> list[str]:
+    if value == "[]":
+        return []
+    if not value.startswith("[") or not value.endswith("]"):
+        raise SelectorError("WORK_LIST_INVALID", f"{field} must be an inline ID list", path=relative_path)
+    items = value[1:-1].split(", ")
+    if any(pattern.fullmatch(item) is None for item in items) or len(set(items)) != len(items):
+        raise SelectorError("WORK_LIST_INVALID", f"{field} contains invalid or duplicate IDs", path=relative_path)
+    return items
+
+
+def single_field(block: str, name: str, relative_path: str) -> str:
+    matches = re.findall(rf"^{re.escape(name)}: (.*)$", block, re.MULTILINE)
+    if len(matches) != 1:
+        raise SelectorError(
+            "WORK_FIELD_INVALID",
+            f"selected Work Item must contain exactly one {name} field",
+            path=relative_path,
+            expected=1,
+            observed=len(matches),
+        )
+    return matches[0].rstrip("\r")
+
+
+def optional_field(block: str, name: str, relative_path: str) -> str | None:
+    if not re.search(rf"^{re.escape(name)}:", block, re.MULTILINE):
+        return None
+    return single_field(block, name, relative_path)
+
+
+def parse_steps(block: str, relative_path: str) -> list[str]:
+    block = block.replace("\r\n", "\n")
+    match = re.search(r"^Steps:\n(?P<body>.*?)(?=^Evidence: )", block, re.MULTILINE | re.DOTALL)
+    if match is None:
+        if re.search(r"^Steps:", block, re.MULTILINE):
+            raise SelectorError("WORK_STEPS_INVALID", "selected Work Item Steps are malformed", path=relative_path)
+        return []
+    lines = match.group("body").splitlines()
+    if not lines:
+        raise SelectorError("WORK_STEPS_INVALID", "selected Work Item Steps must not be empty", path=relative_path)
+    for expected, line in enumerate(lines, 1):
+        if re.fullmatch(rf"{expected}\. .+", line) is None:
+            raise SelectorError(
+                "WORK_STEPS_INVALID",
+                "selected Work Item Steps must be consecutive non-empty single lines",
+                path=relative_path,
+            )
+    for line in lines:
+        step_status(line, relative_path)
+    return lines
+
+
+def step_status(line: str, relative_path: str) -> str | None:
+    text = line.split(". ", 1)[1]
+    match = re.match(r"^\[status: (todo|in_progress|done|cancelled)\] (\S(?:.*\S)?)\Z", text)
+    remainder = match.group(2) if match else text
+    if re.match(r"^\[status(?:\s|:|\])", remainder):
+        raise SelectorError("WORK_STEP_STATUS_INVALID",
+            f"Step {line.split('.', 1)[0]}: use one optional [status: todo|in_progress|done|cancelled] first and non-empty action text, e.g. 1. [status: done] Verify the result.",
+            path=relative_path, observed=line)
+    for annotation in ("route", "execute"):
+        remainder = re.sub(rf"^\[{annotation}: [^\]]+\] ", "", remainder, count=1)
+    if re.match(r"^\[status(?:\s|:|\])", remainder):
+        raise SelectorError(
+            "WORK_STEP_STATUS_INVALID",
+            f"Step {line.split('.', 1)[0]} has an invalid, repeated or misplaced status; put one optional [status: todo|in_progress|done|cancelled] first, before route/execute and action text, e.g. 1. [status: done] Verify the result.",
+            path=relative_path, observed=line,
+        )
+    return match.group(1) if match else None
+
+
+def project_unit(
+    selected: WorkItem,
+    unit: str,
+    relative_path: str,
+) -> dict[str, object]:
+    unit_match = UNIT_RE.fullmatch(unit)
+    if unit_match is None:
+        raise SelectorError("UNIT_INVALID", "--unit has an invalid shape; use W-NNN, W-NNN/step-N or W-NNN/steps-N-M, e.g. W-001/steps-1-3", exit_code=2)
+    steps = parse_steps(selected.block, relative_path)
+    requested_step = unit_match.group("step")
+    requested_first = unit_match.group("first")
+    requested_last = unit_match.group("last")
+    if not steps and (requested_step is not None or requested_first is not None):
+        raise SelectorError("UNIT_HAS_NO_STEPS", "a Work Item without Steps is one complete dispatch unit")
+    if requested_step is not None:
+        selected_numbers = [int(requested_step)]
+    elif requested_first is not None and requested_last is not None:
+        first = int(requested_first)
+        last = int(requested_last)
+        if first >= last:
+            raise SelectorError("UNIT_RANGE_INVALID", "a Step range must contain at least two adjacent Steps")
+        selected_numbers = list(range(first, last + 1))
+    else:
+        selected_numbers = list(range(1, len(steps) + 1))
+    if any(number > len(steps) for number in selected_numbers):
+        raise SelectorError(
+            "UNIT_STEP_MISSING",
+            "selected Step does not exist in the Work Item",
+            expected={"maximum_step": len(steps)},
+            observed={"selected_steps": selected_numbers},
+        )
+    lines = selected.block.splitlines()
+    projection: dict[str, object] = {
+        "unit": unit,
+        "context_text": selected.block.replace("\r\n", "\n").rstrip("\n") + "\n",
+        "header": lines[0],
+        "status": f"Status: {single_field(selected.block, 'Status', relative_path)}",
+        "depends_on": f"Depends on: {single_field(selected.block, 'Depends on', relative_path)}",
+        "blocked_by": f"Blocked by: {single_field(selected.block, 'Blocked by', relative_path)}",
+        "decisions": f"Decisions: {single_field(selected.block, 'Decisions', relative_path)}",
+        "outcome": f"Outcome: {single_field(selected.block, 'Outcome', relative_path)}",
+        "acceptance": f"Acceptance: {single_field(selected.block, 'Acceptance', relative_path)}",
+        "steps": [steps[number - 1] for number in selected_numbers],
+        "source_text": ("\n".join(steps[number - 1] for number in selected_numbers) + "\n"
+                        if requested_step is not None or requested_first is not None else selected.block.replace("\r\n", "\n").rstrip("\n") + "\n"),
+    }
+    progress = [{"number": number, "status": step_status(steps[number - 1], relative_path)}
+                for number in selected_numbers]
+    if any(entry["status"] is not None for entry in progress):
+        projection["step_statuses"] = progress
+    instructions = optional_field(selected.block, "Instructions", relative_path)
+    if instructions is not None:
+        projection["instructions"] = instructions
+    legacy_action = optional_field(selected.block, "Next action", relative_path)
+    if not steps and legacy_action is not None:
+        projection["next_action"] = f"Next action: {legacy_action}"
+    return projection
+
+
+def parse_plan(record: ParsedRecord, relative_path: str) -> tuple[str, str, dict[str, WorkItem]]:
+    structural_body = mask_fenced_code(record.body)
+    match = re.fullmatch(
+        r"\n*# [^\n]+\n\n## Goal\n(?P<goal>.+?)\n\n## Non-goals\n(?P<non_goals>.+?)\n\n## Work items\n(?P<work_items>.*)",
+        structural_body,
+        re.DOTALL,
+    )
+    if match is None:
+        raise SelectorError(
+            "PLAN_SECTION_BOUNDARY_INVALID",
+            "Plan must contain one H1 followed by Goal, Non-goals, and Work items in exact order",
+            path=relative_path,
+        )
+    goal_body = record.body[slice(*match.span("goal"))]
+    non_goals_body = record.body[slice(*match.span("non_goals"))]
+    work_text = record.body[slice(*match.span("work_items"))]
+    if not goal_body.strip() or not non_goals_body.strip():
+        raise SelectorError("PLAN_SECTION_EMPTY", "Goal and Non-goals must be non-empty", path=relative_path)
+    if MARKDOWN_HEADING_RE.search(match.group("goal")) or MARKDOWN_HEADING_RE.search(match.group("non_goals")):
+        raise SelectorError(
+            "PLAN_SECTION_BOUNDARY_INVALID",
+            "Goal and Non-goals must not contain nested or duplicate Markdown headings",
+            path=relative_path,
+        )
+    headings = list(WORK_HEADING_RE.finditer(match.group("work_items")))
+    all_work_headings = list(MARKDOWN_HEADING_RE.finditer(match.group("work_items")))
+    if (
+        not headings
+        or work_text[: headings[0].start()].strip()
+        or [heading.start() for heading in all_work_headings]
+        != [heading.start() for heading in headings]
+    ):
+        raise SelectorError("WORK_BOUNDARY_INVALID", "Work items must contain canonical H3 blocks", path=relative_path)
+    items: dict[str, WorkItem] = {}
+    for index, heading in enumerate(headings):
+        item_id = heading.group(1)
+        if item_id in items:
+            raise SelectorError("WORK_ITEM_ID_DUPLICATE", f"duplicate Work Item ID: {item_id}", path=relative_path)
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(work_text)
+        block = work_text[heading.start() : end]
+        status = single_field(block, "Status", relative_path)
+        dependencies = parse_inline_ids(single_field(block, "Depends on", relative_path), WORK_ID_RE, "Depends on", relative_path)
+        decisions = parse_inline_ids(single_field(block, "Decisions", relative_path), DECISION_ID_RE, "Decisions", relative_path)
+        instructions = optional_field(block, "Instructions", relative_path)
+        if instructions is not None and not instructions.strip():
+            raise SelectorError("WORK_FIELD_INVALID", "Instructions must be one-line text or exactly `Instructions: []`; empty is invalid", path=relative_path)
+        items[item_id] = WorkItem(item_id, block.replace("\n", record.newline), status, dependencies, decisions)
+    return ("## Goal\n" + goal_body).replace("\n", record.newline), ("## Non-goals\n" + non_goals_body).replace("\n", record.newline), items
+
+
+def select_context(
+    root: Path,
+    requested_item: str | None,
+    unit: str | None = None,
+    requested_plan: str | None = None,
+) -> dict[str, object]:
+    index_path = "PROJECT_INDEX.md"
+    index = parse_record(safe_read_text(root, index_path), index_path)
+    require_format_version(index, index_path)
+    active_plan = requested_plan or index.frontmatter.get("active_plan")
+    if active_plan is None or active_plan == "null":
+        raise SelectorError("ACTIVE_PLAN_MISSING", "project has no active Plan", path=index_path)
+    plan_path = find_record_path(root, "docs/plans", active_plan, PLAN_ID_RE, PLAN_FILE_RE)
+    plan = parse_record(safe_read_text(root, plan_path), plan_path)
+    require_format_version(plan, plan_path)
+    if plan.frontmatter.get("id") != active_plan or (requested_plan is None and plan.frontmatter.get("status") != "active"):
+        raise SelectorError("ACTIVE_PLAN_INVALID", "index must reference one matching active Plan", path=plan_path)
+    goal, non_goals, items = parse_plan(plan, plan_path)
+    unit_match = UNIT_RE.fullmatch(unit) if unit is not None else None
+    selected_id = unit_match.group("work_item") if unit_match is not None else requested_item or plan.frontmatter.get("current_item")
+    if selected_id is None or WORK_ID_RE.fullmatch(selected_id) is None:
+        raise SelectorError("CURRENT_ITEM_INVALID", "selected Work Item must match W-NNN", path=plan_path)
+    selected = items.get(selected_id)
+    if selected is None:
+        raise SelectorError("WORK_ITEM_MISSING", f"selected Work Item does not exist: {selected_id}", path=plan_path)
+    dependency_statuses: list[dict[str, str]] = []
+    for dependency_id in selected.dependencies:
+        dependency = items.get(dependency_id)
+        if dependency is None:
+            raise SelectorError("WORK_DEPENDENCY_MISSING", f"dependency does not exist: {dependency_id}", path=plan_path)
+        dependency_statuses.append(
+            {"id": dependency_id, "status_line": f"Status: {dependency.status}"}
+        )
+    decisions: list[str] = []
+    for decision_id in selected.decisions:
+        decision_path = find_record_path(root, "docs/decisions", decision_id, DECISION_ID_RE, DECISION_FILE_RE)
+        decision_text = safe_read_text(root, decision_path)
+        decision = parse_record(decision_text, decision_path)
+        require_format_version(decision, decision_path)
+        if decision.frontmatter.get("id") != decision_id:
+            raise SelectorError("DECISION_ID_MISMATCH", f"Decision file does not contain {decision_id}", path=decision_path)
+        decisions.append(decision_text)
+    work_item: object = selected.block
+    if unit is not None:
+        work_item = project_unit(selected, unit, plan_path)
+    return {
+        "plan": {
+            "frontmatter": plan.raw_frontmatter,
+            "goal": goal,
+            "non_goals": non_goals,
+        },
+        "work_item": work_item,
+        "direct_dependencies": dependency_statuses,
+        "decisions": decisions,
+    }
+
+
+def continuation_context(item: WorkItem, items: dict[str, WorkItem], path: str) -> dict[str, object]:
+    dependencies = []
+    for dependency in item.dependencies:
+        if dependency not in items:
+            raise SelectorError("WORK_DEPENDENCY_MISSING", f"dependency does not exist: {dependency}", path=path)
+        dependencies.append({"id": dependency, "status": items[dependency].status})
+    instructions = optional_field(item.block, "Instructions", path)
+    output: dict[str, object] = {
+        "work_item": item.item_id, "heading": item.block.splitlines()[0],
+        "status": item.status, "dependencies": dependencies,
+        "blocked_by": single_field(item.block, "Blocked by", path),
+        "instructions": instructions,
+    }
+    if instructions is None:
+        output["legacy_next_action"] = optional_field(item.block, "Next action", path)
+        output["evidence"] = single_field(item.block, "Evidence", path)
+    return output
+
+
+def proposal_inventory(root: Path) -> dict[str, object]:
+    index_path = "PROJECT_INDEX.md"
+    require_format_version(parse_record(safe_read_text(root, index_path), index_path), index_path)
+    proposals = []
+    seen = set()
+    statuses = {"proposed", "accepted", "rejected", "deprecated", "superseded"}
+    for name in safe_directory_entries(root, "docs/decisions"):
+        if not name.endswith(".md"):
+            continue
+        path = f"docs/decisions/{name}"
+        filename = DECISION_FILE_RE.fullmatch(name)
+        if filename is None:
+            raise SelectorError(
+                "DECISION_FILENAME_INVALID", "Rename the Decision file to four digits and a lowercase kebab-case subject, e.g. 0001-choice.md; preserve its ID.",
+                path=path, expected="NNNN-lowercase-subject.md", observed=name)
+        decision = parse_record(safe_read_text(root, path), path)
+        require_format_version(decision, path)
+        decision_id = f"ADR-{filename.group(1)}"
+        if decision.frontmatter.get("id") != decision_id:
+            raise SelectorError(
+                "DECISION_ID_MISMATCH", f"Make the filename and id agree on the existing Decision identity; this filename requires id: {decision_id}.",
+                path=path, expected=decision_id, observed=decision.frontmatter.get("id"))
+        if decision_id in seen:
+            raise SelectorError(
+                "DECISION_ID_DUPLICATE", f"Resolve the duplicate file for {decision_id}; retain one canonical record without discarding decision history.",
+                path=path, expected="one file per ADR ID", observed=decision_id)
+        seen.add(decision_id)
+        status = decision.frontmatter.get("status")
+        if status not in statuses:
+            raise SelectorError(
+                "DECISION_STATUS_INVALID", "Correct status to the recorded lifecycle state; do not infer acceptance from an invalid spelling.",
+                path=path, expected=", ".join(sorted(statuses)), observed=status)
+        scope = decision.frontmatter.get("scope", "")
+        if re.fullmatch(r"[a-z0-9][a-z0-9-]*(?:/[a-z0-9][a-z0-9-]*)*", scope) is None:
+            raise SelectorError(
+                "DECISION_SCOPE_INVALID", "Correct scope to lowercase domain segments separated by single slashes, e.g. project/testing; preserve the domain.",
+                path=path, expected="lowercase slash-separated domain label", observed=scope)
+        titles = re.findall(r"^# (.+)$", mask_fenced_code(decision.body), re.MULTILINE)
+        if len(titles) != 1 or not titles[0].strip():
+            raise SelectorError(
+                "DECISION_TITLE_INVALID", "Restore one nonempty H1 title, e.g. # Concrete choice, preserving the Decision's subject.",
+                path=path, expected="one nonempty H1 title", observed=titles)
+        if status == "proposed":
+            proposals.append({"id": decision_id, "title": titles[0], "scope": scope, "path": path})
+    return {"proposals": proposals}
+
+
+def linked_open_decisions(root: Path, item: WorkItem) -> list[dict[str, str]]:
+    output = []
+    for decision_id in item.decisions:
+        path = find_record_path(root, "docs/decisions", decision_id, DECISION_ID_RE, DECISION_FILE_RE)
+        decision = parse_record(safe_read_text(root, path), path)
+        require_format_version(decision, path)
+        if decision.frontmatter.get("id") != decision_id:
+            raise SelectorError("DECISION_ID_MISMATCH", f"Decision file must contain {decision_id}", path=path)
+        if decision.frontmatter.get('status') not in {'proposed', 'accepted', 'rejected', 'deprecated', 'superseded'}:
+            raise SelectorError('DECISION_STATUS_INVALID', 'linked Decision must have a supported status before its proposal facts can be returned', path=path)
+        if decision.frontmatter.get("status") == "proposed":
+            titles = re.findall(r'^# (.*)$', mask_fenced_code(decision.body), re.MULTILINE)
+            if len(titles) != 1 or not titles[0].strip():
+                raise SelectorError('DECISION_TITLE_INVALID', 'linked proposed Decision requires one nonempty H1 outside fences; restore its authored title',
+                                    path=path, expected='one nonempty H1 title', observed=titles)
+            output.append({"id": decision_id, "status": "proposed", "title": titles[0], "path": path})
+    return output
+
+
+def plan_position(root: Path, requested_plan: str | None) -> dict[str, object]:
+    index_path = "PROJECT_INDEX.md"
+    index = parse_record(safe_read_text(root, index_path), index_path)
+    require_format_version(index, index_path)
+    plan_id = requested_plan or index.frontmatter.get("active_plan")
+    if plan_id is None or plan_id == "null":
+        raise SelectorError("ACTIVE_PLAN_MISSING", "project is idle; supply --plan PLAN-NNNN to inspect a named Plan", path=index_path)
+    path = find_record_path(root, "docs/plans", plan_id, PLAN_ID_RE, PLAN_FILE_RE)
+    record = parse_record(safe_read_text(root, path), path)
+    require_format_version(record, path)
+    if record.frontmatter.get("id") != plan_id:
+        raise SelectorError("PLAN_ID_MISMATCH", f"{path} must contain id: {plan_id}", path=path)
+    _, _, items = parse_plan(record, path)
+    current = record.frontmatter.get("current_item")
+    output: dict[str, object] = {
+        "plan": plan_id, "plan_status": record.frontmatter.get("status"),
+        "work_item": current, "work_status": None, "current_steps": [],
+        "current_units": [], "next_step": None, "untracked_steps": [],
+        "reason": "no_current_item", "blocked_by": None,
+    }
+    output["paused_context"] = [continuation_context(item, items, path) for item in items.values() if item.status == "paused"]
+    output["historical_priorities"] = [continuation_context(item, items, path) for item in items.values()
+                                      if item.status not in {"done", "cancelled"} and re.match(r"^### W-[0-9]{3} (?:Prioritized|Deferred) after W-[0-9]{3}:", item.block)]
+    if current is None:
+        return output
+    if record.frontmatter.get("status") != "active" or current not in items or items[current].status not in {"todo", "in_progress", "paused"}:
+        raise SelectorError("CURRENT_ITEM_INVALID", f"{path}: current_item must name an existing todo/in_progress/paused item in an active Plan; correct the Plan and index together", path=path, observed=current)
+    item = items[current]
+    steps = parse_steps(item.block, path)
+    statuses = [step_status(line, path) for line in steps]
+    legacy_action = optional_field(item.block, "Next action", path)
+    if not any(status is not None for status in statuses) and not legacy_action:
+        raise SelectorError("WORK_FIELD_INVALID", "nonterminal Work Item needs written Step status or nonempty legacy Next action; for new work use `1. [status: todo] Action.`", path=path)
+    output.update(acceptance=single_field(item.block, "Acceptance", path), evidence=single_field(item.block, "Evidence", path),
+                  instructions=optional_field(item.block, "Instructions", path), open_decisions=linked_open_decisions(root, item))
+    if legacy_action is not None:
+        output["legacy_next_action"] = legacy_action
+    active = [i for i, status in enumerate(statuses, 1) if status == "in_progress"]
+    units: list[str] = []
+    for number in active:
+        if units and number == last + 1:
+            units[-1] = f"{current}/steps-{first}-{number}"
+        else:
+            first = number
+            units.append(f"{current}/step-{number}")
+        last = number
+    remaining = next(((i, status) for i, status in enumerate(statuses, 1)
+                      if status not in {"done", "cancelled"}), None)
+    output.update(work_status=item.status, current_steps=active, current_units=units,
+                  untracked_steps=[i for i, status in enumerate(statuses, 1) if status is None],
+                  blocked_by=f"Blocked by: {single_field(item.block, 'Blocked by', path)}")
+    if output["untracked_steps"]:
+        output["guidance"] = "1. Determine unmarked Step progress from Evidence, relevant original reports and actual task results or changes against requirements.\n2. Keep missing status unknown, never todo/done; do not repeat established completed effects.\n3. Record progress only within authorized Plan editing; load repair only for an explicit inspection/repair request."
+    if active:
+        output["reason"] = "written_in_progress_with_untracked" if output["untracked_steps"] else "written_in_progress"
+    elif not steps:
+        output["reason"] = "whole_work_item"
+    elif remaining is None:
+        output["reason"] = "steps_terminal_work_item_acceptance_pending"
+        output["guidance"] = "All Steps are terminal; Work Item acceptance/succession is pending.\n1. Inspect outstanding Acceptance, Instructions, Evidence, paused_context, historical_priorities and legacy Next action if present.\n2. Resolve acceptance and succession under Plan rules; the helper neither interprets Instructions nor chooses a return.\n3. Do not repeat completed Steps."
+    elif remaining[1] is None:
+        output["reason"] = "untracked_progress_requires_inspection"
+    else:
+        output.update(next_step=remaining[0], reason="next_written_todo")
+    return output
+
+
+def check_start(root: Path, item_id: str, requested_plan: str | None) -> dict[str, object]:
+    index_path = 'PROJECT_INDEX.md'
+    index = parse_record(safe_read_text(root, index_path), index_path)
+    require_format_version(index, index_path)
+    plan_id = requested_plan or index.frontmatter.get('active_plan')
+    if plan_id in (None, 'null'):
+        raise SelectorError('ACTIVE_PLAN_MISSING', '--check-start needs an active Plan or explicit --plan PLAN-NNNN', path=index_path)
+    path = find_record_path(root, 'docs/plans', plan_id, PLAN_ID_RE, PLAN_FILE_RE)
+    record = parse_record(safe_read_text(root, path), path)
+    require_format_version(record, path)
+    if record.frontmatter.get('id') != plan_id:
+        raise SelectorError('PLAN_ID_MISMATCH', f'{path} must contain id: {plan_id}', path=path)
+    if record.frontmatter.get('status') not in {'draft', 'active', 'completed', 'cancelled'}:
+        raise SelectorError('PLAN_STATUS_INVALID', 'Plan must have draft, active, completed or cancelled status', path=path)
+    _, _, items = parse_plan(record, path)
+    if item_id not in items:
+        raise SelectorError('WORK_ITEM_MISSING', f'--check-start item does not exist: {item_id}', path=path)
+    states = {'todo', 'paused', 'in_progress', 'done', 'cancelled'}
+    if any(item.status not in states for item in items.values()):
+        raise SelectorError('WORK_STATUS_INVALID', 'all Work Item statuses must be todo, paused, in_progress, done or cancelled', path=path)
+    item = items[item_id]
+    dependencies = []
+    for dependency_id in item.dependencies:
+        if dependency_id not in items:
+            raise SelectorError('WORK_DEPENDENCY_MISSING', f'dependency does not exist: {dependency_id}', path=path)
+        dependencies.append({'id': dependency_id, 'status': items[dependency_id].status})
+    blockers = parse_inline_ids(single_field(item.block, 'Blocked by', path),
+                               re.compile(r'(?!ADR-|PLAN-|W-)[A-Z][A-Z0-9]{1,15}-[A-Z0-9][A-Z0-9._-]{0,47}\Z'),
+                               'Blocked by', path)
+    other_started = [entry.item_id for entry in items.values() if entry.item_id != item_id and entry.status == 'in_progress']
+    violations = []
+    if record.frontmatter.get('status') != 'active':
+        violations.append('plan_not_active')
+    if index.frontmatter.get('active_plan') != plan_id:
+        violations.append('plan_not_selected')
+    current = record.frontmatter.get('current_item')
+    if current != item_id:
+        violations.append('item_not_current')
+    if item.status in {'done', 'cancelled'}:
+        violations.append('item_terminal')
+    elif item.status == 'in_progress':
+        violations.append('item_already_started')
+    if any(entry['status'] != 'done' for entry in dependencies):
+        violations.append('dependencies_not_done')
+    if blockers:
+        violations.append('external_blockers')
+    if other_started:
+        violations.append('other_item_in_progress')
+    return {'plan': plan_id, 'plan_status': record.frontmatter.get('status'),
+            'index_active_plan': index.frontmatter.get('active_plan'), 'work_item': item_id,
+            'work_status': item.status, 'current_item': current, 'matches_current_item': current == item_id,
+            'start_state': {'todo': 'not_started', 'paused': 'resume', 'in_progress': 'already_started',
+                            'done': 'terminal', 'cancelled': 'terminal'}[item.status],
+            'dependencies': dependencies, 'blocked_by': blockers, 'other_in_progress': other_started,
+            'open_decisions': linked_open_decisions(root, item), 'violated_conditions': violations,
+            'guidance': 'Facts only: no selection, authorization, start or acceptance. The agent determines permissions and the relevance of proposed Decisions before editing.'}
+
+
+def next_id(root: Path, kind: str, requested_plan: str | None) -> dict[str, object]:
+    index_path = 'PROJECT_INDEX.md'
+    require_format_version(parse_record(safe_read_text(root, index_path), index_path), index_path)
+    numbers: list[int] = []
+    conflicts: list[dict[str, str]] = []
+    if kind == 'work-item':
+        if requested_plan is None:
+            raise SelectorError('USAGE_ERROR', '--next-id work-item requires --plan PLAN-NNNN', exit_code=2)
+        path = find_record_path(root, 'docs/plans', requested_plan, PLAN_ID_RE, PLAN_FILE_RE)
+        record = parse_record(safe_read_text(root, path), path)
+        require_format_version(record, path)
+        if record.frontmatter.get('id') != requested_plan:
+            raise SelectorError('PLAN_ID_MISMATCH', f'{path} must contain id: {requested_plan}', path=path)
+        _, _, items = parse_plan(record, path)
+        numbers = [int(item_id[2:]) for item_id in items]
+        prefix, width, directory = 'W-', 3, None
+    else:
+        if requested_plan is not None:
+            raise SelectorError('USAGE_ERROR', '--plan is only valid with --next-id work-item; omit it for plan/decision IDs', exit_code=2)
+        prefix, width = ('PLAN-', 4) if kind == 'plan' else ('ADR-', 4)
+        directory = 'docs/plans' if kind == 'plan' else 'docs/decisions'
+        pattern = PLAN_FILE_RE if kind == 'plan' else DECISION_FILE_RE
+        id_pattern = PLAN_ID_RE if kind == 'plan' else DECISION_ID_RE
+        for name in safe_directory_entries(root, directory):
+            match = pattern.fullmatch(name)
+            if match is None:
+                continue
+            path = f'{directory}/{name}'
+            record = parse_record(safe_read_text(root, path), path)
+            require_format_version(record, path)
+            record_id = record.frontmatter.get('id', '')
+            if id_pattern.fullmatch(record_id) is None:
+                raise SelectorError('RECORD_ID_INVALID', f'{path} must contain a canonical {prefix} ID', path=path, observed=record_id)
+            file_number, id_number = int(match[1]), int(record_id.split('-')[1])
+            numbers.extend((file_number, id_number))
+            if file_number != id_number:
+                conflicts.append({'path': path, 'id': record_id, 'filename_id': prefix + match[1]})
+    maximum = max(numbers, default=0)
+    if maximum >= 10 ** width - 1:
+        raise SelectorError('ID_SPACE_EXHAUSTED', f'no next {kind} ID fits {width} digits; obtain a format decision before writing',
+                            observed={'highest_number': maximum})
+    value = maximum + 1
+    output: dict[str, object] = {'kind': kind, 'next_id': f'{prefix}{value:0{width}}',
+                                'highest_number': maximum, 'reserved': False, 'conflicts': conflicts,
+                                'guidance': 'Read-only suggestion, not a reservation. Recheck ID and filename collisions immediately before manual creation.'}
+    if directory:
+        output['filename_pattern'] = f'{directory}/{value:04}-<lowercase-hyphenated-subject>.md'
+    else:
+        output['plan'] = requested_plan
+    return output
+
+
+def diagnostic_payload(error: SelectorError) -> dict[str, object]:
+    diagnostic: dict[str, object] = {"code": error.code, "message": error.message}
+    if error.path is not None:
+        diagnostic["path"] = error.path
+    if error.expected is not None:
+        diagnostic["expected"] = error.expected
+    if error.observed is not None:
+        diagnostic["observed"] = error.observed
+    return {"schema_version": 1, "valid": None, "diagnostics": [diagnostic]}
+
+
+def encode_json(payload: object) -> bytes:
+    return (json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
+
+
+def main(argv: list[str] | None = None) -> int:
+    try:
+        args = build_parser().parse_args(argv)
+        if args.work_item is not None and WORK_ID_RE.fullmatch(args.work_item) is None:
+            raise SelectorError("WORK_ITEM_ID_INVALID", "--work-item must match W-NNN", exit_code=2)
+        if args.max_output_bytes < 512:
+            raise SelectorError("OUTPUT_BUDGET_INVALID", "--max-output-bytes must be at least 512", exit_code=2)
+        if args.unit is not None and UNIT_RE.fullmatch(args.unit) is None:
+            raise SelectorError("UNIT_INVALID", "--unit has an invalid shape; use W-NNN, W-NNN/step-N or W-NNN/steps-N-M, e.g. W-001/steps-1-3", exit_code=2)
+        if args.plan is not None and PLAN_ID_RE.fullmatch(args.plan) is None:
+            raise SelectorError("PLAN_ID_INVALID", "--plan must match PLAN-NNNN, e.g. --plan PLAN-0001", exit_code=2)
+        if args.check_start is not None and WORK_ID_RE.fullmatch(args.check_start) is None:
+            raise SelectorError('WORK_ITEM_ID_INVALID', '--check-start must name W-NNN, e.g. --check-start W-001', exit_code=2)
+        if args.check_start and (args.position or args.proposals):
+            raise SelectorError('USAGE_ERROR', '--check-start cannot be combined with --position or --proposals; omit those modes', exit_code=2)
+        if args.next_id and (args.position or args.proposals):
+            raise SelectorError('USAGE_ERROR', '--next-id cannot be combined with --position or --proposals; omit those modes', exit_code=2)
+        if args.position and (args.work_item is not None or args.unit is not None):
+            raise SelectorError("USAGE_ERROR", "--position uses the Plan's current_item; omit --work-item/--unit, e.g. --plan PLAN-0001 --position", exit_code=2)
+        if args.proposals and (args.plan is not None or args.position or args.work_item is not None or args.unit is not None):
+            raise SelectorError(
+                "USAGE_ERROR", "--proposals inventories the whole project; omit --plan, --position, --work-item and --unit. Use select_context.py --root <project-root> --proposals --format json.",
+                expected="--root <project-root> --proposals --format json", exit_code=2)
+        if _MARKDOWN_IMPORT_ERROR is not None:
+            raise SelectorError(
+                "SELECTOR_INTERNAL_ERROR",
+                "Cannot load bundled markdown_structure.py; restore scripts/markdown_structure.py "
+                "from the same package version and rerun the command.",
+                path=str(_MARKDOWN_PATH),
+                expected="readable, importable bundled module exporting mask_fenced_code",
+                observed=f"{type(_MARKDOWN_IMPORT_ERROR).__name__}: {_MARKDOWN_IMPORT_ERROR}",
+                exit_code=3,
+            )
+        root = resolve_root(args.root)
+        if args.check_start:
+            payload = check_start(root, args.check_start, args.plan)
+        elif args.next_id:
+            payload = next_id(root, args.next_id, args.plan)
+        elif args.proposals:
+            payload = proposal_inventory(root)
+        else:
+            payload = plan_position(root, args.plan) if args.position else select_context(root, args.work_item, args.unit, args.plan)
+        encoded = encode_json(payload)
+        if len(encoded) > args.max_output_bytes:
+            raise SelectorError(
+                "OUTPUT_BUDGET_EXCEEDED",
+                f"selected semantic context exceeds --max-output-bytes; no partial result is returned.\n1. Agent-selected internal budget: explicitly retry with at least {len(encoded)} bytes, e.g. --max-output-bytes {len(encoded)}.\n2. Binding cap: do not raise it.\n3. Outer tool limit: capture complete output before display; the selection budget bounds successful context only",
+                expected={"maximum_bytes": args.max_output_bytes},
+                observed={"required_bytes": len(encoded)},
+            )
+    except SelectorError as error:
+        sys.stdout.buffer.write(encode_json(diagnostic_payload(error)))
+        return error.exit_code
+    except Exception as error:  # pragma: no cover - final containment boundary
+        internal = SelectorError(
+            "SELECTOR_INTERNAL_ERROR",
+            f"selector failed unexpectedly ({type(error).__name__})",
+            exit_code=3,
+        )
+        sys.stdout.buffer.write(encode_json(diagnostic_payload(internal)))
+        return 3
+    sys.stdout.buffer.write(encoded)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

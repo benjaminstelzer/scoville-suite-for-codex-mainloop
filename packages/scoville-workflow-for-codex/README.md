@@ -1,0 +1,252 @@
+# Scoville Workflow for Codex
+
+Mainloop takes a prepared Plan through implementation, independent review and
+corrections. Your current chat plans, codes and runs checks. Read-only Explorer
+and Reviewer subagents supply investigation and independent review.
+
+Assign a complete Plan or a bounded part. For a tiny fix, coordination may cost
+more than the fix. This variant is available only through its complete Codex suite.
+
+## How it works
+
+The current chat owns the Plan, code, required checks and commits. It takes one
+original Step at a time through the existing helper; it does not paraphrase the
+assignment. Each review is fresh. Explorer reuse requires the same investigation,
+an idle agent and unchanged pair/rules; an independent request starts fresh.
+Agents choose relevant Skills without gaining additional role rights.
+
+### 1. Main loop
+
+```mermaid
+flowchart TD
+  A["Activate or resume in the same chat"] --> M{"Own active pair matches main?"}
+  M -->|No or unknown| B["Resolve prerequisite; coding stopped"]
+  M -->|Yes| N{"New run?"}
+  N -->|Yes| G{"Git available and workspace clean?"}
+  G -->|No| B
+  G -->|Yes| W["Select authorized Work Item; retain start commit"]
+  N -->|Resume| R["Reconcile own changes, processes, proof and open reviews"]
+  R --> W
+  W --> S[["Run ONE original Step; see diagram 2"]]
+  S --> D{"All Steps and required reviews complete?"}
+  D -->|No| S
+  D -->|Yes| C["Helper: all original Steps and full Acceptance"]
+  C -->|Success| CR["Fresh closure Reviewer from unchanged returned arguments"]
+  C -->|Failure| B
+  CR --> V{"Result?"}
+  V -->|Defect| F["Select one affected Step; preserve open findings"]
+  F --> S
+  V -->|Missing required proof| P["Recover available proof or finish missing authorized check"]
+  P --> C
+  V -->|Pass| E["Close and validate records; commit; continue authorized scope"]
+```
+
+The new-run Git gate never cleans or commits earlier work. Authorized resumption
+reconciles the same started work without prematurely committing it. Missing or
+foreign evidence remains an explicit boundary. Stops preserve unfinished work;
+compaction continues this same chat from actual Plan, Git, effects and results.
+
+### 2. Step implementation and review
+
+```mermaid
+flowchart TD
+  S["Save and validate start; helper returns exact Step"] --> I["Main implements; finishes required checks"]
+  I --> Q["Establish write, test and restore quiescence"]
+  Q --> N{"Files, config or behavior changed, or Step review open?"}
+  N -->|No| U["Record completion; no Step review or empty commit"]
+  N -->|Yes| R["Helper: original Step, HEAD diff and relevant evidence"]
+  R -->|Success| RS["Fresh Reviewer from unchanged returned arguments"]
+  R -->|Failure| B["Stop dispatch; resolve helper failure"]
+  RS --> V{"Result?"}
+  V -->|Defect| I
+  V -->|Missing proof| P["Main recovers proof or finishes missing authorized check"]
+  P --> Q
+  V -->|Pass| C["Commit accepted versionable changes and Plan before next Step"]
+```
+
+Keep source and binding inputs unchanged during review. Closure uses the Work
+Item start commit, not only the last Step diff. Unexpected HEAD movement must
+be reconciled before an empty diff counts as unchanged. Git does not replace
+proof of non-file effects. Preserve necessary nonrepeatable evidence through
+existing results or artifacts; no mandatory per-Step report or source archive.
+
+### 3. Child selection
+
+```mermaid
+flowchart TD
+  R{"Role?"} -->|Reviewer| F["Select fresh Reviewer; fixed pair and next number"]
+  R -->|Explorer| E{"Same investigation or follow-up; idle; unchanged pair and rules?"}
+  E -->|Yes| U["Select followup; same handle, pair and number"]
+  E -->|Independent request, no Explorer, or changed pair or rules| N["Select fresh Explorer; fixed pair and next number"]
+  E -->|Running or uncertain| W["Wait or resolve native state; no duplicate dispatch"]
+  F --> H["Helper builds assignment and native arguments"]
+  U --> H
+  N --> H
+  H --> V{"Exit zero and complete successful output?"}
+  V -->|No| B["Stop dispatch; resolve helper failure"]
+  V -->|Yes| A["Call native tool with returned arguments unchanged"]
+```
+
+Fresh children receive role, writing, shell and result rules once. Explorer
+reuse sends only its new task and needed context/evidence; new or changed sources
+remain readable. No context measurement or thresholds. Close finished Reviewers
+only if native close exists. Interruption proves neither termination nor freed
+capacity. Native types are optional; never raise thread limits automatically.
+
+### 4. Questions and planning preparation
+
+```mermaid
+flowchart TD
+  Q["Question, idea, change request or planning preparation"] --> X["Dispatch read-only Explorer through diagram 3"]
+  X --> R["Return relevant facts, proposals and open choices"]
+  R --> M["Main answers user; writes authorized Plan changes"]
+  M --> W["Continue authorized scope"]
+```
+
+Known progress and stop/resume handling need no exploration. A scope-invalidating
+change stops dependent implementation first. Explorer writes no Plan or code;
+Reviewer runs no project tests. All roles follow the current user's language.
+
+## What it enforces
+
+- **Runtime:** Codex desktop, Python 3.11+, Git and the required native spawn,
+  wait, inspection and interruption tools. Explorer reuse needs followup.
+- **Start:** A new run requires a clean Git workspace. Authorized continuation
+  reconciles its own started work; it never absorbs foreign changes.
+- **Ownership:** Main plans, codes, checks and commits. Explorer and Reviewer
+  remain read-only. Changed Steps receive independent review; every Work Item
+  receives closure over all original Steps and full Acceptance.
+- **Boundaries:** Commit accepted versionable Step changes and Plan before
+  advancing. No intermediate, empty or foreign-change commit. Keep review quiet.
+- **Children:** Every review is fresh, including corrections, evidence followups
+  and closure. Explorer reuse retains rules and pair within the same investigation;
+  independent requests get fresh Explorers, even in the same project or file.
+- **Continuity:** Preserve actual effects, open reviews and stop position through
+  compaction in the same chat. No automatic successor or capacity changes.
+
+An independently established minimum Codex version remains open. CLI
+0.164.0-alpha.11.1 is an observed local version, not a proven minimum. Optional
+native type selection and close are not required; use them only when exposed
+and compatible. `agents.max_concurrent_threads_per_session` is the current host
+key; this developer's 256 is a local setting, not a Codex default.
+
+Workflow activation authorizes accepted-Step commits subject to user and project
+restrictions. See [operations](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-workflow-for-codex/scoville-workflow-for-codex/references/operations.md).
+
+## What it costs
+
+Independent review and necessary corrections add tokens and time. Mainloop
+removes the implementation child and its coordination. Every review initializes
+a fresh agent; Explorer can retain context. Actual quality, time and token effects
+need comparable native runs; source size alone proves no saving.
+
+## How it was developed
+
+This separate variant implements Plan, Coding and checks in the main thread.
+Only Explorer and fresh Reviewer roles are delegated. The original suite remains
+independently available; project migration is explicit, never an automatic upgrade.
+
+Sources and builds use the existing suite manifest and builder. Current technical
+and native acceptance evidence is kept in the development Plan; an earlier
+architecture's results do not establish this variant's behavior or savings.
+
+## Compatibility
+
+Codex-only within this complete Mainloop suite. Required Python, Git and native
+tools are listed above. Configuration and a requested pair alone do not prove
+the active host pair. Missing or mismatching native evidence stops coding.
+The tool contract, local CLI version and minimum supported version are distinct.
+
+Observed on 2026-10-27: Sol 6.1/high main and Explorer with xhigh Reviewers followed
+the tested workflow. Luna 6/medium main produced correct code but violated the
+delegation protocol in its tested run. This is not a guarantee for other runs.
+
+## Install
+
+Install and enable every Skill in the suite. Each applies to its own task scope.
+
+Use the packages from
+[Scoville Suite for Codex](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/packages).
+Workflow only comes with the suite, and every Skill has to come from this
+repository's own `packages/<name>/<name>/` directory. Don't swap in packages
+from the individual repositories, and don't continue if members are missing.
+Use the suite's prompt for a new installation, or its upgrade prompt if you
+already have one installed.
+
+
+
+## Configuration
+
+Schema 2 has three fixed model and reasoning pairs:
+
+| Setting | Default model | Reasoning |
+| --- | --- | --- |
+| workflow.main | gpt-6.1-sol | high |
+| workflow.review | gpt-6.1-sol | xhigh |
+| workflow.explore | gpt-6.1-sol | high |
+
+Use Setup to show or save project overrides in `.scoville/config.json`.
+The main pair must match its own active native session before coding. Recheck
+on activation, authorized resumption, a changed required pair, visible host-model
+change or concrete loss of binding; not on every Step. Setup cannot change the
+host model. Invisible host changes cannot be guaranteed detected.
+
+Old route tables and context settings require explicit Setup cleanup. It asks
+for main and any ambiguous role pair, preserves Ask and unrelated values, and
+saves only a complete valid migration. Reads never migrate or create settings.
+There are no per-Step model routes or context thresholds. Existing execute
+annotations are retained and compared with main; conflicts require a decision.
+See the [dispatch rules](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-workflow-for-codex/scoville-workflow-for-codex/references/operations-dispatch.md).
+
+## Limitations
+
+### Agent capacity
+
+Codex retains native agent threads from earlier assignments, so longer
+Workflow runs and Ask consultations can reach the host's agent limit.
+To give these runs more room, raise the limit to 256 in
+`~/.codex/config.toml` under `[agents]`. Add the section if it is missing:
+
+```toml
+[agents]
+max_concurrent_threads_per_session = 256
+```
+
+This is the suite's recommendation for longer runs. The
+[Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+describes the setting. If a start or necessary message still fails, the
+affected operation stops and reports the problem with its progress preserved
+for continuation.
+
+## How to use
+
+With the suite installed in Codex, activate Workflow in this saved project:
+
+```text
+Use $scoville-workflow-for-codex to execute the active Scoville Plan in this saved project.
+```
+
+Name a Work Item or stopping point to limit scope. Otherwise the main thread
+executes the active Plan. Ask questions or stop during execution. Changed work
+positions are brief; decisions go directly to you. Durable progress, unresolved
+questions and evidence stay in the Plan. Stops and blockers are not completion.
+Questions, change requests and planning preparation go to a read-only Explorer.
+Explorer returns its findings; the main thread answers, writes the Plan and
+implements within authorized scope.
+
+"Start Scoville Workflow" also activates it. "Execute the Plan" alone does not.
+
+All roles communicate in the language of your current message unless you request
+another language. Required field names and technical literals stay unchanged;
+Plans follow Plan's record-language rules.
+
+## Sources
+
+- [Agent Skills specification](https://agentskills.io/specification) for the
+  portable package and progressive disclosure model.
+- [OpenAI coding-agent best practices](https://developers.openai.com/codex/learn/best-practices)
+  for explicit outcomes, constraints, planning, and completion evidence.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

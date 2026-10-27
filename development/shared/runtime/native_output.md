@@ -1,0 +1,45 @@
+Apply the shared reading rule before native delivery. Process machine data in
+code, whether returned directly or as a capture file. Display its checked result,
+not the capture. Use the template below only for output already selected under
+that rule; forward rendered checker output unchanged as text.
+Do not JSON-encode it again or add unchecked status lines. Structured helper
+results and native tool arguments keep their own interfaces.
+
+Keep the complete `exec_command` result until the command ends, including
+`session_id`, every output chunk and the final exit status. A completed outer script does not prove child completion. Use the
+template below for captures, one per outer call.
+
+This template selects 20000;
+use the same smallest applicable limit in the generated command, both tools and
+outer directive. Before execution, replace `<command_json>` with one JSON string
+literal encoding the complete generated command, including quotes and backslashes.
+Replace the whole value; never paste a command inside existing quotes or a
+JavaScript template literal. JSON encoding preserves backticks and `${` as data.
+
+```javascript
+// @exec: {"max_output_tokens": 20000}
+let r = await tools.exec_command({
+  cmd: <command_json>,
+  max_output_tokens: 20000
+});
+let output = r.output;
+while (r.session_id !== undefined) {
+  r = await tools.write_stdin({
+    session_id: r.session_id, chars: "", yield_time_ms: 10000,
+    max_output_tokens: 20000
+  });
+  output += r.output;
+}
+text(output);
+```
+
+Check completeness separately from command success:
+
+| Result | Completion condition |
+| --- | --- |
+| Running `session_id` | Retain its ID and every chunk until completion; never restart the command. |
+| `exit=` from `--run` | Both streams are captured; the child exit status determines command success. A nonzero exit can supply valid failure evidence. |
+| Complete-file metadata | Use the complete-file distinction above and process the supplied file under the shared reading rule: machine data in code, required prose in full. |
+| Empty output, capture failure, or missing output without a complete-file route | Required input remains unread; stop dependent work. |
+
+Never discard a failure's stdout or stderr.

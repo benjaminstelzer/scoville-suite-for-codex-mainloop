@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scoville UI"
+  short_description: "Implement and audit interfaces through their design system"
+  default_prompt: "Use $scoville-ui to implement or audit this interface through its framework and design system."
