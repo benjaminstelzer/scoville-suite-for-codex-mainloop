@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased - 2026-10-28 - Review corrections
+
+- Load Skillwriter's shared criteria in review mode and clarify Plan execution terminology without changing record contracts.
+
+- Give fresh Explorer and Reviewer assignments an explicit instruction-design path. Point Explorer pair mismatches to a fresh agent instead of changing settings.
+
+
 ## Unreleased - 2026-10-28
 
 - Add Scoville Skillwriter as a public standalone Skill and Suite member, with one shared instruction-design source for agent-facing prompts.

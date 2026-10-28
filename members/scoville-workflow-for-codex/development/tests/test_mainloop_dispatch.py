@@ -130,6 +130,9 @@ Evidence: []
         self.assertNotIn('NEXT_STEP_MUST_NOT_APPEAR', assignment)
         self.assertIn('checks: targeted check passed', assignment)
         self.assertIn('# Code review quality', assignment)
+        design = self.helper.parents[1] / 'references/instruction-design.md'
+        self.assertIn(f'instruction_design_rules: {design}', assignment)
+        self.assertTrue(design.is_file())
         self.assertNotIn('check_agent_context.py', assignment)
 
     def test_closure_contains_all_original_steps_and_full_acceptance(self):
@@ -148,7 +151,7 @@ Evidence: []
     def test_missing_fresh_dependencies_block_then_restored_call_succeeds(self):
         package = self.helper.parents[1]
         for relative in ('references/code-review.md', 'references/output-delivery.md',
-                         'scripts/check_text_size.py'):
+                         'references/instruction-design.md', 'scripts/check_text_size.py'):
             with self.subTest(relative=relative):
                 dependency = package / relative
                 content = dependency.read_bytes()
@@ -185,6 +188,9 @@ Evidence: []
                                    '--supplemental-context', '-', request='Find the owner.')
         self.assertNotEqual(0, result.returncode)
         self.assertIn('xhigh', result.stderr)
+        self.assertIn('fresh Explorer', result.stderr)
+        self.assertIn('do not change settings', result.stderr)
+        self.assertNotIn('change settings explicitly', result.stderr)
 
 
 if __name__ == '__main__':

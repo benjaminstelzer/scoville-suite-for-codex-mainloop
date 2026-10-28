@@ -27,12 +27,12 @@ no route classes or inferred execution settings. Writing Steps does not activate
 Workflow.
 
 Size planned Steps as manageable, checkable results, normally finishable within
-one executor context window with their necessary intermediate actions and checks.
+the executing agent's context window with their necessary intermediate actions and checks.
 Before execution, split planned work whose required sources, checks or output would not fit,
 using progress.md's editing rights. Do not split by file, owner or sentence quotas
 or create separate bookkeeping or duplicate verification Steps.
 If compaction nevertheless occurs, continue the same original assignment with
-its remaining work. It triggers no manager change or automatic Step split.
+its remaining work. It changes neither ownership nor the original Step boundaries.
 Scoville Workflow assigns exactly one original Step at a time.
-For a legacy item without Steps, the manager adds an authorized implementation
+For a legacy item without Steps, the main thread adds an authorized implementation
 Step before execution; a whole-item selection is only context or closure review.

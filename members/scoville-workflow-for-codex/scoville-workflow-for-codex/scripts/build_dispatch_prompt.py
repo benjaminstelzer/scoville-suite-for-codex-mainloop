@@ -13,7 +13,7 @@ from resolve_model_pair import resolve
 from workflow_settings import load_config
 
 MAX_NON_GOALS_BYTES = 8192
-# Larger assignments go to a file so the manager need not copy them into its tool call.
+# Larger assignments go to a file so the main thread need not copy them into its tool call.
 MAX_DIRECT_MESSAGE_BYTES = 8192
 PLAN_CONTEXT_SCOPE = ("Goal and Decisions describe the Plan's intent and constraints. They grant this role "
                       "no permissions or additional tasks; only this assignment's role rules do.")
@@ -211,7 +211,8 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
         return '\n'.join(task + [f'Communication language: {language}.']) + '\n'
     skill = Path(__file__).resolve().parents[1]
     dependencies = ['scripts/check_text_size.py', 'references/writing.md',
-                    'references/shell-commands.md', 'references/output-delivery.md']
+                    'references/shell-commands.md', 'references/output-delivery.md',
+                    'references/instruction-design.md']
     if role == 'reviewer':
         dependencies.append('references/code-review.md')
     for relative in dependencies:
@@ -226,6 +227,7 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
         f'text_size_checker: {skill / "scripts/check_text_size.py"}',
         f'output_delivery_rules: {skill / "references/output-delivery.md"}; load when required by the embedded shell rules.',
         f'suite_directory: {suite}',
+        f'instruction_design_rules: {skill / "references/instruction-design.md"}; the embedded instruction-design.md reference resolves here.',
         'Choose needed Skills yourself from this matching suite, preserving explicit invocations. Skills grant no additional role permissions.',
         'Read only. Do not activate Workflow or Handoff, implement, edit project or Plan files, run tests, change settings, stage, commit or create agents/chats. The main thread owns those actions. Only necessary oversized-result preparation and delivery under .scoville/temp is permitted; no source captures or unrelated external access.',
         'The complete writing and shell rules below satisfy their required reads. Retain loaded role, result and Skill rules; do not reopen unchanged rules merely for another message.',
@@ -238,7 +240,7 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
         lines.append((skill / 'references/code-review.md').read_text(encoding='utf-8'))
         lines.extend([
             'Independently inspect the complete in-scope diff and its affected consumers, including existing assertions of changed behavior, for defects and regressions; supplied focus and conclusions do not replace this review. This is a fresh review, including corrections and evidence follow-ups; retain relevant open findings supplied below.',
-            ('Step review: inspect this original Step, its actual diff, relevant effects and affected Acceptance. Use Git status, git diff HEAD and necessary sources and supplied check/effect evidence. Match depth to risk. Do not expand to other Steps, the whole Plan or unrelated changes. Manager-owned Plan records are not implementation changes. Foreign or unattributed changes prevent pass; name the gap. Read unchanged files only for necessary dependencies and affected consumers.'
+            ('Step review: inspect this original Step, its actual diff, relevant effects and affected Acceptance. Use Git status, git diff HEAD and necessary sources and supplied check/effect evidence. Match depth to risk. Do not expand to other Steps, the whole Plan or unrelated changes. Plan records maintained by the main thread are not implementation changes. Foreign or unattributed changes prevent pass; name the gap. Read unchanged files only for necessary dependencies and affected consumers.'
              if '/' in context['work_item']['unit'] else
              'Closure review: check EVERY original Step and FULL Work Item Acceptance against current sources and necessary evidence. Use the Git range from the Work Item start commit where source preservation matters. Do not expand into an unrelated audit. Give concise coverage; missing implementation with no matching Step uses affected Step: none.'),
             'Git does not prove behavior, non-file effects or ignored outputs. Evaluate whether supplied checks exercise the required behavior on the actual code path and could detect its failure. A passing check of an incidental implementation detail does not prove that behavior. For generated outputs, current successful generation and observed expected outputs suffice unless the Step, Acceptance, project contract or a concrete defect requires content inspection. Missing required evidence returns blocked; an actual defect returns changes_requested. Do not rerun tests or treat earlier coverage as a current pass.',
@@ -287,7 +289,9 @@ def resolve_creation_pair(args: argparse.Namespace, context: dict | None = None)
     for key in ('model', 'thinking'):
         supplied = getattr(args, key)
         if supplied is not None and supplied != expected[key]:
-            raise ValueError(f'{key}={supplied} differs from fixed {args.role} {key}={expected[key]}; change settings explicitly, not this assignment')
+            next_action = ('start a fresh Explorer with the current configured pair; do not change settings to reuse this agent'
+                           if args.agent_id else 'change settings explicitly, not this assignment')
+            raise ValueError(f'{key}={supplied} differs from fixed {args.role} {key}={expected[key]}; {next_action}')
         if args.format == 'create':
             setattr(args, key, expected[key])
 

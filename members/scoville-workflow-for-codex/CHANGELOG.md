@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased - 2026-10-28 - Review corrections
+
+- Resolve the shared instruction-design reference explicitly in fresh child assignments and reject an incomplete package before dispatch.
+- Direct a mismatched retained Explorer to a fresh agent with the current pair; preserve the configured settings.
+- Use main-thread terminology in the Step-review assignment.
+
 ## Unreleased - 2026-10-28
 
 - Split Step and Work Item control, use the shared instruction-design owner for assignment writing, and give each fresh Reviewer only its selected review policy. Preserve complete evidence and fixed result fields without repeated preflight prose.
