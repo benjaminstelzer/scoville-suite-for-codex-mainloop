@@ -2,6 +2,13 @@
 
 ## Unreleased - 2026-10-28
 
+- Split Step and Work Item control, use the shared instruction-design owner for assignment writing, and give each fresh Reviewer only its selected review policy. Preserve complete evidence and fixed result fields without repeated preflight prose.
+
+- Assess algorithmic costs within reachable input bounds; correct an unsupported complexity claim without demanding an unnecessary algorithm change.
+
+- Let a correction resolve an objection by fixing it, narrowing an unsupported claim or refuting it with evidence; hypothetical hardening does not expand a Step.
+- Count an unnecessary mechanism with added state, work or maintenance as a concrete review defect.
+
 - Independently review the complete assigned diff, including affected consumers and existing assertions, and judge whether supplied checks distinguish the claimed result from the relevant failure. Supplied focus does not replace that review.
 - Avoid repeating Explorer sources and limits across result fields while preserving distinct findings.
 
@@ -16,7 +23,7 @@
 - Replace active native probe instructions and README diagrams with Mainloop contracts.
 
 - Require code reviews to inspect simplicity, maintainability, foreseeable extension and clarity for later agents. Trace loops, recursion and scanning calls for avoidable nonlinear repeated work without requiring benchmarks.
-- Supply the complete code-review policy to every fresh Reviewer without adding a review phase.
+- Supply the complete code-review policy to fresh Reviewers and retain it on reuse without adding a review phase.
 
 ## Unreleased - 2026-10-20
 

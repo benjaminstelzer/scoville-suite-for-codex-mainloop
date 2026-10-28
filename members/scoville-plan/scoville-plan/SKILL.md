@@ -1,6 +1,6 @@
 ---
 name: scoville-plan
-description: Maintain, resume and audit repository Plans, Work Items and Decisions. Use for Scoville Plan requests, planning records in projects with PROJECT_INDEX.md and docs/plans, durable work across interruptions or context compaction, and follow-up instructions that add or change work during an active Plan. Use to add, remove, reorder or clarify Plan points. Exclude pure informational questions with no retained action, small tasks needing no durable Plan, and explicit opt-out. A requested transfer prompt belongs to Handoff.
+description: Maintain, resume and audit repository Plans, Work Items and Decisions for Scoville Plan requests, planning records in projects with PROJECT_INDEX.md and docs/plans, and durable work across interruptions or compaction. Handle changes to active Plan work; exclude informational questions without retained action, small tasks needing no durable Plan, explicit opt-out, and requested transfer prompts, which belong to Handoff.
 compatibility: "Codex with repository read and write access and Python 3.11+. Direct Markdown and YAML planning needs no service or network. Bundled selector and validator are required for their operations. Missing dependencies or helper errors block the affected operation."
 ---
 
@@ -19,7 +19,7 @@ no Skill-derived changes or claims. Report a conflicting repository requirement.
 
 Plan owns its records' wording and lifecycle. It does not start Workflow or
 choose dispatch routes. Run one editor at a time; do not change affected files
-or required model and reasoning settings concurrently. Reads and Skill upgrades
+or executor model or reasoning settings concurrently. Reads and Skill upgrades
 require no migration.
 
 For requested PROJECT_INDEX.md prose additions or cleanup, apply Scoville

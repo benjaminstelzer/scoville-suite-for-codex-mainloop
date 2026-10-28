@@ -1,27 +1,24 @@
 # Scoville Suite for Codex Mainloop
 
-This variant keeps planning, coding and checks in your current chat. Only
-read-only exploration and independent review run in subagents. Install the
-complete Mainloop suite separately from the original Codex suite.
-
-Scoville helps Codex plan, implement and review work that spans more than one
-conversation. Workflow runs the work step by step in the Plan's order, Ask
-brings in independent advice, and Handoff carries unfinished tasks into the
-next session. Setup manages the project's model and Workflow settings.
+Scoville keeps planning, implementation and checks in your current Codex chat.
+Workflow takes the Plan through its original Steps, read-only Explorers
+investigate questions and fresh Reviewers check the work. Ask brings in
+independent advice, Handoff prepares a continuation and Setup manages project
+settings.
 
 Scoville is the scale for chili heat. These Skills aim for sharper work and
 less diluted context. Adding more instructions is easy. Keeping the useful
 ones is the point.
 
-Using Claude Code or another Agent Skills host? Take
+For Claude Code and other Agent Skills hosts, use
 [Scoville Suite](https://github.com/benjaminstelzer/scoville-suite).
-The original Codex workflow remains available in
-[Scoville Suite for Codex](https://github.com/benjaminstelzer/scoville-suite-for-codex),
-which adds Workflow, Ask and Setup.
+For Codex desktop, use
+[Scoville Suite for Codex Mainloop](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop),
+which adds Workflow, Ask and Setup. Mainloop is the maintained Codex suite.
 
 | Skill | Purpose |
 | --- | --- |
-| [Workflow for Codex](#scoville-workflow-for-codex) | Plans and codes in the current chat, with read-only Explorer and fresh Reviewer agents. |
+| [Workflow for Codex](#scoville-workflow-for-codex) | Plans and codes in the current chat, with read-only Explorers and fresh Reviewers. |
 | [Code](#scoville-code) | Keeps implementation, risk assessment and checks focused on what you asked for. |
 | [Plan](#scoville-plan) | Keeps longer work, decisions and progress easy to pick up again. |
 | [UI](#scoville-ui) | Builds and checks interfaces with their framework and design system. |
@@ -29,3 +26,4 @@ which adds Workflow, Ask and Setup.
 | [Ask for Codex](#scoville-ask-for-codex) | Asks the advisers you configured for an independent opinion. |
 | [Setup](#scoville-setup) | Manages the selected project's Scoville settings. |
 | [Project Context Cleanup](#scoville-project-context-cleanup) | Keeps requested project rules and index text clear without losing required context. |
+| [Skillwriter](#scoville-skillwriter) | Writes and reviews Skills and reusable prompts for frontier models. |

@@ -1,32 +1,39 @@
 ## Install the suite
 
-Install the suite once in your agent host and it's available in all your
-projects. Workflow starts directly in a saved Codex project.
+Install the complete suite in your agent host to use it across projects.
+Workflow starts in a saved Codex project.
 
 ### New installation
 
 Use this request in your agent host:
 
 ```text
-Install and enable the complete suite for all my projects directly from {{ include: suite.repository }}.
+Install and enable the complete suite for all my projects from the packages/ directory of {{ include: suite.repository }}.
+Preserve personal settings and unrelated Skills. Ask before overwriting conflicting customizations.
+Report the installed location and whether the host discovers every member.
 ```
 
-Don't mix standalone and suite copies of the same Skill.
+Do not mix standalone and suite copies of the same Skill. If your host cannot
+install from GitHub, download the repository and copy each
+`packages/<name>/<name>/` Skill directory into the host's Skills location.
+The repository root and development sources are not installable Skills.
 
-If your host can't install directly from GitHub, download this repository and
-copy all the package directories inside it to the host's Skills folder. You
-end up with the same complete suite and the same requirements.
+### Upgrade or migrate an existing installation
 
-### Opt-in migration from the original Codex suite
+Choose the target suite explicitly. Preserve project settings and personal
+customizations, then replace duplicate installed copies with the target suite's
+complete packages. Remove only superseded Skills you have selected for removal.
+An upgrade is not permission to erase settings or unrelated Skills.
 
-This is a separate variant, not an in-place upgrade. Do not mix their packages
-or switch an active old implementation. First reach a reviewed, quiet commit
-boundary, preferably Work Item closure, and preserve required old closure proof
-in existing artifacts. If essential evidence cannot be retained, finish the Work
-Item before switching. Commit a changed tracked Plan before reload.
+When moving from an earlier Codex suite, first reach a reviewed,
+quiet commit boundary, preferably Work Item closure. Retain required acceptance
+evidence and commit a changed tracked Plan before reloading. If essential proof
+cannot be retained, finish that Work Item before switching.
 
-Only after explicitly selecting this variant's separate installation target:
-reload it, request Setup cleanup with complete chosen pairs, and commit a tracked
-configuration change under project checks before authorized continuation. An
-ignored configuration needs no commit. Installation proves neither migration,
-host-model selection nor reload. Keep the original suite available separately.
+Install the complete Mainloop suite from this repository, reload it, then ask
+Setup to show the existing project settings. If cleanup is required, explicitly
+request migration and choose the complete main pair and any ambiguous role
+pairs. Cleanup preserves Ask and unrelated settings. Commit a tracked settings
+change under the project's checks before authorized continuation. An ignored
+configuration needs no commit. Installation alone proves neither configuration
+migration, reload nor the active host model.

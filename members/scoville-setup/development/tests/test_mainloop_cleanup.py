@@ -22,7 +22,7 @@ class MainloopCleanupTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location('mainloop_setup_builder', ROOT / 'development/build_suite.py')
         builder = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(builder)
-        config = builder.load(ROOT)
+        config = builder.load(ROOT, 'codex')
         for name in ('scoville-setup', 'scoville-workflow-for-codex'):
             member = next(m for m in config['members'] if m['name'] == name)
             for relative, data in builder.payload(ROOT, member, config).items():
@@ -148,10 +148,10 @@ class MainloopCleanupTests(unittest.TestCase):
     def test_workflow_save_does_not_validate_unrelated_ask_semantics(self):
         ask = {'claude': {'timeout_seconds': 'invalid-but-unchanged'}}
         self.save({'ask': ask})
-        status, result = self.run_setup('set', {'workflow': {'review': {'reasoning': 'max'}}})
+        status, result = self.run_setup('set', {'workflow': {'review': {'reasoning': 'high'}}})
         self.assertEqual(0, status, result)
         self.assertEqual(ask, json.loads(self.path.read_text(encoding='utf-8'))['ask'])
-        self.assertEqual('max', self.resolve('reviewer')['thinking'])
+        self.assertEqual('high', self.resolve('reviewer')['thinking'])
 
     def test_unknown_legacy_values_are_not_discarded(self):
         self.save({'workflow': {'schema_version': 1, 'foreign_flag': 'preserve'}})

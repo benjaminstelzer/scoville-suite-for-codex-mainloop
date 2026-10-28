@@ -1,5 +1,7 @@
 ### Validation boundary
 
-Earlier coordinator and handoff runs are historical evidence only. Mainloop
-requires its own helper, cleanup, native execution, fresh review, stop and
-continuation checks. A wording or mocked-tool test is not a live workflow pass.
+Actual Explorer fresh and same-handle follow-up assignments and fresh Step and
+closure Reviewers were exercised with gpt-6.1-sol / low. Fresh main receivers
+used the complete results to select the correct next action. These bounded
+probes do not establish a complete executing Workflow, accepted correction,
+Step commit or successful Work Item closure.

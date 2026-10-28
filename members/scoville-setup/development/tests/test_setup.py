@@ -100,17 +100,38 @@ class SetupTests(unittest.TestCase):
         self.assertEqual(status, 0, saved)
         self.assertNotIn('context', json.loads(self.path.read_text())['workflow'])
 
+    def test_regular_choices_can_be_saved_for_workflow_and_ask(self):
+        for level in ('low', 'medium', 'high', 'xhigh'):
+            with self.subTest(level=level):
+                status, saved = self.run_setup('set', {
+                    'workflow': {'main': {'reasoning': level}},
+                    'ask': {'presets': {'astra': {'effort': level}}}})
+                self.assertEqual(0, status, saved)
+                self.assertEqual(level, saved['effective']['workflow']['main']['reasoning'])
+                self.assertEqual(level, saved['effective']['ask']['presets']['astra']['effort'])
+
+    def test_new_special_choices_are_rejected_without_writing(self):
+        self.save({'workflow': {'main': {'reasoning': 'high'}}, 'other': {'keep': True}})
+        before = self.path.read_bytes()
+        for level in ('none', 'minimal', 'max', 'ultra'):
+            for patch in ({'workflow': {'main': {'reasoning': level}}},
+                          {'ask': {'presets': {'astra': {'effort': level}}}}):
+                with self.subTest(patch=patch):
+                    status, failed = self.run_setup('set', patch)
+                    self.assertNotEqual(0, status)
+                    self.assertFalse(failed['ok'])
+                    self.assertIn('low, medium, high or xhigh', failed['diagnostic'])
+                    self.assertEqual(before, self.path.read_bytes())
+
     def test_supported_special_levels_survive_unrelated_save(self):
-        for level in ('none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'):
-            status, saved = self.run_setup('set', {'workflow': {'main': {'reasoning': level}}})
-            self.assertEqual(0, status, saved)
-        value = json.loads(self.path.read_text())
-        value['ask'] = {'presets': {'astra': {'effort': 'ultra'}}}
-        self.save(value)
-        status, saved = self.run_setup('set', {'ask': {'claude': {'timeout_seconds': 2400}}})
-        self.assertEqual(0, status, saved)
-        self.assertEqual('ultra', json.loads(self.path.read_text())['workflow']['main']['reasoning'])
-        self.assertEqual('ultra', saved['effective']['ask']['presets']['astra']['effort'])
+        for level in ('none', 'minimal', 'max', 'ultra'):
+            with self.subTest(level=level):
+                self.save({'workflow': {'main': {'reasoning': level}},
+                           'ask': {'presets': {'astra': {'effort': level}}}})
+                status, saved = self.run_setup('set', {'ask': {'claude': {'timeout_seconds': 2400}}})
+                self.assertEqual(0, status, saved)
+                self.assertEqual(level, json.loads(self.path.read_text())['workflow']['main']['reasoning'])
+                self.assertEqual(level, saved['effective']['ask']['presets']['astra']['effort'])
 
     def test_unknown_saved_workflow_key_does_not_become_ignored(self):
         self.save({'workflow': {'unknown': True}})

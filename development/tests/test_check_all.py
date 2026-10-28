@@ -53,7 +53,7 @@ class CheckAllTests(unittest.TestCase):
         self.assertTrue(any('--check-sources' in command for command in commands))
         self.assertEqual(1, sum('--prepare-runtime-ci' in command for command in commands))
         self.assertEqual(1, sum(str(Path(temporary) / 'runtime/tests') in command for command in commands))
-        self.assertTrue(any('--check-readmes' in command and '--profile' not in command for command in commands))
+        self.assertTrue(any('--check-readmes' in command and 'general' in command for command in commands))
         self.assertTrue(any('--check-readmes' in command and 'codex' in command for command in commands))
 
     def test_zero_discovery_fails_instead_of_reporting_a_pass(self):

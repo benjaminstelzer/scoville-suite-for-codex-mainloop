@@ -85,6 +85,12 @@ class AdviserPromptTests(unittest.TestCase):
             self.assertEqual((copy / 'references/output-delivery.md').resolve(), delivery)
             self.assertTrue(delivery.is_file())
             self.assertNotIn(delivery.read_text(encoding='utf-8'), prompt)
+            design_field = next(line.split(': ', 1)[1] for line in prompt.splitlines()
+                                if line.startswith('instruction_design_rules: '))
+            design = Path(design_field.split(';', 1)[0])
+            self.assertEqual((copy / 'references/instruction-design.md').resolve(), design)
+            self.assertTrue(design.is_file())
+            self.assertNotIn(design.read_text(encoding='utf-8'), prompt)
             planned = root / 'Vollständige Rückgabe.txt'
             complete = ('Required café 漢字 facts.\n' * 220 + 'FINAL_REQUIRED_FACT\n').encode('utf-8')
             planned.write_bytes(complete)

@@ -14,6 +14,8 @@ When writing adviser framing, reporting results or assessing a disputed factual
 or technical conclusion, read and apply the
 [shared writing rules](references/writing.md). The helpers include those rules
 for adviser answers while preserving the literal user question.
+For composed adviser questions and follow-ups, apply
+[agent instruction design](references/instruction-design.md).
 
 ## Choose the consultation
 
@@ -54,25 +56,37 @@ collaboration tools in the calling chat.
 
 ## Ask and collect
 
-1. Prepare a self-contained question, expected scope, requirements and raw
-   evidence. Include paths and working-tree scope only when relevant. Exclude
-   the caller's verdict, intermediate reasoning, previous adviser answers,
-   unrelated history and secrets from fresh consultations.
-2. Read [native agent operation](references/native.md) for Codex advisers,
-   or [Claude operation](references/claude.md) for CLI advisers.
-3. For native advisers, build the assignment and call collaboration.spawn_agent
-   directly under native operation. Use fresh context and the selected settings.
-   For Claude, use the preparation and execution commands in its reference. Start
-   selected native advisers before launching Claude processes; independent Claude
-   advisers may run concurrently within host limits. Dispatch only selected advisers.
-4. Retain each adviser’s handle, settings, reference and scope. Collect complete
-   matching answers under its route’s rules. Necessary questions
-   and follow-ups use that same handle. Keep partial answers and failures visible;
-   do not silently replace an adviser. A returned handle alone is not an answer.
-5. Present answers with material evidence and limits. For a consultation,
-   synthesize agreement, differences and useful conclusions without inventing
-   consensus. No mandatory second exchange round. For reviews, distinguish
-   findings from untested concerns and verify findings before authorized fixes.
+Prepare a self-contained question, scope, requirements and raw evidence. Include
+paths and working-tree scope when relevant. Exclude the caller's verdict,
+intermediate reasoning, previous adviser answers, unrelated history and secrets
+from fresh consultations. Read [native operation](references/native.md) or
+[Claude operation](references/claude.md) for each selected route.
+
+```mermaid
+flowchart TD
+  settings["Resolve selected advisers"] --> valid{"Settings valid?"}
+  valid -->|no| diagnostic["Report diagnostic; stop affected dispatch"]
+  valid -->|yes| route{"Selected route?"}
+  route -->|native| native["Build fresh assignment and spawn directly"]
+  route -->|Claude CLI| claude["Prepare unchanged request and launch"]
+  native --> collect["Collect matching answers under route rules"]
+  claude --> collect
+  collect --> state{"Collection state?"}
+  state -->|active or clarification needed| wait["Wait or clarify with the retained adviser"]
+  wait --> collect
+  state -->|collection blocked or permitted interruption| partial["Report completed answers, failures and pending handles"]
+  state -->|complete| report["Report evidence, differences and limits"]
+```
+
+Dispatch only selected advisers, independently within host capacity and process
+limits. Use fresh context and selected settings. Retain each adviser's handle,
+settings, reference and scope, including running Claude process handles. Necessary
+questions and follow-ups use the same adviser. A returned handle alone is not an
+answer; keep partial answers and failures visible and do not silently replace advisers.
+
+For a consultation, synthesize agreement, differences and useful conclusions
+without inventing consensus. No mandatory second exchange round. For reviews,
+distinguish findings from untested concerns and verify findings before authorized fixes.
 
 In exchanges, apply [Evidence-based conclusions](references/writing.md#evidence-based-conclusions).
 Present disputed claims and their evidence neutrally; do not frame a preferred

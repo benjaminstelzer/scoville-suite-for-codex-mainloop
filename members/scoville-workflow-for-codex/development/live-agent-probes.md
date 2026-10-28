@@ -22,5 +22,5 @@ Unit tests, comprehension and observed native compliance are distinct evidence.
 
 Use complete-file transport when needed. No receipt, startup handshake, context
 telemetry or handoff-control tests. Scope, stopped work and unavailable native
-features remain named limits, not simulated passes. PLAN-0055/W-004 owns this
-implementation's required cases and comparison claims.
+features remain named limits, not simulated passes. The current authorized
+Suite Plan owns required cases and comparison claims.

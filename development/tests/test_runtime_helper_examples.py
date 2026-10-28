@@ -50,7 +50,7 @@ def signature(path, command=None):
     flags, required = set(), []
     for node in ast.walk(tree):
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'add_creation_options':
-            shared_flags, shared_required = signature(ROOT / 'development/shared/runtime/native_task_arguments.py')
+            shared_flags, shared_required = signature(path.with_name('native_task_arguments.py'))
             if any(k.arg == 'project_name' and isinstance(k.value, ast.Constant) and k.value.value is False for k in node.keywords):
                 shared_flags.discard('--project-name')
             flags.update(shared_flags)

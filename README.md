@@ -1,27 +1,24 @@
 # Scoville Suite for Codex Mainloop
 
-This variant keeps planning, coding and checks in your current chat. Only
-read-only exploration and independent review run in subagents. Install the
-complete Mainloop suite separately from the original Codex suite.
-
-Scoville helps Codex plan, implement and review work that spans more than one
-conversation. Workflow runs the work step by step in the Plan's order, Ask
-brings in independent advice, and Handoff carries unfinished tasks into the
-next session. Setup manages the project's model and Workflow settings.
+Scoville keeps planning, implementation and checks in your current Codex chat.
+Workflow takes the Plan through its original Steps, read-only Explorers
+investigate questions and fresh Reviewers check the work. Ask brings in
+independent advice, Handoff prepares a continuation and Setup manages project
+settings.
 
 Scoville is the scale for chili heat. These Skills aim for sharper work and
 less diluted context. Adding more instructions is easy. Keeping the useful
 ones is the point.
 
-Using Claude Code or another Agent Skills host? Take
+For Claude Code and other Agent Skills hosts, use
 [Scoville Suite](https://github.com/benjaminstelzer/scoville-suite).
-The original Codex workflow remains available in
-[Scoville Suite for Codex](https://github.com/benjaminstelzer/scoville-suite-for-codex),
-which adds Workflow, Ask and Setup.
+For Codex desktop, use
+[Scoville Suite for Codex Mainloop](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop),
+which adds Workflow, Ask and Setup. Mainloop is the maintained Codex suite.
 
 | Skill | Purpose |
 | --- | --- |
-| [Workflow for Codex](#scoville-workflow-for-codex) | Plans and codes in the current chat, with read-only Explorer and fresh Reviewer agents. |
+| [Workflow for Codex](#scoville-workflow-for-codex) | Plans and codes in the current chat, with read-only Explorers and fresh Reviewers. |
 | [Code](#scoville-code) | Keeps implementation, risk assessment and checks focused on what you asked for. |
 | [Plan](#scoville-plan) | Keeps longer work, decisions and progress easy to pick up again. |
 | [UI](#scoville-ui) | Builds and checks interfaces with their framework and design system. |
@@ -29,6 +26,7 @@ which adds Workflow, Ask and Setup.
 | [Ask for Codex](#scoville-ask-for-codex) | Asks the advisers you configured for an independent opinion. |
 | [Setup](#scoville-setup) | Manages the selected project's Scoville settings. |
 | [Project Context Cleanup](#scoville-project-context-cleanup) | Keeps requested project rules and index text clear without losing required context. |
+| [Skillwriter](#scoville-skillwriter) | Writes and reviews Skills and reusable prompts for frontier models. |
 
 ## Scoville Workflow for Codex
 
@@ -37,7 +35,8 @@ corrections. Your current chat plans, codes and runs checks. Read-only Explorer
 and Reviewer subagents supply investigation and independent review.
 
 Assign a complete Plan or a bounded part. For a tiny fix, coordination may cost
-more than the fix. This variant is available only through its complete Codex suite.
+more than the fix. Workflow is available only through the complete Codex
+Mainloop suite.
 
 ### How it works
 
@@ -156,11 +155,9 @@ Reviewer runs no project tests. All roles follow the current user's language.
 - **Continuity:** Preserve actual effects, open reviews and stop position through
   compaction in the same chat. No automatic successor or capacity changes.
 
-An independently established minimum Codex version remains open. CLI
-0.164.0-alpha.11.1 is an observed local version, not a proven minimum. Optional
-native type selection and close are not required; use them only when exposed
-and compatible. `agents.max_concurrent_threads_per_session` is the current host
-key; this developer's 256 is a local setting, not a Codex default.
+No minimum Codex version has been independently established. Optional native
+type selection and close are not required. Use them only when exposed and
+compatible. Agent capacity depends on the host's configured limit.
 
 Workflow activation authorizes accepted-Step commits subject to user and project
 restrictions. See [operations](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-workflow-for-codex/scoville-workflow-for-codex/references/operations.md).
@@ -204,7 +201,7 @@ fix acquires its own framework.
 
 Keep personal conventions outside the installed Skill so updates preserve them.
 See the [customization guide](https://github.com/benjaminstelzer/scoville-code#your-own-conventions)
-and [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex/blob/main/packages/scoville-code/scoville-code/SKILL.md).
+and [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-code/scoville-code/SKILL.md).
 
 ### What it costs
 
@@ -245,7 +242,7 @@ shows these records on Windows, macOS and Linux.
   Changes of direction preserve completed work, binding constraints and material decisions.
 
 Edit records from one session at a time. Concurrent edits need reconciliation.
-See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex/blob/main/packages/scoville-plan/scoville-plan/SKILL.md).
+See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-plan/scoville-plan/SKILL.md).
 
 ### What it costs
 
@@ -285,7 +282,7 @@ the user sweat.
 - **Rendered proof.** Source checks alone cannot establish that the interface
   works. Unchecked rendering or interaction stays explicitly unverified.
 
-See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex/blob/main/packages/scoville-ui/scoville-ui/SKILL.md).
+See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-ui/scoville-ui/SKILL.md).
 
 ### What it costs
 
@@ -318,11 +315,10 @@ diluted between conversations. The next agent already has enough imagination.
 - **A useful next action.** The prompt tells the next session where to resume
   and how to recognize completion.
 
-A targeted GPT-6 Luna High test turned a preference into a requirement. Check
-that distinction in a generated handoff. Later testing has not disproved the
-observation.
+Keep preferences distinct from binding requirements. The receiving session
+still needs the exact permissions and acceptance criteria for its next action.
 
-See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex/blob/main/packages/scoville-handoff/scoville-handoff/SKILL.md).
+See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-handoff/scoville-handoff/SKILL.md).
 
 ### What it costs
 
@@ -429,42 +425,76 @@ ingredients that made the rules useful.
 
 [How to use Scoville Project Context Cleanup](members/scoville-project-context-cleanup/README.md#how-to-use).
 
+## Scoville Skillwriter
+
+Scoville Skillwriter writes and reviews Skills and reusable prompts for current
+frontier models. It keeps the goal, real constraints and useful context while
+cutting repetition and unnecessary ceremony.
+
+Scoville measures chili heat. Skillwriter keeps instructions sharp without
+seasoning every sentence with another warning.
+
+### How it works
+
+It combines a shared instruction-design core with an authoring workflow: review before revision, preserve the baseline, and validate the affected outcome. The host's Skill Creator owns Skill structure and packaging.
+
+### What it enforces
+
+An Agent Skills host with filesystem access. Skill authoring also uses the host's Skill Creator; standalone prompts do not need it. No runtime scripts or network access are required.
+
+### What it costs
+
+The Skill has no paid service calls. Host model usage and any explicitly requested evaluation have their usual costs.
+
+[How to use Scoville Skillwriter](members/scoville-skillwriter/README.md#how-to-use).
+
 ## Compatibility
 
-Requires Codex desktop, native agents and Python 3.11+ (Claude consultations also need a signed-in Claude Code CLI, 2.1.280+ for Opus 5.5). Fable, Astra, SOL or Opus (5.0+) are recommended. Selected Luna 6 High checks in Codex are described in each Skill's Compatibility notes; they do not establish a suite-wide baseline.
+Requires Codex desktop, native agents and Python 3.11+, with a signed-in
+Claude Code CLI for Claude consultations (2.1.280+ for Opus 5.5).
+Targeted candidate-path tests in Codex used gpt-6.1-sol / low, with observed
+outcomes and limits described per Skill, and do not establish suite-wide
+reliability, installed discovery, other hosts or Claude execution.
 
 ## Install the suite
 
-Install the suite once in your agent host and it's available in all your
-projects. Workflow starts directly in a saved Codex project.
+Install the complete suite in your agent host to use it across projects.
+Workflow starts in a saved Codex project.
 
 ### New installation
 
 Use this request in your agent host:
 
 ```text
-Install and enable the complete suite for all my projects directly from https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop.
+Install and enable the complete suite for all my projects from the packages/ directory of https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop.
+Preserve personal settings and unrelated Skills. Ask before overwriting conflicting customizations.
+Report the installed location and whether the host discovers every member.
 ```
 
-Don't mix standalone and suite copies of the same Skill.
+Do not mix standalone and suite copies of the same Skill. If your host cannot
+install from GitHub, download the repository and copy each
+`packages/<name>/<name>/` Skill directory into the host's Skills location.
+The repository root and development sources are not installable Skills.
 
-If your host can't install directly from GitHub, download this repository and
-copy all the package directories inside it to the host's Skills folder. You
-end up with the same complete suite and the same requirements.
+### Upgrade or migrate an existing installation
 
-### Opt-in migration from the original Codex suite
+Choose the target suite explicitly. Preserve project settings and personal
+customizations, then replace duplicate installed copies with the target suite's
+complete packages. Remove only superseded Skills you have selected for removal.
+An upgrade is not permission to erase settings or unrelated Skills.
 
-This is a separate variant, not an in-place upgrade. Do not mix their packages
-or switch an active old implementation. First reach a reviewed, quiet commit
-boundary, preferably Work Item closure, and preserve required old closure proof
-in existing artifacts. If essential evidence cannot be retained, finish the Work
-Item before switching. Commit a changed tracked Plan before reload.
+When moving from an earlier Codex suite, first reach a reviewed,
+quiet commit boundary, preferably Work Item closure. Retain required acceptance
+evidence and commit a changed tracked Plan before reloading. If essential proof
+cannot be retained, finish that Work Item before switching.
 
-Only after explicitly selecting this variant's separate installation target:
-reload it, request Setup cleanup with complete chosen pairs, and commit a tracked
-configuration change under project checks before authorized continuation. An
-ignored configuration needs no commit. Installation proves neither migration,
-host-model selection nor reload. Keep the original suite available separately.
+Install the complete Mainloop suite from this repository, reload it, then ask
+Setup to show the existing project settings. If cleanup is required, explicitly
+request migration and choose the complete main pair and any ambiguous role
+pairs. Cleanup preserves Ask and unrelated settings. Commit a tracked settings
+change under the project's checks before authorized continuation. An ignored
+configuration needs no commit. Installation alone proves neither configuration
+migration, reload nor the active host model.
 
 
 
@@ -503,7 +533,8 @@ for continuation.
 <details>
 <summary>Development and builds</summary>
 
-Sources live under `members/`. Edit README fragments in `development/readme/`,
+Both suite editions share one maintained source and Plan. Sources live under
+`members/`. Edit README fragments in `development/readme/`,
 then run `python development/build_suite.py --write-readmes`. The manifest
 `suite.json` owns package membership and README composition.
 
@@ -525,6 +556,7 @@ this block and the development files.
 - **scoville-ask-for-codex**: [Source](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/members/scoville-ask-for-codex) | [Tests](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/members/scoville-ask-for-codex/development/tests) | [Notes](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/members/scoville-ask-for-codex/development/README.md)
 - **scoville-setup**: [Source](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/members/scoville-setup) | [Tests](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/members/scoville-setup/development/tests) | [Notes](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/members/scoville-setup/development/README.md)
 - **scoville-project-context-cleanup**: [Source](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/members/scoville-project-context-cleanup) | [Tests](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/development/instruction_tests) | [Notes](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/members/scoville-project-context-cleanup/development/README.md)
+- **scoville-skillwriter**: [Source](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/members/scoville-skillwriter) | [Tests](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/development/instruction_tests) | [Notes](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/members/scoville-skillwriter/development/README.md)
 
 ## License
 

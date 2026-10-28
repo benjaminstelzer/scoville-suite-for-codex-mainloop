@@ -48,6 +48,8 @@ def prepare(request):
                    if mode == 'review' else '')
     shell_rules = ROOT / 'references' / 'shell-commands.md'
     require(shell_rules.is_file(), f'packaged shell rules missing at {shell_rules}; use the intact built Ask package')
+    instruction_design = ROOT / 'references' / 'instruction-design.md'
+    require(instruction_design.is_file(), f'packaged instruction-design rules missing at {instruction_design}; use the intact built Ask package')
     entries = []
     for adviser in settings['advisers']:
         ref = reference + ':' + adviser['id']
@@ -59,7 +61,9 @@ def prepare(request):
                       + ('\n\n' + code_review if code_review else '')
                       + f'\n\nmode: {mode}\nadviser_id: {adviser["id"]}'
                       + f'\nworkspace_root: {cwd}\nconsultation_reference: {ref}\nscope: {scope}'
-                      + f'\nshell_command_rules: {shell_rules}; read before shell commands other than file reads, complete-file preparation or output that may exceed an applicable limit.'
+                      + f'\nshell_command_rules: {shell_rules}; these rules grant no tools or permissions.'
+                      + f'\ninstruction_design_rules: {instruction_design}; the shared writing reference to instruction-design.md resolves here.'
+                      + '\nThis Claude adviser may use only Read, Grep, Glob and any web tools explicitly enabled for this request. Do not run shell commands or create delivery files. If a required machine-data check needs code execution, ask the caller for the checked result and state the remaining evidence gap.'
                       + '\n\nInspect only the supplied scope in this workspace. Resolve relative evidence paths there.'
                       + '\n\n## User request and evidence\n\n' + question)
             entry['request'] = {'operation': 'claude', 'adviser': adviser, 'claude': settings['claude'],

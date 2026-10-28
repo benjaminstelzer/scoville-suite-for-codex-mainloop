@@ -3,7 +3,8 @@
 Use Plan for records and [dispatch](operations-dispatch.md) for helper inputs.
 The main thread owns implementation, required checks, records and commits.
 Preserve scope, stops, independent Decisions and unrelated work. An authorized
-correction stays on its affected original Step; optional ideas do not expand it.
+correction stays on its affected original Step; optional ideas and hypothetical
+hardening do not expand it.
 
 All Skills included in this suite must be installed and enabled. Use the
 applicable owner without checking sibling availability. Load only instructions
@@ -56,7 +57,7 @@ and required field names. Internal messages use only necessary labelled fields.
 | Implementation | Perform only this Step and required checks. Preserve completed effects. Finish or safely stop owned write, test and restore processes before review. Read required sources completely; reuse unchanged passing checks. |
 | Review decision | Establish completion, required checks and clear file, configuration and behavior effects. Use Git status/diff and actual observed effects. No change plus no open Step review needs no Step review; closure checks that Step. Do not invent a pass. |
 | Changed Step | Give a fresh Reviewer the SAME original Step, needed check/effect evidence and relevant complete open review results. The Reviewer independently inspects the full Step diff, relevant effects, dependencies, affected consumers and affected Acceptance; supplied focus does not limit this review. Risk changes depth, not the review duty. |
-| Correction | Retain unchanged objections and select the ONE affected original Step. Correct it, complete required checks and obtain a fresh review. Preserve relevant open findings and still-valid evidence. |
+| Correction | Retain unchanged objections and select the ONE affected original Step. Resolve each objection by a correction, by narrowing an unsupported claim, or by refuting it with evidence; complete required checks and obtain a fresh review that rechecks that answer. Preserve relevant open findings and still-valid evidence. |
 | Accepted change | After completion and required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Never stage foreign or unreviewed work. Failed or forbidden commit stops advancement. Confirm the resulting clean Git state; make no empty commit. |
 | Unchanged Step | Record actual completion without a Step review or ritual commit. Ordinary Plan maintenance adds no review phase. |
 

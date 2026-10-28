@@ -11,26 +11,6 @@ _spec = importlib.util.spec_from_file_location("shared_suite_builder", _SHARED)
 _module = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_module)
 
-# Keep the existing builder and runtime proof; only this variant's test asset differs.
-_shared_runtime_ci = _module.runtime_ci
-
-
-def runtime_ci():
-    module = _shared_runtime_ci()
-    shared_assets = module.assets
-
-    def assets():
-        result = shared_assets()
-        result['tests/test_runtime_helpers.py'] = (
-            _ROOT / 'development/runtime-tests/test_runtime_helpers.py').read_bytes()
-        return result
-
-    module.assets = assets
-    return module
-
-
-_module.runtime_ci = runtime_ci
-
 # Expose the same callable contract to suite tests.
 within = _module.within
 load = _module.load

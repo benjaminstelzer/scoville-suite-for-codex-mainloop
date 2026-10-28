@@ -35,7 +35,12 @@ those consumers, because a successful save alone says little about the next run.
 
 ## Compatibility
 
-Requires Codex with Python 3.11+. Fable, Astra, SOL or Opus (5.0+) are recommended. Luna 6 with High reasoning passed the selected comprehension and functional checks in Codex. Other routes and hosts remain unverified.
+Requires Codex and Python 3.11+.
+Targeted candidate-path tests with gpt-6.1-sol / low exercised actual show,
+schema-2 cleanup, partial-save helpers and one-time Ask resolution, preserving
+unrelated settings and leaving saved files unchanged on rejected or temporary
+choices, while adviser execution, installed discovery and actual host model
+binding were not tested.
 
 ## Install
 
@@ -59,8 +64,8 @@ without writing; an Ask-only save preserves the old Workflow form unchanged.
 
 ## Limitations
 
-Supported reasoning levels are validated by the actual consumer. Unrelated
-saves preserve valid special levels. Setup neither changes the host model nor
+Set offers low, medium, high and xhigh. Unrelated saves and migration preserve
+valid special levels; execution still depends on actual model support. Setup neither changes the host model nor
 starts agents, tests or Workflow. Cleanup changes no Plan or Codex settings.
 
 Native advisers, Reviewers and Explorers have no sidebar chats. Legacy
@@ -77,7 +82,7 @@ errors leave the file unchanged. Show never migrates.
 ## Sources
 
 - Ask and Workflow configuration files define the defaults and supported values.
-- [Scoville Suite source](https://github.com/benjaminstelzer/scoville-suite-for-codex).
+- [Scoville Suite source](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop).
 
 ## License
 

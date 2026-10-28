@@ -1,27 +1,56 @@
-# Mainloop source project
+# Suite project context
 
-This is the separate `scoville-suite-for-codex-mainloop` development repository.
-PLAN-0055 tracks the implemented architecture and remaining native acceptance.
+Scoville Suite owns checks and procedures. This file contains only
+project-specific source ownership, boundaries and release-test scope.
 
-- Author `suite.json`, `members/` and `development/readme/` here.
-- The original `../scoville-suite`, `../shared`, existing public distributions
-  and installed Skills are read-only for this project. Never push to upstream.
-- Reuse the existing builder through `development/build_suite.py` and the sibling
-  Shared tools. Do not create another builder. `development/shared/` is a generated
-  upstream snapshot, not an authoring source. For variant-specific shared runtime
-  changes, use project-owned member files through this manifest. The Workflow
-  `native_task_arguments.py` is owned here and adapted to the new roles.
-- `codex` is the default profile and its suite identity is this project's name.
-  `general` remains for inherited regression coverage, not publication.
-- Build staging for this variant is `skills/temp/release/mainloop/` under the
-  workspace's single release tree. Never overwrite existing Codex, general,
-  standalone, public or global installation targets. A future publication or
-  installation must use an explicitly selected separate target.
-- Generate README previews from their fragments. Keep required diagrams.
-- Choose checks from changed behavior. Require new runtime Actions only when
-  packaged Python or its Python CI tests change. Before a canonical source
-  commit, run `python development/check_all.py` and require exit 0.
-- Public delivery needs Changelogs and artifact checks. Do not create releases
-  or tags. Project creation alone authorizes no publication or manager migration.
+## Canonical sources
 
-Build entrypoints and provenance: `development/mainloop.md`.
+- `suite.json`: membership, visibility, package files, helper contracts,
+  README composition, family metadata and export destinations.
+- `members/`: canonical Skill sources and member development material,
+  not separate Git repositories.
+- Root Plan profile: suite planning. Member profiles: historical member records.
+- `suite.json.private_records`: internal native planning and test records excluded
+  from public source exports. Never use it to hide package or README dependencies.
+- `../shared/`: shared build tools and runtime-helper sources.
+  Suite-local copies, including `development/shared/`, are generated snapshots.
+- `development/readme/`: README fragments. Member READMEs are generated previews.
+  Each member's `description_fragments` owns its complete description.
+- `development/shared/instruction-writing.md`: Suite authoring rules for
+  AI-consumed content and public copy, generated from `../shared/instruction-writing.md`.
+
+## Project boundaries
+
+Work only on main. Do not create branches or Git worktrees. Publish only main.
+When a backup is needed, preserve the work in a verified Git bundle under the
+workspace's state/ directory.
+
+Plan Viewer source and native builds belong to the independent
+`projects/scoville-plan-viewer` repository. Suite builds contain Skills only.
+Do not maintain a Viewer source copy or native build workflow here.
+
+Installed Skills contain their own runtime dependencies. They depend on neither
+shared source directory and do not import installed siblings as helper libraries.
+
+GitHub-facing README and CHANGELOG wording uses Benjamin's voice.
+
+## Release-test scope
+
+Choose release tests from changed behavior and affected dependencies. Test a
+changed file and its consumers only where the change can affect their results.
+Require a new GitHub Actions runtime matrix only when packaged Python or its
+Python CI tests change. Reuse successful matrix evidence for unchanged Python;
+instructions, documentation, configuration and other non-Python changes need
+appropriate local checks, not another Actions run. Build-tool changes use local
+tests unless they change the packaged Python or Python CI tests.
+Check the current package structure,
+file completeness, generated copies and published artifacts separately.
+
+Fix failures at their narrowest responsible source. Keep shared instructions
+general and applicable to every consuming Skill. Tool and host mechanics belong
+in helpers or conditional host references; one project case is not a shared rule.
+
+Before each canonical source commit, run `python development/check_all.py`.
+Commit only on exit 0. This aggregate gate complements the focused checks above.
+Generated distributions use the verified build of that gated source. Include a
+Changelog entry in every changed distribution before its GitHub push.

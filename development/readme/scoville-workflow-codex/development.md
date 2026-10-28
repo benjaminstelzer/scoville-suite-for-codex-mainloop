@@ -1,9 +1,10 @@
 ## How it was developed
 
-This separate variant implements Plan, Coding and checks in the main thread.
-Only Explorer and fresh Reviewer roles are delegated. The original suite remains
-independently available; project migration is explicit, never an automatic upgrade.
+Mainloop keeps planning, coding and checks in the main chat. Only read-only
+Explorer and fresh Reviewer roles are delegated. It is the maintained Codex
+edition, sharing the same source project and Plan as the General suite.
 
-Sources and builds use the existing suite manifest and builder. Current technical
-and native acceptance evidence is kept in the development Plan; an earlier
-architecture's results do not establish this variant's behavior or savings.
+Targeted producer and receiver tests checked fresh exploration, same-handle
+follow-ups, Step review and full Work Item closure findings. Those tests checked
+the next permitted action, not a complete implementation-to-acceptance lifecycle.
+An earlier architecture's results do not establish Mainloop behavior or savings.

@@ -110,10 +110,10 @@ def run(root=ROOT):
             arguments = [str(path)] if path.is_file() else ['-m', 'unittest', 'discover', '-s', str(path)]
             check(name, arguments)
 
-    builder = root / 'development/build_suite.py'
+    builder = shared / 'build/build_suite.py'
     base = [str(builder), '--root', str(root)]
     check('source previews', [*base, '--check-sources'])
-    check('default README previews', [*base, '--check-readmes'])
+    check('general README previews', [*base, '--profile', 'general', '--check-readmes'])
 
     temporary_root = root.parents[2] / 'temp' / f'{date.today().isoformat()}-suite-check-all'
     try:

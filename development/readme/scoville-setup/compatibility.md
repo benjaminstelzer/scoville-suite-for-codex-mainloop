@@ -1,3 +1,8 @@
 ## Compatibility
 
-Requires Codex with Python 3.11+. Fable, Astra, SOL or Opus (5.0+) are recommended. Luna 6 with High reasoning passed the selected comprehension and functional checks in Codex. Other routes and hosts remain unverified.
+Requires Codex and Python 3.11+.
+Targeted candidate-path tests with gpt-6.1-sol / low exercised actual show,
+schema-2 cleanup, partial-save helpers and one-time Ask resolution, preserving
+unrelated settings and leaving saved files unchanged on rejected or temporary
+choices, while adviser execution, installed discovery and actual host model
+binding were not tested.

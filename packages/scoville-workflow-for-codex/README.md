@@ -5,7 +5,8 @@ corrections. Your current chat plans, codes and runs checks. Read-only Explorer
 and Reviewer subagents supply investigation and independent review.
 
 Assign a complete Plan or a bounded part. For a tiny fix, coordination may cost
-more than the fix. This variant is available only through its complete Codex suite.
+more than the fix. Workflow is available only through the complete Codex
+Mainloop suite.
 
 ## How it works
 
@@ -124,11 +125,9 @@ Reviewer runs no project tests. All roles follow the current user's language.
 - **Continuity:** Preserve actual effects, open reviews and stop position through
   compaction in the same chat. No automatic successor or capacity changes.
 
-An independently established minimum Codex version remains open. CLI
-0.164.0-alpha.11.1 is an observed local version, not a proven minimum. Optional
-native type selection and close are not required; use them only when exposed
-and compatible. `agents.max_concurrent_threads_per_session` is the current host
-key; this developer's 256 is a local setting, not a Codex default.
+No minimum Codex version has been independently established. Optional native
+type selection and close are not required. Use them only when exposed and
+compatible. Agent capacity depends on the host's configured limit.
 
 Workflow activation authorizes accepted-Step commits subject to user and project
 restrictions. See [operations](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-workflow-for-codex/scoville-workflow-for-codex/references/operations.md).
@@ -142,36 +141,36 @@ need comparable native runs; source size alone proves no saving.
 
 ## How it was developed
 
-This separate variant implements Plan, Coding and checks in the main thread.
-Only Explorer and fresh Reviewer roles are delegated. The original suite remains
-independently available; project migration is explicit, never an automatic upgrade.
+Mainloop keeps planning, coding and checks in the main chat. Only read-only
+Explorer and fresh Reviewer roles are delegated. It is the maintained Codex
+edition, sharing the same source project and Plan as the General suite.
 
-Sources and builds use the existing suite manifest and builder. Current technical
-and native acceptance evidence is kept in the development Plan; an earlier
-architecture's results do not establish this variant's behavior or savings.
+Targeted producer and receiver tests checked fresh exploration, same-handle
+follow-ups, Step review and full Work Item closure findings. Those tests checked
+the next permitted action, not a complete implementation-to-acceptance lifecycle.
+An earlier architecture's results do not establish Mainloop behavior or savings.
 
 ## Compatibility
 
-Codex-only within this complete Mainloop suite. Required Python, Git and native
-tools are listed above. Configuration and a requested pair alone do not prove
-the active host pair. Missing or mismatching native evidence stops coding.
-The tool contract, local CLI version and minimum supported version are distinct.
-
-Observed on 2026-10-27: Sol 6.1/high main and Explorer with xhigh Reviewers followed
-the tested workflow. Luna 6/medium main produced correct code but violated the
-delegation protocol in its tested run. This is not a guarantee for other runs.
+Requires the complete Codex Mainloop suite and the Python, Git and native tools
+listed above, with evidence that the active main pair matches the configured pair.
+Targeted candidate-path tests in Codex with gpt-6.1-sol / low exercised actual
+Explorer and Reviewer helper outputs, unchanged native results and fresh main
+receivers selecting the original Step for correction and retaining closure findings,
+while full correction-review-commit execution, successful closure, installed
+discovery and independent backend model identity remain unverified.
 
 ## Install
 
 Install and enable every Skill in the suite. Each applies to its own task scope.
 
 Use the packages from
-[Scoville Suite for Codex](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/packages).
+[Scoville Suite for Codex Mainloop](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/packages).
 Workflow only comes with the suite, and every Skill has to come from this
 repository's own `packages/<name>/<name>/` directory. Don't swap in packages
 from the individual repositories, and don't continue if members are missing.
-Use the suite's prompt for a new installation, or its upgrade prompt if you
-already have one installed.
+Use the suite's new-installation prompt, or its explicit migration instructions
+to move an earlier installation to the maintained Mainloop suite.
 
 
 

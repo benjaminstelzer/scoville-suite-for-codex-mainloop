@@ -1,26 +1,36 @@
 # Changelog
 
-
-
 ## Unreleased - 2026-10-28
+
+- Add Scoville Skillwriter as a public standalone Skill and Suite member, with one shared instruction-design source for agent-facing prompts.
+- Target current frontier models and use gpt-6.1-sol with low reasoning for model tests; keep historical evidence separate from new results.
+- Clarify authoring, maintenance, ownership and output rules without changing fixed result schemas or helper interfaces.
+
+- Consolidate Mainloop into the maintained Suite source: implement in the current chat, use read-only Explorers and fresh independent Reviewers, and migrate legacy settings explicitly through Setup.
+- Publish the Codex edition as scoville-suite-for-codex-mainloop; retire the separate multiworker distribution.
+
+
+- Keep outcome-based Acceptance rules available in standalone and suite Code packages.
+
+- Assess algorithmic costs within reachable input bounds; correct an unsupported complexity claim without demanding an unnecessary algorithm change.
+
+- Count failures observed during normal supported use, normal-use failures and reachable attack paths as credible; treat other injected faults, constructed interleavings and worst-case inputs only as possible failures, not as a reason for new safeguards. Prefer narrowing a claim or removing the risky state, remove replaced paths in the same change, and require reproduction or a trace through normal supported use or a reachable attack path before fixing audit or review findings.
+- Count an unnecessary mechanism with added state, work or maintenance as a concrete review defect.
+- Keep Acceptance free of restated guarantees the work cannot plausibly break, and require a separate requirement before forbidding removal of an existing mechanism.
+
+
+
+- Let a correction resolve an objection by fixing it, narrowing an unsupported claim or refuting it with evidence; hypothetical hardening does not expand a Step.
+
 
 - Independently review the complete assigned diff, including affected consumers and existing assertions, and judge whether supplied checks distinguish the claimed result from the relevant failure. Supplied focus does not replace that review.
 - Avoid repeating Explorer sources and limits across result fields while preserving distinct findings.
 
 ## Unreleased - 2026-10-27
 
-- Show successful helper preparation before native child calls in existing flows; clarify file/stdin context transport without growing the affected Skill texts.
-- Bound Explorer reuse to the same investigation; independent requests receive a fresh Explorer, with no new management mechanism.
-- Document the observed Sol workflow combination and the Luna/Medium delegation limit without promising model compliance.
-- Implement Mainloop planning, coding and required checks in the current thread; delegate only read-only Explorer and a fresh Reviewer for every review.
-- Replace implementation routing and context thresholds with fixed main/review/explore pairs; verify the own active main pair and retain complete Decision bindings.
-- Add explicit atomic Setup cleanup for old settings, preserving Ask and unrelated fields; retain independent Plan syntax and guarantees.
-- Integrate variant-owned runtime test assets through the existing builder and document the new loop in four diagrams. Original Suite, Shared and installations remain separate.
-
-- Create the separate Mainloop development target using the existing builder; import the approved architecture Plan without changing the original Suite or its installation targets.
 - Require code reviews to inspect simplicity, maintainability, foreseeable extension and clarity for later agents. Trace loops, recursion and scanning calls for avoidable nonlinear repeated work without requiring benchmarks.
 - Apply the same static review to UI construction, updates and the final source diff.
-- Supply the complete code-review policy to every fresh Reviewer without adding a review phase.
+- Supply the complete code-review policy to fresh Reviewers and retain it on reuse without adding a review phase.
 - Include the complete code-review policy in native and Claude review prompts. Consultation prompts stay unchanged.
 
 ## Unreleased - 2026-10-20

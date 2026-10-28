@@ -18,7 +18,7 @@ class MainloopDispatchTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location('mainloop_dispatch_builder', ROOT / 'development/build_suite.py')
         builder = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(builder)
-        config = builder.load(ROOT)
+        config = builder.load(ROOT, 'codex')
         member = next(m for m in config['members'] if m['name'] == 'scoville-workflow-for-codex')
         for relative, data in builder.payload(ROOT, member, config).items():
             path = Path(cls.package.name) / relative

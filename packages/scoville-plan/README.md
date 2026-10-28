@@ -31,7 +31,7 @@ shows these records on Windows, macOS and Linux.
   Changes of direction preserve completed work, binding constraints and material decisions.
 
 Edit records from one session at a time. Concurrent edits need reconciliation.
-See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex/blob/main/packages/scoville-plan/scoville-plan/SKILL.md).
+See the [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-plan/scoville-plan/SKILL.md).
 
 ## What it costs
 
@@ -45,7 +45,13 @@ work they explain, without turning routine updates into more work items.
 
 ## Compatibility
 
-Requires Codex, repository read/write access and Python 3.11+ for the bundled helpers. Fable, Astra, SOL or Opus (5.0+) are recommended. Luna 6 with High reasoning passed the selected comprehension and functional checks in Codex. Other routes and hosts remain unverified.
+Requires Codex, repository read/write access and Python 3.11+ for the bundled helpers.
+Targeted candidate-path tests in Codex with gpt-6.1-sol / low produced and
+maintained valid native records, preserved open choices and non-repeatable
+evidence, honored an explicit opt-out, selected the initial todo item for a new
+profile and retained draft/idle state when explicitly requested, while broader
+lifecycle, implementation acceptance, other hosts and installed discovery remain
+unverified.
 
 ## Install
 
@@ -66,10 +72,11 @@ The host needs permission to write to its Skills directory. The
 
 ### Model choices for Workflow
 
-When using Scoville Workflow for Codex, you can request a model and reasoning
-level for a Step. Otherwise Workflow uses its configured routing. Scoville
-Setup shows or saves those settings. Unsupported model/effort combinations
-stop the affected operation instead of silently changing your choice.
+Scoville Workflow for Codex Mainloop uses fixed main, review and explore model
+and reasoning pairs. Setup shows or saves those project settings. An existing
+Step execute annotation is retained and compared with the main pair. A conflict
+requires a decision rather than dispatching that Step through a separate route.
+Unsupported choices stop the affected operation without silently changing them.
 
 ## How to use
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased - 2026-10-28 - Adviser prompt clarity
+
+- Route composed adviser questions and follow-ups to the shared instruction-design rules while preserving literal questions and transport contracts.
+- Resolve the shared instruction-design reference to its packaged absolute path in native and Claude assignments; reject an incomplete package before dispatch.
+- Dispatch independent adviser routes within host limits without a native-first requirement; show collection branches in one flow.
+- State the no-tests adviser boundary and native delivery exception consistently, and remove repeated completion guidance.
+- Clarify Claude's read-tool-only prompt, including caller-supplied machine-data checks when code execution is required.
+
+## Unreleased - 2026-10-28
+
+- Assess algorithmic costs within reachable input bounds; correct an unsupported complexity claim without demanding an unnecessary algorithm change.
+
+- Count an unnecessary mechanism with added state, work or maintenance as a concrete review defect.
+
 ## Unreleased - 2026-10-27
 
 - Require code reviews to inspect simplicity, maintainability, foreseeable extension and clarity for later agents. Trace loops, recursion and scanning calls for avoidable nonlinear repeated work without requiring benchmarks.

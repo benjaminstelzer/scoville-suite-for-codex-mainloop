@@ -13,7 +13,12 @@ a failed native route with CLI.
 ## Prepare and run
 
 Keep the UTF-8 question and generated request files in the workspace temporary
-area outside the reviewed tree. Generate one request per selected Claude adviser:
+area outside the reviewed tree.
+
+When composing questions or follow-ups, apply the
+[agent instruction design](instruction-design.md) rules. The helper preserves
+the literal question; pass its generated request unchanged to execution.
+Generate one request per selected Claude adviser:
 
 ```text
 python "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-root>" --adviser claude --question-file "<temporary>/question.txt" --mode review --scope "<exact scope>" --reference "<consultation reference>" --output-file "<temporary>/claude-request.json"
@@ -57,6 +62,9 @@ override. Read web-tools and timeout defaults from the imported settings in
 Customizations are disabled by default. Local launch does not mean offline;
 Claude and optional web tools communicate with their services. These tool
 restrictions do not justify a claim of sandbox isolation.
+The adviser cannot run shell commands or create delivery files. If a required
+machine-data check needs code execution, supply checked results from the caller
+or retain the resulting evidence gap.
 
 A positive finite timeout_seconds on the request overrides its default for
 that call.

@@ -88,12 +88,29 @@ def save_validated(project_root: Path, current: dict, proposed: dict, sections) 
     return {'saved': True, 'effective': values}
 
 
+def validate_setup_choices(value: dict, path: str = "patch") -> None:
+    for key, item in value.items():
+        field = f"{path}.{key}"
+        if key in {"effort", "reasoning"} and item not in ("low", "medium", "high", "xhigh"):
+            raise ValueError(
+                f"{field}={type(item).__name__} is unsupported by Setup; choose low, medium, high or xhigh, "
+                "or edit .scoville/config.json manually when another level is required"
+            )
+        if isinstance(item, dict):
+            validate_setup_choices(item, field)
+        elif isinstance(item, list):
+            for index, entry in enumerate(item):
+                if isinstance(entry, dict):
+                    validate_setup_choices(entry, f"{field}[{index}]")
+
+
 def apply(project_root: Path, patch: dict) -> dict:
     if not isinstance(patch, dict) or not patch or set(patch) - {'ask', 'workflow'}:
         raise ValueError("set requires a nonempty JSON object containing only ask and/or workflow")
     for key, value in patch.items():
         if not isinstance(value, dict):
             raise ValueError(f"patch.{key} must be a JSON object")
+    validate_setup_choices(patch)
     current = read_config(project_root)
     if 'workflow' in patch:
         if needs_cleanup(current.get('workflow', {})):

@@ -73,6 +73,12 @@ with the fixed pair; do not emulate it or install custom agent files.
 
 ## Build and deliver child assignments
 
+Before preparing an assignment or review input, apply the
+[agent instruction design](instruction-design.md) rules at this producing step.
+Keep original Plan text and complete native finals unchanged; include the checks,
+effects, attribution and limits the selected role needs. The helper supplies the
+role and result contracts; do not add the authoring workflow to its message.
+
 ```text
 python "<workflow>/scripts/build_dispatch_prompt.py" --project-root "<absolute-workspace>" --plan PLAN-NNNN --unit W-001/step-2 --role reviewer --communication-language "<language>" --format create --project-name "<project>" --agent-number <number> --supplemental-context -
 ```

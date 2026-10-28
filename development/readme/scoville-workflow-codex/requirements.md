@@ -15,11 +15,9 @@
 - **Continuity:** Preserve actual effects, open reviews and stop position through
   compaction in the same chat. No automatic successor or capacity changes.
 
-An independently established minimum Codex version remains open. CLI
-0.164.0-alpha.11.1 is an observed local version, not a proven minimum. Optional
-native type selection and close are not required; use them only when exposed
-and compatible. `agents.max_concurrent_threads_per_session` is the current host
-key; this developer's 256 is a local setting, not a Codex default.
+No minimum Codex version has been independently established. Optional native
+type selection and close are not required. Use them only when exposed and
+compatible. Agent capacity depends on the host's configured limit.
 
 Workflow activation authorizes accepted-Step commits subject to user and project
 restrictions. See [operations](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-workflow-for-codex/scoville-workflow-for-codex/references/operations.md).

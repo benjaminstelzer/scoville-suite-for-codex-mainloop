@@ -20,7 +20,7 @@ class FixedPairTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location('mainloop_test_builder', ROOT / 'development/build_suite.py')
         builder = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(builder)
-        config = builder.load(ROOT)
+        config = builder.load(ROOT, 'codex')
         member = next(m for m in config['members'] if m['name'] == 'scoville-workflow-for-codex')
         for relative, content in builder.payload(ROOT, member, config).items():
             path = Path(cls.package.name) / relative
@@ -108,6 +108,26 @@ class FixedPairTests(unittest.TestCase):
                 result = self.invoke('--role', 'main', '--session-path', str(self.session))
                 self.assertEqual(1, result.returncode)
                 self.assertFalse(json.loads(result.stdout)['valid'])
+
+    def test_native_proof_failures_do_not_fall_back_to_an_older_valid_pair(self):
+        for tail in (b'{"type":"turn_context"', b'{"type":"turn_context","payload":invalid}\n'):
+            with self.subTest(tail=tail):
+                self.write_session()
+                with self.session.open('ab') as stream:
+                    stream.write(tail)
+                failed = self.invoke('--role', 'main')
+                self.assertEqual(1, failed.returncode)
+                self.assertFalse(json.loads(failed.stdout)['valid'])
+        self.write_session()
+        duplicate = self.sessions / 'duplicate-main-1.jsonl'
+        duplicate.write_bytes(self.session.read_bytes())
+        self.assertEqual(1, self.invoke('--role', 'main').returncode)
+        # The retained explicit identity disambiguates discovery without weakening its checks.
+        self.assertEqual(0, self.invoke('--role', 'main', '--session-path', str(self.session)).returncode)
+        duplicate.unlink()
+        with patch.dict(os.environ, CODEX_THREAD_ID=''):
+            self.assertEqual(1, self.invoke('--role', 'main').returncode)
+        self.assertEqual(0, self.invoke('--role', 'main').returncode)
 
     def test_reverse_reader_preserves_large_records_without_repeating_bytes(self):
         self.write_session()

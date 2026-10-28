@@ -13,7 +13,7 @@ time. It delegates only these roles:
 | Role | Assignment | Rights and lifetime |
 | --- | --- | --- |
 | Explorer | Investigate questions, ideas and planning preparation; return findings and proposals. | Read only; no tests or Plan writes. Reuse this thread's Explorer only for the same investigation or a follow-up building on its findings, while idle with unchanged pair and rules. An independent request gets a fresh Explorer. |
-| Reviewer | Independently review the selected changed Step or the completed Work Item. | Read only; no tests or Plan writes. Fresh for EVERY review, including correction, missing evidence and repeated closure. |
+| Reviewer | Independently review the selected changed Step or the completed Work Item. | Read only; no tests or Plan writes. Fresh for every review, including correction, missing evidence and repeated closure. |
 
 Only necessary oversized-result delivery under the shared procedure permits
 temporary writes by read-only roles. Do not modify the review's sources or
@@ -56,49 +56,49 @@ Before a new run, require the clean-Git gate in operations. An authorized
 continuation of the same started work reconciles its actual changes and
 processes. Both require the main-pair check; ordinary successive Steps do not.
 
-## Step loop
+## Step and review
 
 ```mermaid
 flowchart TD
   ready["Check activation, Git state and fixed main pair"] --> select["Select ONE original Step; save its start"]
   select --> original["Helper validates start and returns original task"]
-  original --> code["Main thread: implement and finish required checks"]
-  code --> quiet["Establish write and process quiescence"]
-  quiet --> complete{"Step complete; checks met; effects clear?"}
-  complete -->|no or unclear| blocked["Resolve prerequisite; keep work open"]
+  original --> code["Main: implement; finish required checks and owned processes"]
+  code --> complete{"Step complete; checks met; effects clear?"}
+  complete -->|no or unclear| blocked["Resolve prerequisite; keep Step open"]
   complete -->|yes| changes{"File, config or behavior changes; or open Step review?"}
-  changes -->|yes| review["Helper: SAME original Step and required evidence"]
-  review -->|success| spawn["Fresh Reviewer from unchanged returned arguments"]
+  changes -->|no| unchanged["Record completion without a review pass or empty commit"]
+  changes -->|yes| review["Helper: SAME Step and required evidence"]
   review -->|failure| blocked
+  review -->|success| spawn["Spawn fresh Reviewer with unchanged returned arguments"]
   spawn --> result{"Review result?"}
   result -->|changes_requested| original
   result -->|blocked| blocked
   result -->|pass| commit["Record progress; commit accepted versionable work"]
-  changes -->|no| unchanged["Record completion; invent no review pass or empty commit"]
-  commit -->|success or no versionable changes| more{"All Steps and required Step reviews complete?"}
   commit -->|failed or forbidden| blocked
-  unchanged --> more
-  more -->|no; next Step authorized| select
+  commit -->|success or no versionable changes| accepted["Continue at Work Item control"]
+  unchanged --> accepted
+```
+
+## Work Item control
+
+```mermaid
+flowchart TD
+  accepted["Step completed through Step and review"] --> more{"All Steps and required Step reviews complete?"}
+  more -->|no; next Step authorized| next["Return to Step and review for next original Step"]
   more -->|no; scope ends| stop["Save allowed owned progress; stop with item open"]
   more -->|yes| closure["Helper: ALL original Steps and FULL Acceptance"]
-  closure -->|success| closure_spawn["Fresh Reviewer from unchanged returned arguments"]
-  closure -->|failure| blocked
-  closure_spawn --> final{"Closure result?"}
-  final -->|changes_requested| affected["Select ONE affected Step; preserve open findings"]
-  affected --> original
-  final -->|blocked| blocked
-  final -->|pass| accept["Accept Work Item; commit coherent records; continue authorized scope"]
+  closure -->|failure| blocked["Resolve prerequisite; keep Work Item open"]
+  closure -->|success| spawn["Spawn fresh Reviewer with unchanged returned arguments"]
+  spawn --> result{"Closure result?"}
+  result -->|changes_requested| affected["Select ONE affected Step; preserve open findings; return to Step and review"]
+  result -->|blocked| blocked
+  result -->|pass| accept["Accept Work Item; commit coherent records; continue authorized scope"]
 ```
 
 Use Explorer for questions, ideas and planning preparation; the main thread
 answers the user and writes authorized Plans. Handle stop, resume and known
 progress directly. A missing Step for unchanged binding Acceptance follows
 operations; it does not authorize changing scope.
-
-Before acting, check authority, the original task, role and prerequisites.
-Before reporting, check relevant evidence, required fields and the user's
-language. Correct mismatches; do not print a checklist transcript. Missing
-evidence is a named gap, not a pass. Waiting for a child is working, not blocked.
 
 ## Runtime helpers
 

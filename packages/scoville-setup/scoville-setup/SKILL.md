@@ -40,24 +40,28 @@ python "<setup-skill-directory>/scripts/setup.py" cleanup --project-root "<proje
 | --- | --- |
 | show | Read only. Show effective fixed pairs or resolve old routes with cleanup_required. Create no file. |
 | set | Save only explicitly requested fields. An old Workflow form requires cleanup before a Workflow save; Ask-only saves leave it unchanged. |
-| cleanup | Explicitly migrate old Workflow settings to schema 2. Ask and foreign values remain unchanged. An unchanged valid configuration returns saved: false. |
+| cleanup | Migrate old Workflow settings to schema 2 only when explicitly authorized. Ask and foreign values remain unchanged. An unchanged valid configuration returns saved: false. |
+| One-time Ask override | Load Scoville Ask for Codex and read its `references/configuration.md` for read-only settings resolution. Report resolved values without saving or starting advisers. |
 
 Generate stdin JSON with a serializer such as Python `json.dumps` or PowerShell
-`ConvertTo-Json -Depth 10 -Compress`. In PowerShell, set
-`$OutputEncoding = [System.Text.UTF8Encoding]::new($false)` before piping UTF-8.
+`ConvertTo-Json -Depth 10 -Compress`. Use the UTF-8 stdin procedure in the
+loaded [shell command rules](references/shell-commands.md).
 Use `ask`, `workflow` or both for set; use only `workflow` for cleanup.
-Include only requested changes. Do not hand-write JSON or silently substitute
-values. The helper validates changed sections before saving. An invalid choice
+Include only requested changes. Set offers low, medium, high and xhigh; keep
+existing special levels on unrelated saves and migration. Do not hand-write JSON
+or silently substitute values. The helper validates changed sections before saving. An invalid choice
 does not authorize a partial save.
 
 Check the returned file, saved flag and requested effective values before
-reporting success. A mismatch or error needs its concrete diagnostic, not an
-automatic broader save. `saved: false` says this operation wrote nothing; it
+reporting success. Report a mismatch or error with its concrete diagnostic;
+do not automatically repeat or broaden the save. `saved: false` says this operation wrote nothing; it
 does not mean overrides are absent. Set returns only changed effective sections.
 
 ## Workflow pairs and migration
 
-Schema 2 has `main`, `review` and `explore`, each with `model` and `reasoning`.
+Schema 2 has fixed `main`, `review` and `explore` pairs, each with `model` and
+`reasoning`. For set, patch only requested fields, such as
+`workflow.review.reasoning`. Cleanup choices supply complete pairs.
 Defaults come from [Workflow](assets/workflow.toml); do not copy their values
 into these instructions. The host controls the actual main-thread model.
 Saving its required pair does not change or verify the host model.
@@ -73,8 +77,9 @@ flowchart TD
   unique -->|no| choose["Obtain explicit pairs for ambiguous roles"]
   inherit --> validate["Validate all three complete pairs"]
   choose --> validate
-  validate -->|valid| save["Save schema 2; retire old Workflow fields"]
-  validate -->|invalid or incomplete| stop["Report the missing choice; save nothing"]
+  validate --> valid{"All pairs valid and complete?"}
+  valid -->|yes| save["Save schema 2; retire old Workflow fields"]
+  valid -->|no| stop["Report invalid or missing choices; save nothing"]
 ```
 
 Never derive main from execute. Explorer candidates use fieldwise inheritance
@@ -93,10 +98,10 @@ Claude fields are `max_budget_usd`, `session_persistence`, `customizations`,
 cap, not charges, provider limits or timeouts. Preserve existing `ask.pin_threads`
 on unrelated saves; it has no effect on native advisers.
 
-For a one-time Ask override, use Ask for Codex's read-only settings resolution
-under `references/configuration.md`. Show the resolved values without starting
-advisers or saving unrequested settings. Setup never starts Workflow, installs
-Skills, publishes packages or creates a monitor.
+Keep a one-time choice in the request or Plan Step unless the user explicitly
+asks to save it. Change saved settings between runs. Setup never starts advisers
+or Workflow, installs or updates Skills, publishes packages, creates a monitor
+or adds another configuration system.
 
 ## Runtime helpers
 

@@ -28,7 +28,7 @@ fix acquires its own framework.
 
 Keep personal conventions outside the installed Skill so updates preserve them.
 See the [customization guide](https://github.com/benjaminstelzer/scoville-code#your-own-conventions)
-and [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex/blob/main/packages/scoville-code/scoville-code/SKILL.md).
+and [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-code/scoville-code/SKILL.md).
 
 ## What it costs
 
@@ -42,9 +42,14 @@ evidence. Selected comparisons do not establish a general performance gain.
 
 ## Compatibility
 
-Developed for Codex and Claude Code with reference access and a shell for the project's own checks. Fable, Astra, SOL or Opus (5.0+) are recommended. Luna 6 with High reasoning has passing results in selected practical Code tasks in Codex, but some practical checks and one abstract instruction-recall check did not pass. These checks do not establish reliable use across Code tasks or on other model routes or hosts.
-
-Python 3.11+ and the bundled text-size checker are required for size checks.
+Requires Codex desktop, native agents, the complete suite, reference
+access and a shell for project checks, with Python 3.11+ and the bundled checker
+for size checks.
+Targeted candidate-path tests in Codex with gpt-6.1-sol / low exercised a wording
+edit, an actual calculator correction, source-based complexity review and an
+unchanged review consumed by a fresh manager, while an intentionally failing
+check remained failed and broader model, host and installed-discovery behavior
+remain unverified.
 
 ## Install
 

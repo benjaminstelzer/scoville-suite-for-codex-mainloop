@@ -63,11 +63,11 @@ settings, create Codex chats or assume a `close_agent` tool exists.
 
 Never count a question or failure as a completed review.
 
-Once its complete native final is received, send no routine acknowledgement,
-closure message or keepalive to the completed adviser. It has ended its turn.
+After a complete native final, retain the handle without routine acknowledgements,
+closure messages or keepalives. It has ended its turn.
 Retaining a handle does not keep the turn active or prove a host slot is free.
 Necessary follow-ups use the targeted route below, not queued send_message.
-If a necessary message targets an agent whose state is unclear, check once with
+If a necessary follow-up targets an agent whose state is unclear, check once with
 `collaboration.list_agents`, `path_prefix` set to its retained canonical task
 path. A completion race remains possible; add no polling loop.
 

@@ -79,13 +79,15 @@ class AskBehaviorTests(unittest.TestCase):
                 (root / 'references/writing.md').write_bytes((PACKAGE / 'references/writing.md').read_bytes())
                 (root / 'references/code-review.md').write_bytes((PACKAGE / 'references/code-review.md').read_bytes())
                 (root / 'references/shell-commands.md').write_bytes((PACKAGE / 'references/shell-commands.md').read_bytes())
+                (root / 'references/instruction-design.md').write_bytes((PACKAGE / 'references/instruction-design.md').read_bytes())
                 self.assertEqual('claude', ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']['operation'])
 
     def test_claude_conditional_shell_reference_is_required_and_absolute(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'references').mkdir()
-            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/code-review.md'):
+            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/code-review.md',
+                         'references/instruction-design.md'):
                 (root / name).write_bytes((PACKAGE / name).read_bytes())
             shell = root / 'references/shell-commands.md'
             with mock.patch.object(ask, 'ROOT', root):
@@ -100,7 +102,8 @@ class AskBehaviorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'references').mkdir()
-            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/shell-commands.md'):
+            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/shell-commands.md',
+                         'references/instruction-design.md'):
                 (root / name).write_bytes((PACKAGE / name).read_bytes())
             with mock.patch.object(ask, 'ROOT', root):
                 with self.assertRaisesRegex(ValueError, 'code-review rules.*code-review.md'):
@@ -111,6 +114,41 @@ class AskBehaviorTests(unittest.TestCase):
                 (root / 'references/code-review.md').write_text(quality, encoding='utf-8')
                 corrected = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']
                 self.assertEqual(1, corrected['prompt'].count(quality))
+
+    def test_relocated_claude_instruction_design_resolves_outside_evidence_workspace(self):
+        with tempfile.TemporaryDirectory(prefix='Ask relocated ä ') as directory:
+            root = Path(directory) / 'relocated package'
+            evidence = Path(directory) / 'evidence workspace'
+            (root / 'references').mkdir(parents=True)
+            evidence.mkdir()
+            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md',
+                         'references/shell-commands.md', 'references/code-review.md',
+                         'references/instruction-design.md'):
+                (root / name).write_bytes((PACKAGE / name).read_bytes())
+            design = root / 'references/instruction-design.md'
+            question = 'Keep this literal: café; "quotes".\n'
+            with mock.patch.object(ask, 'ROOT', root):
+                for mode in ('review', 'consultation'):
+                    with self.subTest(mode=mode):
+                        request = ask.prepare(prepare_request([ADVISERS[1]], cwd=str(evidence),
+                                              mode=mode, question=question))['entries'][0]['request']
+                        line = next(line for line in request['prompt'].splitlines()
+                                    if line.startswith('instruction_design_rules: '))
+                        supplied = Path(line.split(': ', 1)[1].split(';', 1)[0])
+                        self.assertTrue(supplied.is_absolute())
+                        self.assertEqual(design.resolve(), supplied)
+                        self.assertEqual(design.read_bytes(), supplied.read_bytes())
+                        self.assertNotIn(design.read_text(encoding='utf-8'), request['prompt'])
+                        self.assertTrue(request['prompt'].endswith(question))
+                        self.assertEqual(str(evidence), request['cwd'])
+                design.unlink()
+                for mode in ('review', 'consultation'):
+                    with self.subTest(missing_mode=mode):
+                        with self.assertRaisesRegex(ValueError, 'instruction-design rules missing.*instruction-design.md'):
+                            ask.prepare(prepare_request([ADVISERS[1]], cwd=str(evidence), mode=mode))
+                design.write_bytes((PACKAGE / 'references/instruction-design.md').read_bytes())
+                request = ask.prepare(prepare_request([ADVISERS[1]], cwd=str(evidence)))['entries'][0]['request']
+                self.assertEqual('claude', request['operation'])
 
     def test_invalid_nested_timeout_does_not_echo_private_value(self):
         marker = 'TEST_PRIVATE_VALUE_NOT_FOR_DIAGNOSTICS'
