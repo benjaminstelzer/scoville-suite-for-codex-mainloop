@@ -145,9 +145,9 @@ Return pass only after the assigned review found no unresolved defect or require
               if role == 'reviewer' else
               """status: done | blocked
 answer: <answer, recommendation, or planning proposals with scope and open questions>
-evidence: <decisive source locations>
+evidence: <decisive source locations not already cited in answer, or none>
 blocker: <only for blocked: exact missing prerequisite or decision>
-limits: <material limits, or none>
+limits: <material limits not already stated in answer, or none>
 This is exploration, not review acceptance.""")
     return ['Return only these minimal labelled fields, with no narration:', fields,
             'Return the complete result through your native final once, then stay inactive. Do not send a duplicate result.']
@@ -238,10 +238,10 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
     else:
         lines.append((skill / 'references/code-review.md').read_text(encoding='utf-8'))
         lines.extend([
-            'Use only the review mode selected by the Task line. This is a fresh review, including corrections and evidence follow-ups; retain relevant open findings supplied below.',
-            'Step review: inspect this original Step, its actual diff, relevant effects and affected Acceptance. Use Git status, git diff HEAD and necessary sources and supplied check/effect evidence. Match depth to risk. Do not expand to other Steps, the whole Plan or unrelated changes. Manager-owned Plan records are not implementation changes. Foreign or unattributed changes prevent pass; name the gap. Read unchanged files only for necessary dependencies.',
+            'Use only the review mode selected by the Task line. Independently inspect the complete in-scope diff and its affected consumers, including existing assertions of changed behavior, for defects and regressions; supplied focus and conclusions do not replace this review. This is a fresh review, including corrections and evidence follow-ups; retain relevant open findings supplied below.',
+            'Step review: inspect this original Step, its actual diff, relevant effects and affected Acceptance. Use Git status, git diff HEAD and necessary sources and supplied check/effect evidence. Match depth to risk. Do not expand to other Steps, the whole Plan or unrelated changes. Manager-owned Plan records are not implementation changes. Foreign or unattributed changes prevent pass; name the gap. Read unchanged files only for necessary dependencies and affected consumers.',
             'Closure review: check EVERY original Step and FULL Work Item Acceptance against current sources and necessary evidence. Use the Git range from the Work Item start commit where source preservation matters. Do not expand into an unrelated audit. Give concise coverage; missing implementation with no matching Step uses affected Step: none.',
-            'Git does not prove behavior, non-file effects or ignored outputs. Evaluate supplied checks against their claims. For generated outputs, current successful generation and observed expected outputs suffice unless the Step, Acceptance, project contract or a concrete defect requires content inspection. Missing required evidence returns blocked; an actual defect returns changes_requested. Do not rerun tests or treat earlier coverage as a current pass.',
+            'Git does not prove behavior, non-file effects or ignored outputs. Evaluate whether supplied checks exercise the required behavior on the actual code path and could detect its failure. A passing check of an incidental implementation detail does not prove that behavior. For generated outputs, current successful generation and observed expected outputs suffice unless the Step, Acceptance, project contract or a concrete defect requires content inspection. Missing required evidence returns blocked; an actual defect returns changes_requested. Do not rerun tests or treat earlier coverage as a current pass.',
             'This Reviewer receives no further assignment. After the complete native final, the main thread may close it if that native operation is available.',
         ])
     lines.extend(result_contract(role))

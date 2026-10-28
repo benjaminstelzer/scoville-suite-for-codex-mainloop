@@ -2,6 +2,11 @@
 
 
 
+## Unreleased - 2026-10-28
+
+- Independently review the complete assigned diff, including affected consumers and existing assertions, and judge whether supplied checks distinguish the claimed result from the relevant failure. Supplied focus does not replace that review.
+- Avoid repeating Explorer sources and limits across result fields while preserving distinct findings.
+
 ## Unreleased - 2026-10-27
 
 - Show successful helper preparation before native child calls in existing flows; clarify file/stdin context transport without growing the affected Skill texts.

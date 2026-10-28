@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased - 2026-10-28
+
+- Independently review the complete assigned diff, including affected consumers and existing assertions, and judge whether supplied checks distinguish the claimed result from the relevant failure. Supplied focus does not replace that review.
+- Avoid repeating Explorer sources and limits across result fields while preserving distinct findings.
+
 ## Unreleased - 2026-10-27
 
 - Distinguish selecting a child from starting it: helper success precedes the unchanged native call; clarify supplemental-context input as file path or stdin.
