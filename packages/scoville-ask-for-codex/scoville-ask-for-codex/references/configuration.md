@@ -75,7 +75,7 @@ Shipped settings, generated from their canonical file:
   "advisers": ["astra"],
   "presets": {
     "astra": {"route": "native", "model": "gpt-6-astra", "effort": "high"},
-    "sol": {"route": "native", "model": "gpt-5.6-sol", "effort": "high"},
+    "sol": {"route": "native", "model": "gpt-6.1-sol", "effort": "high"},
     "claude": {"route": "claude-cli", "model": "claude-opus-5-5", "effort": "high"},
     "fable": {"route": "claude-cli", "model": "claude-fable-5-1", "effort": "medium"}
   },

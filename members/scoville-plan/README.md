@@ -23,6 +23,8 @@ shows these records on Windows, macOS and Linux.
 
 The validator checks structure and references. It cannot establish permission,
 meaning or whether an acceptance result is true.
+Selector and validator share Plan section boundaries; diagnostics identify
+the location and correction without imposing blank-line layout.
 
 ## What it enforces
 
@@ -87,6 +89,7 @@ The host needs permission to write to its Skills directory. The
 
 
 ## Configuration
+
 
 ### Model choices for Workflow
 

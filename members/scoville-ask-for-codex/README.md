@@ -16,9 +16,10 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
   clarifications use the same adviser; follow-ups after completion need a request.
 - Show missing answers and failed starts alongside completed results.
 
-Shared writing rules travel with the assignment. Detailed data, command and
-delivery rules load when the task needs them. Claude follow-ups still include
-the complete rule context.
+Native assignments carry role and delivery rights plus exact paths to the
+shared writing rules and, for reviews, Code review quality. Advisers read those
+before work; detailed data, command and delivery rules load when needed.
+Claude follow-ups still include the complete rule context.
 
 ## What it enforces
 
@@ -89,6 +90,8 @@ Project choices go under `ask` in `.scoville/config.json` at the project
 root. Anything missing falls back to the shipped defaults.
 Reading settings creates no file. If you name something explicitly in a
 request, it overrides these values for that call only, without saving them.
+The shipped `sol` preset uses `gpt-6.1-sol / high`; saved project overrides
+retain their selected values. The host still decides model availability.
 
 Use Scoville Setup to inspect or save adviser choices.
 

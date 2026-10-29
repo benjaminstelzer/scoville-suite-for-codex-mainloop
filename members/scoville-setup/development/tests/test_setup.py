@@ -123,10 +123,17 @@ class SetupTests(unittest.TestCase):
                     field = ('patch.workflow.main.reasoning' if 'workflow' in patch
                              else 'patch.ask.presets.astra.effort')
                     self.assertIn(field, failed['diagnostic'])
+                    self.assertIn(repr(level), failed['diagnostic'])
                     self.assertIn('low, medium, high or xhigh', failed['diagnostic'])
                     self.assertIn('no settings were saved', failed['diagnostic'])
                     self.assertIn('the user can edit .scoville/config.json manually', failed['diagnostic'])
                     self.assertEqual(before, self.path.read_bytes())
+        for value in ({'secret': 'private-token-not-for-display'}, ['private-token-not-for-display']):
+            status, failed = self.run_setup('set', {'workflow': {'main': {'reasoning': value}}})
+            self.assertEqual(status, 1)
+            self.assertIn('patch.workflow.main.reasoning', failed['diagnostic'])
+            self.assertNotIn('private-token-not-for-display', failed['diagnostic'])
+            self.assertEqual(before, self.path.read_bytes())
         status, saved = self.run_setup('set', {
             'workflow': {'main': {'reasoning': 'medium'}},
             'ask': {'presets': {'astra': {'effort': 'medium'}}}})

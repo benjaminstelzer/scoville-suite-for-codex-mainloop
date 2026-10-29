@@ -55,6 +55,10 @@ collaboration tools in the calling chat.
 
 ## Ask and collect
 
+Style generated framing only; preserve literal user questions, quotations,
+technical data and hidden expectation keys unchanged, subject to authorized
+edits and required secret redaction.
+
 Prepare a self-contained question, scope, requirements and raw evidence. Include
 paths and working-tree scope when relevant. Exclude the caller's verdict,
 intermediate reasoning, previous adviser answers, unrelated history and secrets

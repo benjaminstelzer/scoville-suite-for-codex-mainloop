@@ -56,7 +56,9 @@ flowchart TD
   review -->|failure| blocked
   review -->|success| spawn["Spawn fresh Reviewer with unchanged returned arguments"]
   spawn --> result{"Review result?"}
-  result -->|changes_requested| original
+  result -->|changes_requested| approach{"Supported next correction or changed evidence?"}
+  approach -->|yes| original
+  approach -->|no| stalled["Keep Step open; report unresolved finding and needed prerequisite"]
   result -->|blocked| blocked
   result -->|pass| commit["Record progress; commit accepted versionable work"]
   commit -->|failed or forbidden| blocked
@@ -75,7 +77,9 @@ flowchart TD
   closure -->|failure| blocked["Resolve prerequisite; keep Work Item open"]
   closure -->|success| spawn["Spawn fresh Reviewer with unchanged returned arguments"]
   spawn --> result{"Closure result?"}
-  result -->|changes_requested| affected["Select ONE affected Step; preserve open findings; return to Step and review"]
+  result -->|changes_requested| approach{"Supported next correction or changed evidence?"}
+  approach -->|yes| affected["Select ONE affected Step; preserve open findings; return to Step and review"]
+  approach -->|no| stalled["Keep item open; report unresolved finding and needed prerequisite"]
   result -->|blocked| blocked
   result -->|pass| accept["Accept Work Item; commit coherent records; continue authorized scope"]
 ```

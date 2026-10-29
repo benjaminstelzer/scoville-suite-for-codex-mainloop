@@ -1,5 +1,6 @@
 ## Configuration
 
+
 ### Model choices for Workflow
 
 Scoville Workflow for Codex Mainloop uses fixed main, review and explore model

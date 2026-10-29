@@ -25,7 +25,9 @@ flowchart TD
   C -->|Success| CR["Fresh closure Reviewer from unchanged returned arguments"]
   C -->|Failure| B
   CR --> V{"Result?"}
-  V -->|Defect| F["Select one affected Step; preserve open findings"]
+  V -->|Defect| nextCorrection{"Supported correction or changed evidence?"}
+  nextCorrection -->|Yes| F["Select one affected Step; preserve open findings"]
+  nextCorrection -->|No| O["Keep item open; report needed prerequisite"]
   F --> S
   V -->|Missing required proof| P["Recover available proof or finish missing authorized check"]
   P --> C
@@ -49,7 +51,9 @@ flowchart TD
   R -->|Success| RS["Fresh Reviewer from unchanged returned arguments"]
   R -->|Failure| B["Stop dispatch; resolve helper failure"]
   RS --> V{"Result?"}
-  V -->|Defect| I
+  V -->|Defect| nextCorrection{"Supported correction or changed evidence?"}
+  nextCorrection -->|Yes| I
+  nextCorrection -->|No| O["Keep Step open; report needed prerequisite"]
   V -->|Missing proof| P["Main recovers proof or finishes missing authorized check"]
   P --> Q
   V -->|Pass| C["Commit accepted versionable changes and Plan before next Step"]

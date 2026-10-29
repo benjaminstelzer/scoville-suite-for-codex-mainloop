@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased - 2026-10-29 - Focused native delivery
+
+- Give native advisers exact Writing and review-rule paths instead of embedding those complete texts; retain role rights, delivery contracts and original questions.
+- Keep caller literal protection before framing and answer protection in the Adviser source shared with Claude.
+- Use gpt-6.1-sol/high for the shipped sol preset while preserving project overrides.
+- Preserve bounded native handles and original capture failure bytes. Targeted Sol/low receivers and recorded Claude CLI transport were checked; Claude model behavior remains untested.
+
 ## Unreleased - 2026-10-29 - Follow-up corrections
 
 - Load data rules before requesting output, provide the Claude adviser output-rule path and document the user configuration route for special reasoning levels.

@@ -1,6 +1,7 @@
 """Current Decision identity and fail-closed dispatch, without a cache registry."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -8,6 +9,28 @@ from unittest.mock import patch
 from test_contract import SELECTOR, copy_started_profile, prompt_builder
 
 class DecisionSourceTests(unittest.TestCase):
+    def test_parent_link_uses_same_context_but_root_and_record_links_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root, source = self.setup_project(directory)
+            parent_alias = Path(directory) / 'alias'
+            try:
+                os.symlink(root.parent, parent_alias, target_is_directory=True)
+            except OSError as error:
+                self.skipTest(f'Directory links unavailable: {error}')
+            direct = prompt_builder.select_unit(SELECTOR, root, 'W-001/step-1')
+            through_parent = prompt_builder.select_unit(SELECTOR, parent_alias / root.name, 'W-001/step-1')
+            self.assertEqual(direct, through_parent)
+            root_alias = Path(directory) / 'root-alias'
+            os.symlink(root, root_alias, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, 'ROOT_INVALID'):
+                prompt_builder.select_unit(SELECTOR, root_alias, 'W-001/step-1')
+            outside = Path(directory) / 'outside.md'
+            outside.write_bytes(source.read_bytes())
+            source.unlink()
+            os.symlink(outside, source)
+            with self.assertRaisesRegex(ValueError, 'PATH_REDIRECTED'):
+                prompt_builder.select_unit(SELECTOR, root, 'W-001/step-1')
+
     def test_main_task_requires_complete_accepted_decisions_before_edit_without_forcing_rereads(self):
         with tempfile.TemporaryDirectory() as directory:
             root, source = self.setup_project(directory)

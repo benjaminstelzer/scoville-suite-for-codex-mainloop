@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased - 2026-10-29 - Packaged Skill review fixes
+
+- Align Plan section boundaries and actionable diagnostics; retain nested Goal headings and reject incomplete ID inventories.
+- Preserve original capture bytes on encoding failure, supply EOF on stdin and support explicit bounded execution without automatic retries. Keep unresolved process cleanup visible.
+- Distinguish needed source contracts from machine reports, and align General fallbacks with their helper behavior.
+- Preserve user decisions at equal-authority rule conflicts and stop unsupported repair repetition without a fixed attempt count.
+- Detect document overflow against usable client width while retaining local data scrolling.
+
+- Resolve Workflow Decisions below linked workspace ancestors without weakening root or record link boundaries.
+- Load native Ask writing and review rules from exact package paths; retain literal questions and use gpt-6.1-sol/high for the shipped sol preset.
+- Use bounded native collection calls with retained handles and report invalid Setup choices without exposing nested payloads.
+
+- Record targeted gpt-6.1-sol/low receiver cases, the final six-job runtime matrix and explicit native POSIX/Claude evidence limits.
+
 ## Unreleased - 2026-10-29 - Private source boundaries
 
 - Remove obsolete development reports and their dangling links; retain current Skills, helpers, tests and build sources.

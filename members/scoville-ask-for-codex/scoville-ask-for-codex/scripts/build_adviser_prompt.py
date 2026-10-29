@@ -64,7 +64,9 @@ def main() -> int:
     for name in rule_names:
         path = ROOT / 'references' / name
         try:
-            rules.append(path.read_text(encoding='utf-8'))
+            content = path.read_text(encoding='utf-8')
+            if name not in ('writing.md', 'code-review.md'):
+                rules.append(content)
         except (OSError, UnicodeError) as error:
             parser.error(f'Cannot read required packaged UTF-8 reference "{path}". '
                          f'Use the intact built Ask package; do not repair its contracts in the adviser. Original error: {error}')
@@ -84,11 +86,14 @@ def main() -> int:
     if not instruction_design.is_file():
         parser.error(f'packaged instruction-design rules missing at {instruction_design}; use the intact built Ask package')
     prompt = ('\n\n'.join(rules)
+              + f'\n\nRead shared writing rules before work: {ROOT / "references/writing.md"}.'
+              + (f'\nFor this review read Code review quality before inspection: {ROOT / "references/code-review.md"}.'
+                 if args.mode == 'review' else '')
               + f'\n\nmode: {args.mode}\nadviser_id: {args.adviser_id}'
               + f'\nworkspace_root: {args.workspace_root}'
               + f'\ntext_size_checker: {checker}\npython: {sys.executable}'
               + f'\nshell_command_rules: {shell_rules}; read before shell commands.'
-              + f'\nmachine_data_rules: {machine_data}; read before requesting or reading machine reports, logs or structured state; the embedded machine-data.md reference resolves here.'
+              + f'\nmachine_data_rules: {machine_data}; read before requesting or reading machine reports, logs or structured state; the writing reference to machine-data.md resolves here.'
               + f'\noutput_delivery_rules: {delivery_rules}; read when the writing or shell rules require it.'
               + f'\ninstruction_design_rules: {instruction_design}; the shared writing reference to instruction-design.md resolves here.'
               + f'\nconsultation_reference: {args.reference}\nscope: {args.scope}'

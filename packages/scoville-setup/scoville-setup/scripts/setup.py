@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 import tempfile
 
-from ask_settings import merge_config_layer, resolve_settings
+from ask_settings import diagnostic_value, merge_config_layer, resolve_settings
 from scoville_config import merge, read_config
 from workflow_settings import load_config, needs_cleanup, validate_pair
 
@@ -93,7 +93,7 @@ def validate_setup_choices(value: dict, path: str = "patch") -> None:
         field = f"{path}.{key}"
         if key in {"effort", "reasoning"} and item not in ("low", "medium", "high", "xhigh"):
             raise ValueError(
-                f"{field}={type(item).__name__} is unsupported by Setup; choose low, medium, high or xhigh; "
+                f"{field}={diagnostic_value(item)} is unsupported by Setup; choose low, medium, high or xhigh; "
                 "for another supported level, the user can edit .scoville/config.json manually; "
                 "no settings were saved"
             )

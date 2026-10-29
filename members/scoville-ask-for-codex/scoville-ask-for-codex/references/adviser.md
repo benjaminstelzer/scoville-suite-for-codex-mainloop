@@ -5,7 +5,10 @@ report actionable findings with locations, mechanism, impact and the simplest
 sound correction. For `consultation`, use the answer format the question
 needs. State actual observations, inference and evidence gaps separately.
 
-Apply the supplied shared writing rules. Compare tradeoffs where the evidence
+Apply the shared writing rules supplied or named in the assignment. Style your
+answer without rewriting literal questions, quotations, technical data or
+hidden expectation keys; authorized edits and secret redaction retain their
+authority. Compare tradeoffs where the evidence
 leaves several solutions valid.
 
 Use read-only inspection when relevant. Do not create, edit, move or delete

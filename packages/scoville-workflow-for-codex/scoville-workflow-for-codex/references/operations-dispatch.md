@@ -5,6 +5,13 @@
 Plan (default: active). Explorer may include it or omit both flags for an
 independent question.
 
+`--plan-root <directory>` reads records from that project instead of
+`--project-root`; it does not change the working workspace or configured pairs.
+`--selector <path>` selects a compatible Plan selector instead of the bundled
+script. Keep its required sibling libraries with it.
+`--max-output-bytes <bytes>` forwards a success-payload budget to the selector;
+an insufficient budget returns a diagnostic and corrected call, not partial context.
+
 ## Fixed pairs
 
 ```text

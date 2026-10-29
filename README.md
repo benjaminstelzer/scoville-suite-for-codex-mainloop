@@ -70,7 +70,9 @@ flowchart TD
   C -->|Success| CR["Fresh closure Reviewer from unchanged returned arguments"]
   C -->|Failure| B
   CR --> V{"Result?"}
-  V -->|Defect| F["Select one affected Step; preserve open findings"]
+  V -->|Defect| nextCorrection{"Supported correction or changed evidence?"}
+  nextCorrection -->|Yes| F["Select one affected Step; preserve open findings"]
+  nextCorrection -->|No| O["Keep item open; report needed prerequisite"]
   F --> S
   V -->|Missing required proof| P["Recover available proof or finish missing authorized check"]
   P --> C
@@ -94,7 +96,9 @@ flowchart TD
   R -->|Success| RS["Fresh Reviewer from unchanged returned arguments"]
   R -->|Failure| B["Stop dispatch; resolve helper failure"]
   RS --> V{"Result?"}
-  V -->|Defect| I
+  V -->|Defect| nextCorrection{"Supported correction or changed evidence?"}
+  nextCorrection -->|Yes| I
+  nextCorrection -->|No| O["Keep Step open; report needed prerequisite"]
   V -->|Missing proof| P["Main recovers proof or finishes missing authorized check"]
   P --> Q
   V -->|Pass| C["Commit accepted versionable changes and Plan before next Step"]
@@ -251,6 +255,8 @@ shows these records on Windows, macOS and Linux.
 
 The validator checks structure and references. It cannot establish permission,
 meaning or whether an acceptance result is true.
+Selector and validator share Plan section boundaries; diagnostics identify
+the location and correction without imposing blank-line layout.
 
 ### What it enforces
 
@@ -385,9 +391,10 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
   clarifications use the same adviser; follow-ups after completion need a request.
 - Show missing answers and failed starts alongside completed results.
 
-Shared writing rules travel with the assignment. Detailed data, command and
-delivery rules load when the task needs them. Claude follow-ups still include
-the complete rule context.
+Native assignments carry role and delivery rights plus exact paths to the
+shared writing rules and, for reviews, Code review quality. Advisers read those
+before work; detailed data, command and delivery rules load when needed.
+Claude follow-ups still include the complete rule context.
 
 ### What it enforces
 
@@ -509,12 +516,18 @@ Claude consultations also need a signed-in Claude Code CLI (2.1.280+ for Opus 5.
 
 ## Model checks and limits
 
-Controlled native Codex cases used Codex-edition packages and covered all nine
-maintained Skills. The cases ran with `gpt-6.1-sol` and `low` reasoning.
+Earlier controlled native Codex cases covered all nine maintained Skills
+through Codex-edition packages. The cases ran with `gpt-6.1-sol` and `low` reasoning.
 The candidate cases preserved the tested
 task, authority and evidence boundaries, including complete data checks,
 one-time effects and continuation. The Skillwriter case also used the host's
 Skill Creator; the Handoff receiver applied its host rules.
+
+The latest follow-up checks used the same model and effort for native adviser
+and dispatch delivery, complete-file reading and large-report evaluation.
+They distinguish complete captures from command success and unreadable UTF-8.
+The [follow-up evidence](docs/testing/0060-fertige-skills-folgefixes.md) records
+the tested scope, correction cases and remaining transport limits.
 
 These are local case results, not a suite-wide reliability rate or proof of
 installed discovery, other hosts or product integrations. The revised

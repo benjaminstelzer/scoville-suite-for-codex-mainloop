@@ -217,9 +217,12 @@ class AdviserPromptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(request, result.stdout)
         self.assertIn('workspace_root:', result.stdout)
-        for name in ('adviser.md', 'writing.md', 'code-review.md', 'native-delivery.md'):
+        for name in ('adviser.md', 'native-delivery.md'):
             rules = (PACKAGE / 'references' / name).read_text(encoding='utf-8')
             self.assertEqual(result.stdout.count(rules), 1)
+        for name in ('writing.md', 'code-review.md'):
+            self.assertIn(str(PACKAGE / 'references' / name), result.stdout)
+            self.assertNotIn((PACKAGE / 'references' / name).read_text(encoding='utf-8'), result.stdout)
 
     def test_review_requires_quality_policy_but_consultation_does_not_load_it(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -239,7 +242,8 @@ class AdviserPromptTests(unittest.TestCase):
             policy.write_bytes(original)
             corrected = self.run_prompt(script=script)
             self.assertEqual(0, corrected.returncode, corrected.stderr)
-            self.assertEqual(1, corrected.stdout.count(original.decode('utf-8')))
+            self.assertIn(str(policy.resolve()), corrected.stdout)
+            self.assertNotIn(original.decode('utf-8'), corrected.stdout)
 
     def test_missing_writing_contract_fails_then_restored_package_is_consumable(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -264,14 +268,17 @@ class AdviserPromptTests(unittest.TestCase):
             fixed = self.run_prompt(question, self.SPAWN, script)
             self.assertEqual(0, fixed.returncode, fixed.stderr)
             payload = json.loads(fixed.stdout)
-            self.assertEqual(1, payload['message'].count(content.decode('utf-8')))
+            self.assertIn(str(writing.resolve()), payload['message'])
+            self.assertNotIn(content.decode('utf-8'), payload['message'])
             self.assertTrue(payload['message'].endswith(question))
             def consume(*, task_name, message, fork_turns, model, reasoning_effort):
                 self.assertEqual(fork_turns, 'none')
                 self.assertEqual(task_name, self.SPAWN[3])
                 self.assertTrue(message.endswith(question))
-                for name in ('adviser.md', 'writing.md', 'code-review.md', 'native-delivery.md'):
+                for name in ('adviser.md', 'native-delivery.md'):
                     self.assertIn((copy / 'references' / name).read_text(encoding='utf-8'), message)
+                for name in ('writing.md', 'code-review.md'):
+                    self.assertIn(str(copy / 'references' / name), message)
             consume(**payload)
 
     def test_resolved_selected_advisers_feed_prompt_builder_without_repair(self):

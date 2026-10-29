@@ -61,6 +61,7 @@ and required field names. Internal messages use only necessary labelled fields.
 | Review decision | Use Git status/diff and observed file, configuration and behavior effects for the diagram's review decision. Closure checks unchanged Steps; record no invented review pass. |
 | Changed Step | Supply the SAME original Step, needed check/effect evidence and relevant complete open review results. Dispatch supplies the independent full-diff, dependency, consumer and Acceptance review contract. |
 | Correction | Retain unchanged objections and select the ONE affected original Step. Resolve each objection by a correction, by narrowing an unsupported claim, or by refuting it with evidence; complete required checks and obtain a fresh review that rechecks that answer. Preserve relevant open findings and still-valid evidence. |
+| Repeated finding without new evidence or changed conditions | Follow Code's Stop repetition rule: continue only with a supported next diagnosis or correction. Otherwise keep the Step open; report the unresolved finding and record any actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
 | Accepted change | After completion and required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Never stage foreign or unreviewed work. Failed or forbidden commit stops advancement. Confirm the resulting clean Git state; make no empty commit. |
 
 Ordinary Plan maintenance adds no review phase.

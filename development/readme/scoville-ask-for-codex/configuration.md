@@ -5,6 +5,8 @@ Project choices go under `ask` in `.scoville/config.json` at the project
 root. Anything missing falls back to the shipped defaults.
 Reading settings creates no file. If you name something explicitly in a
 request, it overrides these values for that call only, without saving them.
+The shipped `sol` preset uses `gpt-6.1-sol / high`; saved project overrides
+retain their selected values. The host still decides model availability.
 
 Use Scoville Setup to inspect or save adviser choices.
 

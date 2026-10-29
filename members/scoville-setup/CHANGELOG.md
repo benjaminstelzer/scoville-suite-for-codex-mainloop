@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased - 2026-10-29 - Actionable choices
+
+- Name the rejected scalar choice and its field while withholding nested settings payloads; preserve existing files on failure.
+- Inherit corrected capture, source/report and native delivery rules from their shared owners.
+
 ## Unreleased - 2026-10-29 - Follow-up corrections
 
 - Restore the manual user route for supported special reasoning levels while keeping agent changes helper-based; load shared rules before data requests and disputed conclusions.

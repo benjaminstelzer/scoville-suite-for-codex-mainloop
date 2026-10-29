@@ -44,12 +44,20 @@ temporary files before evaluation; evaluator failure must not require rerunning 
 
 With `--run`, fitting output is returned directly even with `--publish-full`;
 larger output is saved from that execution. Direct machine output still needs
-evaluation before display. Invalid UTF-8 fails with 125 without saving.
+evaluation before display. Capture supplies EOF on stdin. When native waiting
+cannot bound a command, an explicit `--timeout-seconds <positive-seconds>` before
+`--run` terminates its process family at that deadline; there is no default
+deadline or automatic retry. Invalid UTF-8 and timeout fail with 125. With
+`--publish-full`, available original bytes are saved as `.bin`; failure metadata
+on stderr gives `error`, `capture_complete`, `exit_code` and `full_file`.
+Timeout output remains incomplete; invalid encoding is not usable UTF-8.
+`timeout_cleanup_incomplete` also identifies a process whose termination is
+unconfirmed. Preserve it and resolve the process state before further work.
 Replacement characters introduced relative to the source also stop dependent work.
 
 A saved command capture contains `exit=<n> stdout_bytes=<n> stderr_bytes=<n>`,
 then `stdout:\n`, stdout, `\nstderr:\n` and stderr. Parse using the byte counts
-and UTF-8. JSON `"status": "complete_file"` with `full_file` identifies complete
+without decoding invalid bytes. JSON `"status": "complete_file"` with `full_file` identifies complete
 saved output; `"output_complete": false` describes its omitted inline portion.
 Open `full_file` and process the contents before dependent work. Without this
 route, missing output or `output_complete=false` leaves required content unread.
@@ -89,7 +97,7 @@ arguments retain their own interfaces.
 
 Retain every `exec_command` chunk, `session_id` and final exit status until the
 child ends. Outer script completion does not establish child completion; do
-not restart a running command. Use one capture per outer call.
+not restart a running command. Make one bounded native call per outer call.
 
 The template selects 20000; use the same smallest applicable limit in the
 generated command, both tools and outer directive. Replace `<command_json>`
@@ -103,16 +111,18 @@ let r = await tools.exec_command({
   cmd: <command_json>,
   max_output_tokens: 20000
 });
-let output = r.output;
-while (r.session_id !== undefined) {
-  r = await tools.write_stdin({
-    session_id: r.session_id, chars: "", yield_time_ms: 10000,
-    max_output_tokens: 20000
-  });
-  output += r.output;
-}
-text(output);
+text(r.output);
+text(r.session_id !== undefined
+  ? {state: "pending", session_id: r.session_id}
+  : {state: "finished", exit_code: r.exit_code});
 ```
+
+For `pending`, retain the handle and start a separate outer call containing
+one `tools.write_stdin({session_id: <retained_id>, chars: "",
+yield_time_ms: 10000, max_output_tokens: 20000})`. Forward its eligible output
+and report pending or finished in the same way. Continue until the actual
+exit status arrives, unless an authorized interruption applies. If the outer
+tool itself yields a running cell, resume that cell first.
 
 Command success and output completeness are separate: the child's `exit=`
 determines success and a nonzero exit can supply valid failure evidence.

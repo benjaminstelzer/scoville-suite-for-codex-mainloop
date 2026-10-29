@@ -56,9 +56,10 @@ def select_unit(selector: Path, root: Path, unit: str, max_output_bytes: int | N
 
 def decision_sources(root: Path, context: dict) -> list[dict]:
     """Bind the selected Decisions to their current canonical UTF-8 sources."""
-    from select_context import (DECISION_ID_RE, DECISION_FILE_RE, SelectorError, find_record_path,
+    from select_context import (DECISION_ID_RE, DECISION_FILE_RE, SelectorError, find_record_path, resolve_root,
                                 safe_read_text, parse_record, require_format_version, parse_inline_ids)
     try:
+        root = resolve_root(str(root))
         ids = parse_inline_ids(context["work_item"]["decisions"].removeprefix("Decisions: "),
                                DECISION_ID_RE, "Decisions", context["work_item"]["unit"])
         texts = context["decisions"]
@@ -335,6 +336,11 @@ def main() -> int:
             raise ValueError('--project-root must be an existing absolute project directory')
         if args.assignment_file and args.format != 'create':
             raise ValueError('--assignment-file requires child --format create')
+        if args.role == 'main' and args.format == 'create':
+            raise ValueError('main is this thread, not a subagent; use prompt output')
+        if args.role != 'main':
+            resolve_creation_pair(args)
+        validate_creation_options(args)
         role_input = {}
         stdin_used = False
         for key in ('reviewer_result', 'supplemental_context'):
@@ -355,8 +361,7 @@ def main() -> int:
                    if args.unit else {})
         if args.role == 'main':
             validate_execution_start(args.plan_root or args.workspace_root, context)
-        resolve_creation_pair(args, context)
-        validate_creation_options(args)
+            resolve_creation_pair(args, context)
         prompt = build_prompt(args.role, args.workspace_root, context, role_input,
                               args.communication_language, reuse=bool(args.agent_id))
         if args.format != 'create':

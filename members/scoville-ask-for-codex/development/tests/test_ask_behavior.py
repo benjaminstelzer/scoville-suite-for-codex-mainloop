@@ -264,7 +264,7 @@ class AskBehaviorTests(unittest.TestCase):
         selected = ask.resolve({"catalog": CATALOG,
             "overrides": {"advisers": ["sol", "claude", "fable"]}})["config"]["advisers"]
         self.assertEqual([(a["id"], a["model"], a["effort"]) for a in selected], [
-            ("sol", "gpt-5.6-sol", "high"),
+            ("sol", "gpt-6.1-sol", "high"),
             ("claude", "claude-opus-5-5", "high"),
             ("fable", "claude-fable-5-1", "medium"),
         ])

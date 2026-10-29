@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased - 2026-10-29 - Dispatch and correction boundaries
+
+- Resolve linked workspace ancestors without accepting a linked root or redirected records; validate simple inputs early and document existing selector and output options.
+- Stop unsupported repeated repairs with findings open; continue supported corrections without a fixed retry counter.
+- Use bounded native waits with retained handles and preserve original bytes when command capture fails.
+
 ## Unreleased - 2026-10-29 - Follow-up corrections
 
 - Explicitly review defects and regressions across the complete assigned diff; test child read-only scope and clarify copied validator diagnostics.

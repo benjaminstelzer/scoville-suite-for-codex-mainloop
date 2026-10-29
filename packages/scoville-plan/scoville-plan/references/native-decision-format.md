@@ -167,5 +167,5 @@ Preserve those fields when already present, including later lifecycle changes.
 Existing batch IDs are `batch-YYYYMMDD-N` (positive N) or 64 hexadecimal digits.
 Both fields occur together; members are existing unique ADR IDs, each lists
 itself, and every member has the same batch ID and complete ordered membership.
-Do not recompute historical hashes. The Viewer ignores these fields; validator
+Do not recompute historical hashes. Scoville Plan Viewer ignores these fields; validator
 and selector retain historical integrity checks.
