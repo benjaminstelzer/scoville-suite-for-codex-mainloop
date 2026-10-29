@@ -93,8 +93,8 @@ def validate_setup_choices(value: dict, path: str = "patch") -> None:
         field = f"{path}.{key}"
         if key in {"effort", "reasoning"} and item not in ("low", "medium", "high", "xhigh"):
             raise ValueError(
-                f"{field}={type(item).__name__} is unsupported by Setup; choose low, medium, high or xhigh, "
-                "or edit .scoville/config.json manually when another level is required"
+                f"{field}={type(item).__name__} is unsupported by Setup; choose low, medium, high or xhigh; "
+                "no settings were saved"
             )
         if isinstance(item, dict):
             validate_setup_choices(item, field)

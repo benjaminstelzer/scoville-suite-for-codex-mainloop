@@ -6,4 +6,6 @@
 - **Explicit failures.** Unavailable models, invalid settings and failed calls
   are reported. Ask does not quietly choose a different adviser.
 
-Claude uses read tools by default. Web access requires `claude.web_tools`.
+Claude uses Read, Grep and Glob. Web access requires an explicit
+`claude.web_tools` setting or request override. Advisers do not run tests;
+native agents may create temporary files only for necessary oversized answers.

@@ -133,7 +133,29 @@ Evidence: []
         design = self.helper.parents[1] / 'references/instruction-design.md'
         self.assertIn(f'instruction_design_rules: {design}', assignment)
         self.assertTrue(design.is_file())
+        for field, filename in [('machine_data_rules', 'machine-data.md'),
+                                ('python_discovery_rules', 'python-discovery.md')]:
+            reference = self.helper.parents[1] / 'references' / filename
+            self.assertIn(f'{field}: {reference};', assignment)
+            self.assertTrue(reference.is_file())
+            self.assertNotIn(reference.read_text(encoding='utf-8'), assignment)
         self.assertNotIn('check_agent_context.py', assignment)
+
+    def test_missing_machine_rule_stops_dispatch_and_corrected_package_succeeds(self):
+        reference = self.helper.parents[1] / 'references/machine-data.md'
+        original = reference.read_bytes()
+        try:
+            reference.unlink()
+            failed, path = self.create('reviewer', '--unit', 'W-001/step-1')
+            self.assertNotEqual(0, failed.returncode)
+            self.assertIn(str(reference), failed.stderr)
+            self.assertIn('restore the matching package', failed.stderr)
+            self.assertFalse(path.exists())
+        finally:
+            reference.write_bytes(original)
+        corrected, path = self.create('reviewer', '--unit', 'W-001/step-1')
+        self.assertEqual(0, corrected.returncode, corrected.stderr)
+        self.assertTrue(path.is_file())
 
     def test_closure_contains_all_original_steps_and_full_acceptance(self):
         result, path = self.create('reviewer', '--unit', 'W-001')

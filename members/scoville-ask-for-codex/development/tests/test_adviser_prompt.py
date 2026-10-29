@@ -91,6 +91,13 @@ class AdviserPromptTests(unittest.TestCase):
             self.assertEqual((copy / 'references/instruction-design.md').resolve(), design)
             self.assertTrue(design.is_file())
             self.assertNotIn(design.read_text(encoding='utf-8'), prompt)
+            machine_field = next(line.split(': ', 1)[1] for line in prompt.splitlines()
+                                 if line.startswith('machine_data_rules: '))
+            machine = Path(machine_field.split(';', 1)[0])
+            self.assertEqual((copy / 'references/machine-data.md').resolve(), machine)
+            self.assertTrue(machine.is_file())
+            self.assertNotIn(machine.read_text(encoding='utf-8'), prompt)
+            self.assertIn('read before shell commands.', prompt)
             planned = root / 'Vollständige Rückgabe.txt'
             complete = ('Required café 漢字 facts.\n' * 220 + 'FINAL_REQUIRED_FACT\n').encode('utf-8')
             planned.write_bytes(complete)
@@ -112,6 +119,22 @@ class AdviserPromptTests(unittest.TestCase):
             self.assertEqual('complete_file', metadata['status'])
             self.assertEqual((root / '.scoville/temp').resolve(), published.parent)
             self.assertEqual(complete, published.read_bytes())
+
+    def test_missing_machine_rule_is_named_and_corrected_prompt_succeeds(self):
+        with tempfile.TemporaryDirectory() as directory:
+            copy = Path(directory) / 'Ask package ä'
+            shutil.copytree(PACKAGE, copy)
+            reference = copy / 'references/machine-data.md'
+            reference.unlink()
+            script = copy / 'scripts/build_adviser_prompt.py'
+            failed = self.run_prompt(script=script)
+            self.assertNotEqual(0, failed.returncode)
+            self.assertIn(str(reference), failed.stderr)
+            self.assertIn('intact built Ask package', failed.stderr)
+            reference.write_bytes((PACKAGE / 'references/machine-data.md').read_bytes())
+            corrected = self.run_prompt(script=script)
+            self.assertEqual(0, corrected.returncode, corrected.stderr)
+            self.assertIn(f'machine_data_rules: {reference};', corrected.stdout)
 
     def test_missing_named_checker_has_no_partial_prompt_then_intact_package_works(self):
         with tempfile.TemporaryDirectory() as directory:

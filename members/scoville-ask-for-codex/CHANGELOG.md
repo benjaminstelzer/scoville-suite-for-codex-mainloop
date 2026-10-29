@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased - 2026-10-29 - Focused adviser instructions
+
+- Shorten shared adviser framing and consolidate native collection rules while preserving independent questions, exact handles, complete answers and explicit failures.
+- Load machine-data rules before reports or structured state, and load command, interpreter and delivery detail only when needed. Keep packaged references directly usable.
+- Preserve the complete rule context in Claude follow-ups and keep request/resume interfaces unchanged.
+- Check native review and consultation cases with `gpt-6.1-sol / low`, plus local helper consumers and a Claude CLI double. No current Claude provider behavior test or exact transmitted-byte comparison is claimed.
+
 ## Unreleased - 2026-10-28 - Adviser prompt clarity
 
 - Route composed adviser questions and follow-ups to the shared instruction-design rules while preserving literal questions and transport contracts.

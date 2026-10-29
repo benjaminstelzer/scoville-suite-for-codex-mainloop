@@ -60,6 +60,9 @@ class AskBehaviorTests(unittest.TestCase):
         quality = (PACKAGE / 'references/code-review.md').read_text(encoding='utf-8')
         self.assertEqual(1, request['prompt'].count(quality))
         self.assertTrue(request['prompt'].endswith(question))
+        machine_data = PACKAGE / 'references/machine-data.md'
+        self.assertIn(f'machine_data_rules: {machine_data};', request['prompt'])
+        self.assertNotIn(machine_data.read_text(encoding='utf-8'), request['prompt'])
         completed = subprocess.CompletedProcess([], 0, json.dumps({'result':'review complete','session_id':'fixture'}), '')
         with mock.patch.object(ask.ask_claude, 'resolve_claude_command', return_value=['claude']), \
              mock.patch.object(ask.ask_claude, 'run_command', return_value=completed) as consumer:
@@ -77,6 +80,7 @@ class AskBehaviorTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'packaged writing rules.*writing.md.*readable UTF-8'):
                     ask.prepare(prepare_request([ADVISERS[1]]))
                 (root / 'references/writing.md').write_bytes((PACKAGE / 'references/writing.md').read_bytes())
+                (root / 'references/machine-data.md').write_bytes((PACKAGE / 'references/machine-data.md').read_bytes())
                 (root / 'references/code-review.md').write_bytes((PACKAGE / 'references/code-review.md').read_bytes())
                 (root / 'references/shell-commands.md').write_bytes((PACKAGE / 'references/shell-commands.md').read_bytes())
                 (root / 'references/instruction-design.md').write_bytes((PACKAGE / 'references/instruction-design.md').read_bytes())
@@ -87,7 +91,7 @@ class AskBehaviorTests(unittest.TestCase):
             root = Path(directory)
             (root / 'references').mkdir()
             for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/code-review.md',
-                         'references/instruction-design.md'):
+                         'references/instruction-design.md', 'references/machine-data.md'):
                 (root / name).write_bytes((PACKAGE / name).read_bytes())
             shell = root / 'references/shell-commands.md'
             with mock.patch.object(ask, 'ROOT', root):
@@ -103,7 +107,7 @@ class AskBehaviorTests(unittest.TestCase):
             root = Path(directory)
             (root / 'references').mkdir()
             for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/shell-commands.md',
-                         'references/instruction-design.md'):
+                         'references/instruction-design.md', 'references/machine-data.md'):
                 (root / name).write_bytes((PACKAGE / name).read_bytes())
             with mock.patch.object(ask, 'ROOT', root):
                 with self.assertRaisesRegex(ValueError, 'code-review rules.*code-review.md'):
@@ -115,16 +119,27 @@ class AskBehaviorTests(unittest.TestCase):
                 corrected = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']
                 self.assertEqual(1, corrected['prompt'].count(quality))
 
+    def test_missing_machine_rule_is_named_and_corrected_prepare_succeeds(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'Ask package ä'
+            shutil.copytree(PACKAGE, root)
+            reference = root / 'references/machine-data.md'
+            reference.unlink()
+            with mock.patch.object(ask, 'ROOT', root):
+                with self.assertRaisesRegex(ValueError, 'packaged machine-data rules missing.*machine-data.md'):
+                    ask.prepare(prepare_request([ADVISERS[1]]))
+                reference.write_bytes((PACKAGE / 'references/machine-data.md').read_bytes())
+                prompt = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']['prompt']
+                self.assertIn(f'machine_data_rules: {reference};', prompt)
+
     def test_relocated_claude_instruction_design_resolves_outside_evidence_workspace(self):
+        import shutil
         with tempfile.TemporaryDirectory(prefix='Ask relocated ä ') as directory:
             root = Path(directory) / 'relocated package'
             evidence = Path(directory) / 'evidence workspace'
-            (root / 'references').mkdir(parents=True)
+            shutil.copytree(PACKAGE, root)
             evidence.mkdir()
-            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md',
-                         'references/shell-commands.md', 'references/code-review.md',
-                         'references/instruction-design.md'):
-                (root / name).write_bytes((PACKAGE / name).read_bytes())
             design = root / 'references/instruction-design.md'
             question = 'Keep this literal: café; "quotes".\n'
             with mock.patch.object(ask, 'ROOT', root):

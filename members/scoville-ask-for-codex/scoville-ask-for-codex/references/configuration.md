@@ -1,5 +1,10 @@
 # Settings and helper inputs
 
+Before invoking this Skill's task helpers, apply the policy below and
+read [shell command rules](shell-commands.md).
+
+{{ include: helper.policy }}
+
 Resolve locally with one complete command:
 
 ```text

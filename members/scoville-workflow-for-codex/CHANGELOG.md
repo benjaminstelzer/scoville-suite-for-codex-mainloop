@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased - 2026-10-29
+
+- Consolidate Step, closure and child-selection rules at their existing owners; keep independent full-diff review, original Step scope and complete evidence.
+- Embed writing and shell rules once for fresh children. Load machine-data, interpreter and output-delivery rules when needed; keep retained Explorer rules and Decision identities on follow-up.
+- Move running-project upgrade safeguards to Setup's explicitly authorized migration operation.
+- Compare generated prompts with identical inputs separately from model behavior. Fresh Explorer and Reviewer text is shorter; Explorer reuse retains its task and binding context.
+- Exercise actual fresh/reused Explorer and Step/closure Reviewer assignments with `gpt-6.1-sol / low`, plus two receivers of the actual Reviewer finals. Correct Step selection and open findings are observed; a complete correction-review-commit loop and successful closure remain untested. Strict native transport byte identity is not claimed.
+
 ## Unreleased - 2026-10-28 - Review corrections
 
 - Resolve the shared instruction-design reference explicitly in fresh child assignments and reject an incomplete package before dispatch.

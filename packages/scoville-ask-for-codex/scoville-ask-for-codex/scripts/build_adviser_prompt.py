@@ -74,6 +74,9 @@ def main() -> int:
     shell_rules = ROOT / 'references' / 'shell-commands.md'
     if not shell_rules.is_file():
         parser.error(f'packaged shell rules missing at {shell_rules}; use the intact built Ask package')
+    machine_data = ROOT / 'references' / 'machine-data.md'
+    if not machine_data.is_file():
+        parser.error(f'packaged machine-data rules missing at {machine_data}; use the intact built Ask package')
     delivery_rules = ROOT / 'references' / 'output-delivery.md'
     if not delivery_rules.is_file():
         parser.error(f'packaged output-delivery rules missing at {delivery_rules}; use the intact built Ask package')
@@ -84,8 +87,9 @@ def main() -> int:
               + f'\n\nmode: {args.mode}\nadviser_id: {args.adviser_id}'
               + f'\nworkspace_root: {args.workspace_root}'
               + f'\ntext_size_checker: {checker}\npython: {sys.executable}'
-              + f'\nshell_command_rules: {shell_rules}; read before shell commands other than file reads, complete-file preparation or output that may exceed an applicable limit.'
-              + f'\noutput_delivery_rules: {delivery_rules}; read when the shell rules require it.'
+              + f'\nshell_command_rules: {shell_rules}; read before shell commands.'
+              + f'\nmachine_data_rules: {machine_data}; read before requesting or reading machine reports, logs or structured state; the embedded machine-data.md reference resolves here.'
+              + f'\noutput_delivery_rules: {delivery_rules}; read when the writing or shell rules require it.'
               + f'\ninstruction_design_rules: {instruction_design}; the shared writing reference to instruction-design.md resolves here.'
               + f'\nconsultation_reference: {args.reference}\nscope: {args.scope}'
               + '\n\nInspect only the supplied scope in this workspace. Resolve relative evidence paths there.'

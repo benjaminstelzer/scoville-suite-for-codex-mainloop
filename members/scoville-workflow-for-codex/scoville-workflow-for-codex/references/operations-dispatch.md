@@ -65,11 +65,9 @@ flowchart TD
 ```
 
 Confirmed failure follows operations before fresh work. No context measurement,
-threshold or replacement protocol is part of dispatch. Each review, including a
-correction, evidence follow-up and closure, is fresh. A finished Reviewer may be
-closed only if the native tool exists; never substitute interruption for closing
-or claim freed capacity. Use native type selection only if exposed and compatible
-with the fixed pair; do not emulate it or install custom agent files.
+threshold or replacement protocol is part of dispatch. Use native type selection
+only if exposed and compatible with the fixed pair; do not emulate it or install
+custom agent files. Operations owns native waits, complete finals and closing.
 
 ## Build and deliver child assignments
 
@@ -99,13 +97,13 @@ Next action. Closure includes the full original Work Item and Acceptance.
 The helper's fixed scope sentence prevents Goal and Decisions granting role rights.
 
 Fresh children receive complete role, writing, shell and result rules once;
-Reviewers also receive the code-review policy. Codex supplies project instructions;
-do not add an AGENTS.md loader. Explorer reuse sends only the new task, current
-binding context, complete necessary inputs and communication language. It lists
-Decision identities instead of repeating retained bodies. Read new, changed or
-uncertain Decisions completely; omitted nonbinding background is no reread reason.
-Do not reload retained rules or Skills for each message. Newly relevant sources
-and specialized references remain allowed.
+Reviewers also receive the code-review policy. Embedded rules satisfy their
+required reads. Codex supplies project instructions; add no AGENTS.md loader.
+Explorer reuse sends the new task, current binding context, complete necessary
+inputs and communication language, with Decision identities instead of retained
+bodies. Read new, changed or uncertain Decisions completely; omitted nonbinding
+background is no reread reason. Retained unchanged rules and Skills stay loaded;
+load newly relevant sources and specialized references as needed.
 
 For Explorer, use `--role explorer --supplemental-context "<request.txt>"` or stdin.
 Preserve the user's exact request and requested response format with investigation

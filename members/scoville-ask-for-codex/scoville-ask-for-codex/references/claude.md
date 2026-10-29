@@ -15,10 +15,8 @@ a failed native route with CLI.
 Keep the UTF-8 question and generated request files in the workspace temporary
 area outside the reviewed tree.
 
-When composing questions or follow-ups, apply the
-[agent instruction design](instruction-design.md) rules. The helper preserves
-the literal question; pass its generated request unchanged to execution.
-Generate one request per selected Claude adviser:
+The helper preserves the literal question. Generate one request per selected
+Claude adviser and pass it unchanged to execution:
 
 ```text
 python "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-root>" --adviser claude --question-file "<temporary>/question.txt" --mode review --scope "<exact scope>" --reference "<consultation reference>" --output-file "<temporary>/claude-request.json"

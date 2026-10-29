@@ -79,8 +79,12 @@ flowchart TD
 ```
 
 Fresh children receive role, writing, shell and result rules once. Explorer
-reuse sends only its new task and needed context/evidence; new or changed sources
-remain readable. No context measurement or thresholds. Close finished Reviewers
+reuse sends its new task and needed context/evidence. Embedded writing and shell
+rules satisfy their required reads; unchanged rules stay loaded. Machine-data,
+Python discovery and large-output rules load when the operation needs them.
+Fresh assignments include accepted Decision text or its valid binding-section
+projection; reuse carries current source identities and reads new, changed or
+uncertain Decisions. No context measurement or thresholds. Close finished Reviewers
 only if native close exists. Interruption proves neither termination nor freed
 capacity. Native types are optional; never raise thread limits automatically.
 

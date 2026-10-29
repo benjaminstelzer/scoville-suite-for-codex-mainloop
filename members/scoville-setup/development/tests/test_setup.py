@@ -118,10 +118,24 @@ class SetupTests(unittest.TestCase):
                           {'ask': {'presets': {'astra': {'effort': level}}}}):
                 with self.subTest(patch=patch):
                     status, failed = self.run_setup('set', patch)
-                    self.assertNotEqual(0, status)
+                    self.assertEqual(1, status)
                     self.assertFalse(failed['ok'])
+                    field = ('patch.workflow.main.reasoning' if 'workflow' in patch
+                             else 'patch.ask.presets.astra.effort')
+                    self.assertIn(field, failed['diagnostic'])
                     self.assertIn('low, medium, high or xhigh', failed['diagnostic'])
+                    self.assertIn('no settings were saved', failed['diagnostic'])
+                    self.assertNotIn('manually', failed['diagnostic'])
+                    self.assertNotIn('edit .scoville/config.json', failed['diagnostic'])
                     self.assertEqual(before, self.path.read_bytes())
+        status, saved = self.run_setup('set', {
+            'workflow': {'main': {'reasoning': 'medium'}},
+            'ask': {'presets': {'astra': {'effort': 'medium'}}}})
+        self.assertEqual(0, status, saved)
+        self.assertTrue(saved['saved'])
+        self.assertEqual('medium', saved['effective']['workflow']['main']['reasoning'])
+        self.assertEqual('medium', saved['effective']['ask']['presets']['astra']['effort'])
+        self.assertEqual({'keep': True}, json.loads(self.path.read_text())['other'])
 
     def test_supported_special_levels_survive_unrelated_save(self):
         for level in ('none', 'minimal', 'max', 'ultra'):

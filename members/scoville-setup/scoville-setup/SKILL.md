@@ -10,10 +10,8 @@ compatibility: "Codex Suite with Python 3.11+, bundled configuration helpers and
 
 Manage `.scoville/config.json` in the known absolute project root. Overrides
 apply per field. There is no personal layer or parent-directory search.
-Read the [shared writing rules](references/writing.md) before evaluating settings
-or explaining results. Reuse retained matching rules.
-
-{{ include: rules.python }}
+Before reading machine reports, logs or structured state, evaluating settings
+or explaining results, read the [shared writing rules](references/writing.md). Reuse retained matching rules.
 
 ## Operations
 
@@ -30,9 +28,8 @@ python "<setup-skill-directory>/scripts/setup.py" cleanup --project-root "<proje
 | cleanup | Migrate old Workflow settings to schema 2 only when explicitly authorized. Ask and foreign values remain unchanged. An unchanged valid configuration returns saved: false. |
 | One-time Ask override | Load Scoville Ask for Codex and read its `references/configuration.md` for read-only settings resolution. Report resolved values without saving or starting advisers. |
 
-Generate stdin JSON with a serializer such as Python `json.dumps` or PowerShell
-`ConvertTo-Json -Depth 10 -Compress`. Use the UTF-8 stdin procedure in the
-loaded [shell command rules](references/shell-commands.md).
+Generate stdin JSON with a serializer. Follow the loaded
+[shell command rules](references/shell-commands.md) for UTF-8 stdin.
 Use `ask`, `workflow` or both for set; use only `workflow` for cleanup.
 Include only requested changes. Set offers low, medium, high and xhigh; keep
 existing special levels on unrelated saves and migration. Do not hand-write JSON
@@ -74,7 +71,22 @@ from the effective old execute routes. Different pairs have no automatic
 winner. Preserve supported special reasoning levels; actual model support still
 determines execution. Cleanup starts no agents or tests, edits no Plan and
 changes no `.codex` settings. Migrate between runs or at the authorized safe
-boundary specified by Workflow.
+boundary below.
+
+For an explicitly authorized upgrade of a running project, first let the old
+version reach a reviewed, quiescent commit boundary, preferably Work Item
+closure. Preserve needed old closure evidence before reload. If essential
+proof is only volatile, save it once in a unique ignored
+`.scoville/temp/workflow-migration-<Plan>-<WorkItem>-<Nr>.txt` and reference it
+in existing Evidence; commit a changed tracked Plan before reload. This adds
+no archive or per-Step report. If essential proof cannot be preserved, do not
+switch within the Work Item.
+
+Then reload and explicitly run Setup cleanup with the chosen pairs. Separately
+commit a tracked configuration change under project checks before authorized
+continuation; untracked configuration needs no commit. These instructions grant
+no upgrade, cleanup, commit or continuation permission. Installation proves
+neither cleanup, host-model change nor reload.
 
 ## Ask
 
@@ -89,5 +101,8 @@ Keep a one-time choice in the request or Plan Step unless the user explicitly
 asks to save it. Change saved settings between runs. Setup never starts advisers
 or Workflow, installs or updates Skills, publishes packages, creates a monitor
 or adds another configuration system.
+
+Before invoking this Skill's task helpers, apply the policy below and
+read [shell command rules](references/shell-commands.md).
 
 {{ include: helper.policy }}

@@ -105,6 +105,14 @@
         {
           "source": "shared:prompting/instruction-design.md",
           "target": "scoville-code/references/instruction-design.md"
+        },
+        {
+          "source": "shared:prompting/machine-data.md",
+          "target": "scoville-code/references/machine-data.md"
+        },
+        {
+          "source": "shared:runtime/python_discovery.md",
+          "target": "scoville-code/references/python-discovery.md"
         }
       ],
       "family": {
@@ -127,7 +135,8 @@
       ],
       "helper_contracts": {
         "scripts/check_text_size.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/output-delivery.md"
         }
       },
       "distribution": "suite"
@@ -209,6 +218,14 @@
         {
           "source": "shared:prompting/instruction-design.md",
           "target": "scoville-handoff/references/instruction-design.md"
+        },
+        {
+          "source": "shared:prompting/machine-data.md",
+          "target": "scoville-handoff/references/machine-data.md"
+        },
+        {
+          "source": "shared:runtime/python_discovery.md",
+          "target": "scoville-handoff/references/python-discovery.md"
         }
       ],
       "family": {
@@ -231,7 +248,8 @@
       ],
       "helper_contracts": {
         "scripts/check_text_size.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/output-delivery.md"
         }
       },
       "distribution": "suite"
@@ -350,6 +368,14 @@
         {
           "source": "shared:prompting/instruction-design.md",
           "target": "scoville-plan/references/instruction-design.md"
+        },
+        {
+          "source": "shared:prompting/machine-data.md",
+          "target": "scoville-plan/references/machine-data.md"
+        },
+        {
+          "source": "shared:runtime/python_discovery.md",
+          "target": "scoville-plan/references/python-discovery.md"
         }
       ],
       "family": {
@@ -384,19 +410,21 @@
         "development/readme/scoville-plan/requirements.md",
         "development/readme/scoville-plan/costs.md"
       ],
-      "shared_helpers": [],
       "helper_contracts": {
         "scripts/select_context.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "SKILL.md"
         },
         "scripts/markdown_structure.py": {
           "kind": "library"
         },
         "scripts/validate_profile.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "SKILL.md"
         },
         "scripts/check_text_size.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/output-delivery.md"
         }
       },
       "distribution": "suite"
@@ -574,6 +602,14 @@
         {
           "source": "shared:prompting/instruction-design.md",
           "target": "scoville-ui/references/instruction-design.md"
+        },
+        {
+          "source": "shared:prompting/machine-data.md",
+          "target": "scoville-ui/references/machine-data.md"
+        },
+        {
+          "source": "shared:runtime/python_discovery.md",
+          "target": "scoville-ui/references/python-discovery.md"
         }
       ],
       "family": {
@@ -601,7 +637,8 @@
       ],
       "helper_contracts": {
         "scripts/check_text_size.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/output-delivery.md"
         }
       },
       "distribution": "suite"
@@ -613,12 +650,6 @@
         "tests": "members/scoville-workflow-for-codex/development/tests",
         "notes": "members/scoville-workflow-for-codex/development/README.md"
       },
-      "shared_helpers": [
-        {
-          "source": "runtime/scoville_config.py",
-          "target": "scoville-workflow-for-codex/scripts/scoville_config.py"
-        }
-      ],
       "repository": "benjaminstelzer/scoville-suite-for-codex-mainloop",
       "distribution": "suite",
       "visibility": "public",
@@ -733,6 +764,18 @@
         {
           "source": "members/scoville-workflow-for-codex/scoville-workflow-for-codex/scripts/native_task_arguments.py",
           "target": "scoville-workflow-for-codex/scripts/native_task_arguments.py"
+        },
+        {
+          "source": "shared:prompting/machine-data.md",
+          "target": "scoville-workflow-for-codex/references/machine-data.md"
+        },
+        {
+          "source": "shared:runtime/python_discovery.md",
+          "target": "scoville-workflow-for-codex/references/python-discovery.md"
+        },
+        {
+          "source": "shared:runtime/scoville_config.py",
+          "target": "scoville-workflow-for-codex/scripts/scoville_config.py"
         }
       ],
       "family": {
@@ -750,19 +793,23 @@
       ],
       "helper_contracts": {
         "scripts/build_dispatch_prompt.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/operations.md"
         },
         "scripts/validate_profile.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/operations.md"
         },
         "scripts/resolve_model_pair.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/operations.md"
         },
         "scripts/workflow_settings.py": {
           "kind": "library"
         },
         "scripts/select_context.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/operations.md"
         },
         "scripts/markdown_structure.py": {
           "kind": "library"
@@ -774,7 +821,8 @@
           "kind": "library"
         },
         "scripts/check_text_size.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/output-delivery.md"
         }
       },
       "variables": {
@@ -915,11 +963,17 @@
         {
           "source": "shared:prompting/instruction-design.md",
           "target": "scoville-ask-for-codex/references/instruction-design.md"
-        }
-      ],
-      "shared_helpers": [
+        },
         {
-          "source": "runtime/scoville_config.py",
+          "source": "shared:prompting/machine-data.md",
+          "target": "scoville-ask-for-codex/references/machine-data.md"
+        },
+        {
+          "source": "shared:runtime/python_discovery.md",
+          "target": "scoville-ask-for-codex/references/python-discovery.md"
+        },
+        {
+          "source": "shared:runtime/scoville_config.py",
           "target": "scoville-ask-for-codex/scripts/scoville_config.py"
         }
       ],
@@ -937,10 +991,12 @@
       },
       "helper_contracts": {
         "scripts/ask.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/configuration.md"
         },
         "scripts/build_adviser_prompt.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/configuration.md"
         },
         "scripts/ask_claude.py": {
           "kind": "library"
@@ -952,7 +1008,8 @@
           "kind": "library"
         },
         "scripts/check_text_size.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/output-delivery.md"
         }
       },
       "distribution": "suite"
@@ -1049,11 +1106,17 @@
         {
           "source": "members/scoville-setup/CHANGELOG.md",
           "target": "CHANGELOG.md"
-        }
-      ],
-      "shared_helpers": [
+        },
         {
-          "source": "runtime/scoville_config.py",
+          "source": "shared:prompting/machine-data.md",
+          "target": "scoville-setup/references/machine-data.md"
+        },
+        {
+          "source": "shared:runtime/python_discovery.md",
+          "target": "scoville-setup/references/python-discovery.md"
+        },
+        {
+          "source": "shared:runtime/scoville_config.py",
           "target": "scoville-setup/scripts/scoville_config.py"
         }
       ],
@@ -1066,7 +1129,8 @@
       },
       "helper_contracts": {
         "scripts/setup.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "SKILL.md"
         },
         "scripts/ask_settings.py": {
           "kind": "library"
@@ -1078,7 +1142,8 @@
           "kind": "library"
         },
         "scripts/check_text_size.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/output-delivery.md"
         }
       },
       "variables": {
@@ -1158,6 +1223,14 @@
         {
           "source": "shared:prompting/instruction-design.md",
           "target": "scoville-project-context-cleanup/references/instruction-design.md"
+        },
+        {
+          "source": "shared:prompting/machine-data.md",
+          "target": "scoville-project-context-cleanup/references/machine-data.md"
+        },
+        {
+          "source": "shared:runtime/python_discovery.md",
+          "target": "scoville-project-context-cleanup/references/python-discovery.md"
         }
       ],
       "family": {
@@ -1180,7 +1253,8 @@
       ],
       "helper_contracts": {
         "scripts/check_text_size.py": {
-          "kind": "helper"
+          "kind": "helper",
+          "policy": "references/output-delivery.md"
         }
       }
     },

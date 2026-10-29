@@ -8,10 +8,11 @@ compatibility: "Codex desktop online, Python 3.11+ and filesystem access. Native
 
 Collect independent answers in the calling task. A review asks each adviser to
 assess the same evidence; a general consultation combines independent answers
-into a synthesis. The caller owns any subsequent changes. Advisers keep the reviewed subject unchanged and never delegate the consultation.
+into a synthesis. The caller owns subsequent changes; advisers inspect without
+changing the subject, running tests or delegating.
 
-When writing adviser framing, reporting results or assessing a disputed factual
-or technical conclusion, read and apply the
+Before reading machine reports, logs or structured state, or writing adviser
+framing or results, read and apply the
 [shared writing rules](references/writing.md). The helpers include those rules
 for adviser answers while preserving the literal user question.
 For composed adviser questions and follow-ups, apply
@@ -42,8 +43,6 @@ results; display names are not agent handles. Resolve selected presets in one
 call and report each adviser's settings. Read
 [configuration and helper inputs](references/configuration.md) for resolution,
 migration or the first helper invocation.
-
-{{ include: rules.python }}
 
 Native spawn_agent validates the requested model and effort on the actual host.
 Report a host rejection without substituting another model or route.
@@ -78,23 +77,20 @@ flowchart TD
   state -->|complete| report["Report evidence, differences and limits"]
 ```
 
-Dispatch only selected advisers, independently within host capacity and process
-limits. Use fresh context and selected settings. Retain each adviser's handle,
-settings, reference and scope, including running Claude process handles. Necessary
-questions and follow-ups use the same adviser. A returned handle alone is not an
-answer; keep partial answers and failures visible and do not silently replace advisers.
+Dispatch selected advisers independently with fresh context and resolved
+settings, within host capacity and process limits. Each route governs handle
+retention, collection and necessary follow-ups. Keep partial answers and
+failures visible; never silently replace advisers.
 
 For a consultation, synthesize agreement, differences and useful conclusions
 without inventing consensus. No mandatory second exchange round. For reviews,
 distinguish findings from untested concerns and verify findings before authorized fixes.
 
-In exchanges, apply [Evidence-based conclusions](references/writing.md#evidence-based-conclusions).
-Present disputed claims and their evidence neutrally; do not frame a preferred
-answer as fact or pressure advisers to agree. Neutral candidate acceptance or
-objection questions are allowed. Ask advisers to substantiate disputed
-conclusions and address contrary evidence. Check the reason for a changed
-conclusion; an unexplained concession does not resolve a finding, and consensus
-does not replace required review acceptance.
+Apply [Evidence-based conclusions](references/writing.md#evidence-based-conclusions)
+to exchanges. Present claims and evidence neutrally, including candidate
+acceptance or objection questions, without pressuring advisers to agree.
+An unexplained concession does not resolve a finding; consensus does not
+replace required review acceptance.
 
 Retain requested and actually reported model/effort separately; unavailable
 telemetry is unknown.
@@ -113,10 +109,7 @@ session implicitly.
 
 {{ include: family.contract }}
 
-Native advisers may inspect the subject but must not change it or run tests.
-Only necessary oversized-answer delivery permits temporary files in `.scoville/temp`,
-as specified in [native delivery](references/native-delivery.md).
-Spawning a native agent adds no technical write barrier or separate sandbox. Claude tool restrictions
-and opt-in web access are described in references/claude.md.
-
-{{ include: helper.policy }}
+Only necessary oversized-answer delivery permits native advisers to create
+temporary files, under [native delivery](references/native-delivery.md).
+Native spawning adds no technical write barrier or separate sandbox. The
+Claude route owns its tool restrictions and opt-in web access.

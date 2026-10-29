@@ -89,8 +89,12 @@ flowchart TD
 ```
 
 Fresh children receive role, writing, shell and result rules once. Explorer
-reuse sends only its new task and needed context/evidence; new or changed sources
-remain readable. No context measurement or thresholds. Close finished Reviewers
+reuse sends its new task and needed context/evidence. Embedded writing and shell
+rules satisfy their required reads; unchanged rules stay loaded. Machine-data,
+Python discovery and large-output rules load when the operation needs them.
+Fresh assignments include accepted Decision text or its valid binding-section
+projection; reuse carries current source identities and reads new, changed or
+uncertain Decisions. No context measurement or thresholds. Close finished Reviewers
 only if native close exists. Interruption proves neither termination nor freed
 capacity. Native types are optional; never raise thread limits automatically.
 
@@ -136,8 +140,12 @@ restrictions. See [operations](https://github.com/benjaminstelzer/scoville-suite
 
 Independent review and necessary corrections add tokens and time. Mainloop
 removes the implementation child and its coordination. Every review initializes
-a fresh agent; Explorer can retain context. Actual quality, time and token effects
-need comparable native runs; source size alone proves no saving.
+a fresh agent; Explorer can retain context.
+
+With identical fixture inputs, generated fresh Explorer text fell from 2,560 to
+1,634 words and Step Reviewer text from 3,101 to 2,123 words. Explorer reuse stayed
+at 268 words. These are generated-text measurements, separate from the recipient
+tests below. They do not measure billed tokens, actual rule loads or execution time.
 
 ## How it was developed
 
@@ -145,20 +153,40 @@ Mainloop keeps planning, coding and checks in the main chat. Only read-only
 Explorer and fresh Reviewer roles are delegated. It is the maintained Codex
 edition, sharing the same source project and Plan as the General suite.
 
-Targeted producer and receiver tests checked fresh exploration, same-handle
-follow-ups, Step review and full Work Item closure findings. Those tests checked
-the next permitted action, not a complete implementation-to-acceptance lifecycle.
-An earlier architecture's results do not establish Mainloop behavior or savings.
+The current source consolidates role selection, Step and closure control, and
+helper transport at their existing owners. Explicit upgrade instructions live
+with Setup's migration operation. Recipient tests and generated-text measurements
+cover different claims; the validation boundary below states what was observed.
+
+### Review and continuation
+
+In the current bounded tests, a Step Reviewer found a first-match implementation
+that lost required duplicate entries, plus missing verification of that contract.
+A separate closure Reviewer checked both original Steps and found an adapter
+converting `None` to an empty string. Two fresh receivers of the complete Reviewer
+finals selected the appropriate original Step for correction and kept findings,
+evidence gaps and closure open. They performed no implementation or new checks.
+
+### Validation boundary
+
+On 2026-10-29, actual helper-generated fresh Explorer, same-handle Explorer
+follow-up, Step Reviewer and closure Reviewer assignments were exercised in
+Codex. Native turn records confirmed `gpt-6.1-sol / low`. The reused Explorer
+retained ordering and nonmutation constraints without new tools or rule reads.
+
+These bounded cases did not execute the correction-review-commit loop or establish
+a successful Work Item closure, installed discovery or production acceptance.
+The encrypted native message arguments prevented an independent full-text
+transport comparison; strict transport byte identity is not claimed. Generated
+prompt sizes are reported separately from observed recipient behavior.
 
 ## Compatibility
 
 Requires the complete Codex Mainloop suite and the Python, Git and native tools
 listed above, with evidence that the active main pair matches the configured pair.
-Targeted candidate-path tests in Codex with gpt-6.1-sol / low exercised actual
-Explorer and Reviewer helper outputs, unchanged native results and fresh main
-receivers selecting the original Step for correction and retaining closure findings,
-while full correction-review-commit execution, successful closure, installed
-discovery and independent backend model identity remain unverified.
+The technical requirements do not establish behavior for every model or reasoning
+setting. The validation boundary above describes the tested model and assignments;
+installed discovery and independent backend model identity remain unverified.
 
 ## Install
 

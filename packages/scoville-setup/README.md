@@ -21,8 +21,8 @@ before one save. It creates no agents or Plan changes.
 
 - Saves settings only when you ask and leaves unrelated values alone.
 - Rejects invalid values before writing.
-- Changes configuration between runs. It doesn't start or supervise a
-  workflow.
+- Changes configuration between runs, or at an explicitly authorized safe
+  migration boundary. It doesn't start or supervise a workflow.
 
 ## What it costs
 
@@ -33,14 +33,21 @@ before one save. It creates no agents or Plan changes.
 Setup reuses Ask and Workflow validation. Tests follow saved settings into
 those consumers, because a successful save alone says little about the next run.
 
+On 2026-10-29, actual gpt-6.1-sol / low recipients ran show, a requested
+partial save and explicit schema-2 cleanup in isolated projects. The requested
+pairs were saved, Ask and unrelated values were preserved, and Setup's effective
+pairs matched the Workflow resolver. A read-only PowerShell check needed a
+syntax correction. The save and cleanup were not repeated.
+
+There was no separate byte checkpoint around the initial show. The absence of
+writes during that call was therefore not independently verified. These cases
+did not test migration during a running Workflow, installation, actual host-model
+binding or adviser execution. No current Claude behavior test was run.
+
 ## Compatibility
 
-Requires Codex and Python 3.11+.
-Targeted candidate-path tests with gpt-6.1-sol / low exercised actual show,
-schema-2 cleanup, partial-save helpers and one-time Ask resolution, preserving
-unrelated settings and leaving saved files unchanged on rejected or temporary
-choices, while adviser execution, installed discovery and actual host model
-binding were not tested.
+Requires the Codex Suite, Python 3.11+, the bundled configuration helpers and
+filesystem access to the selected project. Configuration changes are local.
 
 ## Install
 
@@ -78,6 +85,16 @@ Ask Setup to show or save this project's settings. For an old Workflow
 configuration, explicitly request cleanup and supply the required main pair and
 any ambiguous review/explore choices. All three valid pairs are saved together;
 errors leave the file unchanged. Show never migrates.
+
+For an explicitly authorized upgrade of a running project, let the old version
+reach a reviewed, quiescent commit boundary, preferably Work Item closure.
+Preserve needed closure evidence and commit a changed tracked Plan before
+reload. If essential proof cannot be preserved, stay with the old version
+within that Work Item. After reload, run explicitly authorized cleanup with
+the chosen pairs. A tracked configuration change needs its own commit under
+project checks before authorized continuation. The Skill's
+migration instructions grant no upgrade, cleanup, commit or continuation
+permission. Installation alone proves neither cleanup nor reload.
 
 ## Sources
 

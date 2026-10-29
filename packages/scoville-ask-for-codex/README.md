@@ -12,9 +12,13 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
 
 - Select configured advisers using native Codex agents or the Claude CLI.
 - Give each the same question, scope and relevant evidence independently.
-- Collect separate reviews or combine answers to a general question. Follow-up
-  questions continue with the same adviser and context.
+- Collect separate reviews or combine answers to a general question. Necessary
+  clarifications use the same adviser; follow-ups after completion need a request.
 - Show missing answers and failed starts alongside completed results.
+
+Shared writing rules travel with the assignment. Detailed data, command and
+delivery rules load when the task needs them. Claude follow-ups still include
+the complete rule context.
 
 ## What it enforces
 
@@ -24,7 +28,9 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
 - **Explicit failures.** Unavailable models, invalid settings and failed calls
   are reported. Ask does not quietly choose a different adviser.
 
-Claude uses read tools by default. Web access requires `claude.web_tools`.
+Claude uses Read, Grep and Glob. Web access requires an explicit
+`claude.web_tools` setting or request override. Advisers do not run tests;
+native agents may create temporary files only for necessary oversized answers.
 
 ## What it costs
 
@@ -37,17 +43,22 @@ more complicated than the question warranted. Native adviser handles and
 saved Claude sessions gave each conversation a clear continuation path.
 Missing answers still have to remain visible: a partial panel is not a consensus.
 
+### Current validation
+
+Current native review and consultation cases used `gpt-6.1-sol / low`. Advisers
+returned independent findings and respected the read-only scope. Local helper
+tests also checked prompt delivery and Claude request/resume handling with a
+CLI double. No current Claude provider behavior test was run.
+
+These are targeted cases, not a general success rate or proof of faster model
+execution. Encrypted native message records prevented an independent
+byte-for-byte comparison of transmitted assignments.
+
 ## Compatibility
 
-Requires Codex desktop online, Python 3.11+, filesystem access and native agent
-tools, with a signed-in Claude Code CLI for Claude consultations (2.1.280+ for
-Opus 5.5).
-Targeted candidate-path tests with gpt-6.1-sol / low exercised actual native
-review and consultation outputs through unchanged complete-file delivery and
-Claude-formatted text interpreted by Sol, while a path-only Claude frame caused
-Sol to exceed its literal tool allowance when the named tools were unavailable,
-and no full caller orchestration, Claude CLI execution, provider behavior or
-installed discovery was established.
+Requires Codex desktop online, Python 3.11+ and filesystem access. Native
+advisers need collaboration agent tools. Claude consultations need a signed-in
+Claude Code CLI, version 2.1.280 or newer for Opus 5.5.
 
 ## Install
 

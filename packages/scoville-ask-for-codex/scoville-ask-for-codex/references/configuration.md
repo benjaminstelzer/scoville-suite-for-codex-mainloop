@@ -1,5 +1,20 @@
 # Settings and helper inputs
 
+Before invoking this Skill's task helpers, apply the policy below and
+read [shell command rules](shell-commands.md).
+
+## Runtime helpers
+
+Use the bundled helpers for their operations. Read their invocation instructions,
+not their source, unless diagnosing a failure.
+
+| Condition | Required route |
+| --- | --- |
+| Python and every named helper are available | Use the bundled helper. |
+| Missing Python, script, dependency or helper error | Stop the affected operation; do not substitute manual execution. |
+
+Helpers: `scripts/ask.py`, `scripts/build_adviser_prompt.py`.
+
 Resolve locally with one complete command:
 
 ```text

@@ -23,8 +23,7 @@ def communication_rule(language: str) -> str:
     single_line(language, '--communication-language')
     return (
         f"Communication language: {language}. Use it for commentary, messages and natural-language text in result fields. "
-        "Your commentary and messages go to the main thread. "
-        "Your final uses the required result fields. "
+        "Address the main thread. "
         "Keep required field names, status values, quotes, relay text and technical literals exact."
     )
 
@@ -212,6 +211,7 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
     skill = Path(__file__).resolve().parents[1]
     dependencies = ['scripts/check_text_size.py', 'references/writing.md',
                     'references/shell-commands.md', 'references/output-delivery.md',
+                    'references/machine-data.md', 'references/python-discovery.md',
                     'references/instruction-design.md']
     if role == 'reviewer':
         dependencies.append('references/code-review.md')
@@ -225,7 +225,9 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
         f'scoville_role={role}', 'dispatch_contract=SCOVILLE_AGENT_DISPATCH_V2',
         f'workspace_root={workspace}', f'python: {sys.executable}',
         f'text_size_checker: {skill / "scripts/check_text_size.py"}',
-        f'output_delivery_rules: {skill / "references/output-delivery.md"}; load when required by the embedded shell rules.',
+        f'output_delivery_rules: {skill / "references/output-delivery.md"}; load when required by the embedded writing or shell rules.',
+        f'machine_data_rules: {skill / "references/machine-data.md"}; read before requesting or reading machine reports, logs or structured state; the embedded machine-data.md reference resolves here.',
+        f'python_discovery_rules: {skill / "references/python-discovery.md"}; read before Python or runtime-helper operations; the embedded python-discovery.md reference resolves here.',
         f'suite_directory: {suite}',
         f'instruction_design_rules: {skill / "references/instruction-design.md"}; the embedded instruction-design.md reference resolves here.',
         'Choose needed Skills yourself from this matching suite, preserving explicit invocations. Skills grant no additional role permissions.',
@@ -239,8 +241,8 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
     else:
         lines.append((skill / 'references/code-review.md').read_text(encoding='utf-8'))
         lines.extend([
-            'Independently inspect the complete in-scope diff and its affected consumers, including existing assertions of changed behavior, for defects and regressions; supplied focus and conclusions do not replace this review. This is a fresh review, including corrections and evidence follow-ups; retain relevant open findings supplied below.',
-            ('Step review: inspect this original Step, its actual diff, relevant effects and affected Acceptance. Use Git status, git diff HEAD and necessary sources and supplied check/effect evidence. Match depth to risk. Do not expand to other Steps, the whole Plan or unrelated changes. Plan records maintained by the main thread are not implementation changes. Foreign or unattributed changes prevent pass; name the gap. Read unchanged files only for necessary dependencies and affected consumers.'
+            'Independently inspect the complete in-scope diff, dependencies and affected consumers, including existing assertions of changed behavior. Supplied focus and conclusions do not limit this review. Recheck supplied open findings, including corrections and evidence follow-ups.',
+            ('Step review: inspect this original Step, its actual diff, relevant effects and affected Acceptance using Git status, git diff HEAD, necessary sources and supplied check/effect evidence. Risk changes depth, not scope. Do not expand to other Steps, the whole Plan or unrelated changes. Plan records maintained by the main thread are not implementation changes. Foreign or unattributed changes prevent pass; name the gap. Read unchanged files only for necessary dependencies and affected consumers.'
              if '/' in context['work_item']['unit'] else
              'Closure review: check EVERY original Step and FULL Work Item Acceptance against current sources and necessary evidence. Use the Git range from the Work Item start commit where source preservation matters. Do not expand into an unrelated audit. Give concise coverage; missing implementation with no matching Step uses affected Step: none.'),
             'Git does not prove behavior, non-file effects or ignored outputs. Evaluate whether supplied checks exercise the required behavior on the actual code path and could detect its failure. A passing check of an incidental implementation detail does not prove that behavior. For generated outputs, current successful generation and observed expected outputs suffice unless the Step, Acceptance, project contract or a concrete defect requires content inspection. Missing required evidence returns blocked; an actual defect returns changes_requested. Do not rerun tests or treat earlier coverage as a current pass.',

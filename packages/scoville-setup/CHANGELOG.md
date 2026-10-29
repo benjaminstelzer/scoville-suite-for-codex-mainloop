@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased - 2026-10-29
+
+- Load data, shell and output rules when needed while keeping configuration validation and save-error stops. Unsupported-choice errors name the field and supported levels, confirm that nothing was saved and no longer suggest manual configuration edits.
+- Move the running-project migration procedure to Setup, including the reviewed safe boundary, evidence preservation, reload and separate authority for cleanup, commits and continuation.
+- Separate technical requirements from observed gpt-6.1-sol / low results. Actual show, partial-save and cleanup cases preserved unrelated values and agreed with Workflow resolution. The initial show had no isolated byte checkpoint. Running-Workflow migration, installation, host-model binding and Claude behavior were not tested.
+
 ## Unreleased - 2026-10-28
 
 - Clarify fixed-pair patches, explicit migration authority and one-time Ask resolution through Ask's own configuration reference; use the shared UTF-8 transport procedure and preserve save-error stops.

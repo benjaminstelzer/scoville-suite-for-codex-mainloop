@@ -44,6 +44,8 @@ def prepare(request):
     settings = resolve(request)['config']
     role = read_utf8(ROOT / 'references/adviser.md', 'packaged adviser contract')
     writing = read_utf8(ROOT / 'references/writing.md', 'packaged writing rules')
+    machine_data = ROOT / 'references' / 'machine-data.md'
+    require(machine_data.is_file(), f'packaged machine-data rules missing at {machine_data}; use the intact built Ask package')
     code_review = (read_utf8(ROOT / 'references/code-review.md', 'packaged code-review rules')
                    if mode == 'review' else '')
     shell_rules = ROOT / 'references' / 'shell-commands.md'
@@ -62,6 +64,7 @@ def prepare(request):
                       + f'\n\nmode: {mode}\nadviser_id: {adviser["id"]}'
                       + f'\nworkspace_root: {cwd}\nconsultation_reference: {ref}\nscope: {scope}'
                       + f'\nshell_command_rules: {shell_rules}; these rules grant no tools or permissions.'
+                      + f'\nmachine_data_rules: {machine_data}; read before requesting or reading machine reports, logs or structured state; the embedded machine-data.md reference resolves here.'
                       + f'\ninstruction_design_rules: {instruction_design}; the shared writing reference to instruction-design.md resolves here.'
                       + '\nThis Claude adviser may use only Read, Grep, Glob and any web tools explicitly enabled for this request. Do not run shell commands or create delivery files. If a required machine-data check needs code execution, ask the caller for the checked result and state the remaining evidence gap.'
                       + '\n\nInspect only the supplied scope in this workspace. Resolve relative evidence paths there.'
