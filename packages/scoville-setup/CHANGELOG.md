@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased - 2026-10-29 - Follow-up corrections
+
+- Restore the manual user route for supported special reasoning levels while keeping agent changes helper-based; load shared rules before data requests and disputed conclusions.
+
 ## Unreleased - 2026-10-29
 
 - Load data, shell and output rules when needed while keeping configuration validation and save-error stops. Unsupported-choice errors name the field and supported levels, confirm that nothing was saved and no longer suggest manual configuration edits.

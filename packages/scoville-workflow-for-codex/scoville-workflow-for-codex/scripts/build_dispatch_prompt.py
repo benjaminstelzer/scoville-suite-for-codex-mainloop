@@ -241,7 +241,7 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
     else:
         lines.append((skill / 'references/code-review.md').read_text(encoding='utf-8'))
         lines.extend([
-            'Independently inspect the complete in-scope diff, dependencies and affected consumers, including existing assertions of changed behavior. Supplied focus and conclusions do not limit this review. Recheck supplied open findings, including corrections and evidence follow-ups.',
+            'Independently inspect the complete in-scope diff, dependencies and affected consumers, including existing assertions of changed behavior, for defects and regressions. Supplied focus and conclusions do not limit this review. Recheck supplied open findings, including corrections and evidence follow-ups.',
             ('Step review: inspect this original Step, its actual diff, relevant effects and affected Acceptance using Git status, git diff HEAD, necessary sources and supplied check/effect evidence. Risk changes depth, not scope. Do not expand to other Steps, the whole Plan or unrelated changes. Plan records maintained by the main thread are not implementation changes. Foreign or unattributed changes prevent pass; name the gap. Read unchanged files only for necessary dependencies and affected consumers.'
              if '/' in context['work_item']['unit'] else
              'Closure review: check EVERY original Step and FULL Work Item Acceptance against current sources and necessary evidence. Use the Git range from the Work Item start commit where source preservation matters. Do not expand into an unrelated audit. Give concise coverage; missing implementation with no matching Step uses affected Step: none.'),

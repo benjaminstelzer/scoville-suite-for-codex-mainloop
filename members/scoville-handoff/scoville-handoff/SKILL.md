@@ -47,7 +47,8 @@ receiver verification and actions, not snapshot creation.
 ## Preserve continuation facts
 
 Before requesting or reading machine reports, logs or structured state, or
-composing the continuation prompt, apply the
+composing the continuation prompt or answering a disputed factual or technical
+conclusion, apply the
 [shared writing rules](references/writing.md): use retained matching rules or
 load them if needed, with their conditional data, shell and delivery routes.
 They grant no additional task reads or actions.

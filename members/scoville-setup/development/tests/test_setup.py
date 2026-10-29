@@ -125,8 +125,7 @@ class SetupTests(unittest.TestCase):
                     self.assertIn(field, failed['diagnostic'])
                     self.assertIn('low, medium, high or xhigh', failed['diagnostic'])
                     self.assertIn('no settings were saved', failed['diagnostic'])
-                    self.assertNotIn('manually', failed['diagnostic'])
-                    self.assertNotIn('edit .scoville/config.json', failed['diagnostic'])
+                    self.assertIn('the user can edit .scoville/config.json manually', failed['diagnostic'])
                     self.assertEqual(before, self.path.read_bytes())
         status, saved = self.run_setup('set', {
             'workflow': {'main': {'reasoning': 'medium'}},

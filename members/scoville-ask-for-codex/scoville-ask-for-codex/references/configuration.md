@@ -42,7 +42,8 @@ separate commands. Use the bundled ask.py from this installed package.
 
 Legacy ask.pin_threads booleans remain readable and are preserved when other
 settings change, but have no effect. Native advisers are subagents without
-sidebar chats. Use Scoville Setup for configuration changes.
+sidebar chats. Use Scoville Setup for agent-driven configuration changes.
+Users can edit `.scoville/config.json` manually for supported special reasoning levels.
 
 The selected project root owns `.scoville/config.json`. Its `ask` section
 overrides this Skill's defaults. Missing files or fields use those defaults.

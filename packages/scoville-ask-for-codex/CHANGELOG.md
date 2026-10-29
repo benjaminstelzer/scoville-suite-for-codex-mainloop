@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased - 2026-10-29 - Follow-up corrections
+
+- Load data rules before requesting output, provide the Claude adviser output-rule path and document the user configuration route for special reasoning levels.
+
 ## Unreleased - 2026-10-29 - Focused adviser instructions
 
 - Shorten shared adviser framing and consolidate native collection rules while preserving independent questions, exact handles, complete answers and explicit failures.

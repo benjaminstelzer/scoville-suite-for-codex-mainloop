@@ -64,6 +64,7 @@ def prepare(request):
                       + f'\n\nmode: {mode}\nadviser_id: {adviser["id"]}'
                       + f'\nworkspace_root: {cwd}\nconsultation_reference: {ref}\nscope: {scope}'
                       + f'\nshell_command_rules: {shell_rules}; these rules grant no tools or permissions.'
+                      + f'\noutput_delivery_rules: {ROOT / "references/output-delivery.md"}; load when required by the embedded writing rules.'
                       + f'\nmachine_data_rules: {machine_data}; read before requesting or reading machine reports, logs or structured state; the embedded machine-data.md reference resolves here.'
                       + f'\ninstruction_design_rules: {instruction_design}; the shared writing reference to instruction-design.md resolves here.'
                       + '\nThis Claude adviser may use only Read, Grep, Glob and any web tools explicitly enabled for this request. Do not run shell commands or create delivery files. If a required machine-data check needs code execution, ask the caller for the checked result and state the remaining evidence gap.'

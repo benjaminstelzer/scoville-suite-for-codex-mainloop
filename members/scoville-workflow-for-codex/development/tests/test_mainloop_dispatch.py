@@ -157,6 +157,31 @@ Evidence: []
         self.assertEqual(0, corrected.returncode, corrected.stderr)
         self.assertTrue(path.is_file())
 
+    def test_child_role_permissions_and_scope_contract(self):
+        paths = 'Relevant paths: src/alpha.py, tests/test_alpha.py, src/consumer.py'
+        for role in ('reviewer', 'explorer'):
+            with self.subTest(role=role):
+                path = self.base / f'{role}-contract.txt'
+                result = self.run_dispatch(role, '--format', 'create', '--project-name', 'Fixture',
+                                           '--agent-number', '1', '--assignment-file', str(path),
+                                           '--unit', 'W-001/step-1', '--supplemental-context', '-', request=paths)
+                self.assertEqual(0, result.returncode, result.stderr)
+                assignment = path.read_text(encoding='utf-8')
+                permissions = next(line for line in assignment.splitlines() if line.startswith('Read only.'))
+                for restriction in ('edit project or Plan files', 'run tests', 'change settings',
+                                    'stage', 'commit', 'create agents/chats'):
+                    self.assertIn(restriction, permissions)
+                self.assertIn(paths, assignment)
+                self.assertNotIn('NEXT_STEP_MUST_NOT_APPEAR', assignment)
+                if role == 'reviewer':
+                    review = next(line for line in assignment.splitlines()
+                                  if line.startswith('Independently inspect'))
+                    for requirement in ('complete in-scope diff', 'dependencies', 'affected consumers',
+                                        'existing assertions', 'defects', 'regressions'):
+                        self.assertIn(requirement, review)
+                else:
+                    self.assertIn('Investigate only the supplied question', assignment)
+
     def test_closure_contains_all_original_steps_and_full_acceptance(self):
         result, path = self.create('reviewer', '--unit', 'W-001')
         self.assertEqual(0, result.returncode, result.stderr)

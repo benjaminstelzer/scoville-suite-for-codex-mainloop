@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased - 2026-10-29 - Follow-up corrections
+
+- Explicitly review defects and regressions across the complete assigned diff; test child read-only scope and clarify copied validator diagnostics.
+
 ## Unreleased - 2026-10-29
 
 - Consolidate Step, closure and child-selection rules at their existing owners; keep independent full-diff review, original Step scope and complete evidence.

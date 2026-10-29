@@ -11,7 +11,7 @@ assess the same evidence; a general consultation combines independent answers
 into a synthesis. The caller owns subsequent changes; advisers inspect without
 changing the subject, running tests or delegating.
 
-Before reading machine reports, logs or structured state, or writing adviser
+Before requesting or reading machine reports, logs or structured state, or writing adviser
 framing or results, read and apply the
 [shared writing rules](references/writing.md). The helpers include those rules
 for adviser answers while preserving the literal user question.

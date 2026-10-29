@@ -10,8 +10,9 @@ Implement and verify UI through its established framework, platform and design
 system. An owner is the source responsible for a decision or behavior: product
 requirements for intent, a design system for visuals, or a component for mechanics.
 
-Before reading machine reports, logs or structured state, or writing
-instructions, reviews or reports, read and apply the
+Before requesting or reading machine reports, logs or structured state, writing
+instructions, reviews or reports, or answering a disputed factual or technical
+conclusion, read and apply the
 [shared writing rules](references/writing.md). Approved interface text retains
 its product contract.
 

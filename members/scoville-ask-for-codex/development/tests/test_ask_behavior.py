@@ -133,7 +133,7 @@ class AskBehaviorTests(unittest.TestCase):
                 prompt = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']['prompt']
                 self.assertIn(f'machine_data_rules: {reference};', prompt)
 
-    def test_relocated_claude_instruction_design_resolves_outside_evidence_workspace(self):
+    def test_relocated_claude_rule_paths_resolve_outside_evidence_workspace(self):
         import shutil
         with tempfile.TemporaryDirectory(prefix='Ask relocated ä ') as directory:
             root = Path(directory) / 'relocated package'
@@ -147,13 +147,16 @@ class AskBehaviorTests(unittest.TestCase):
                     with self.subTest(mode=mode):
                         request = ask.prepare(prepare_request([ADVISERS[1]], cwd=str(evidence),
                                               mode=mode, question=question))['entries'][0]['request']
-                        line = next(line for line in request['prompt'].splitlines()
-                                    if line.startswith('instruction_design_rules: '))
-                        supplied = Path(line.split(': ', 1)[1].split(';', 1)[0])
-                        self.assertTrue(supplied.is_absolute())
-                        self.assertEqual(design.resolve(), supplied)
-                        self.assertEqual(design.read_bytes(), supplied.read_bytes())
-                        self.assertNotIn(design.read_text(encoding='utf-8'), request['prompt'])
+                        for field, filename in (('instruction_design_rules', 'instruction-design.md'),
+                                                ('output_delivery_rules', 'output-delivery.md')):
+                            line = next(line for line in request['prompt'].splitlines()
+                                        if line.startswith(field + ': '))
+                            supplied = Path(line.split(': ', 1)[1].split(';', 1)[0])
+                            expected = root / 'references' / filename
+                            self.assertTrue(supplied.is_absolute())
+                            self.assertEqual(expected.resolve(), supplied)
+                            self.assertEqual(expected.read_bytes(), supplied.read_bytes())
+                            self.assertNotIn(expected.read_text(encoding='utf-8'), request['prompt'])
                         self.assertTrue(request['prompt'].endswith(question))
                         self.assertEqual(str(evidence), request['cwd'])
                 design.unlink()

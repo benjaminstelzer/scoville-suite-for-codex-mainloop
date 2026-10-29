@@ -12,8 +12,9 @@ Explicit activation requirements and user exclusions apply in either layout.
 
 Manage `.scoville/config.json` in the known absolute project root. Overrides
 apply per field. There is no personal layer or parent-directory search.
-Before reading machine reports, logs or structured state, evaluating settings
-or explaining results, read the [shared writing rules](references/writing.md). Reuse retained matching rules.
+Before requesting or reading machine reports, logs or structured state, evaluating
+settings, explaining results or answering a disputed factual or technical conclusion,
+read the [shared writing rules](references/writing.md). Reuse retained matching rules.
 
 ## Operations
 
@@ -34,9 +35,12 @@ Generate stdin JSON with a serializer. Follow the loaded
 [shell command rules](references/shell-commands.md) for UTF-8 stdin.
 Use `ask`, `workflow` or both for set; use only `workflow` for cleanup.
 Include only requested changes. Set offers low, medium, high and xhigh; keep
-existing special levels on unrelated saves and migration. Do not hand-write JSON
+existing special levels on unrelated saves and migration. Do not hand-write transport JSON
 or silently substitute values. The helper validates changed sections before saving. An invalid choice
 does not authorize a partial save.
+
+For supported special reasoning levels, the user can edit `.scoville/config.json`
+manually. Agent-driven configuration changes use the helpers above.
 
 Check the returned file, saved flag and requested effective values before
 reporting success. Report a mismatch or error with its concrete diagnostic;

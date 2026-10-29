@@ -73,8 +73,8 @@ rate or general performance result.
 
 ## Compatibility
 
-Use this profile with Codex and the complete suite.
-Both profiles need reference access and the project's framework tools. Geometry
+Requires Codex and the complete suite.
+Requires reference access and the project's framework tools. Geometry
 proof needs DOM or equivalent measurement, visual proof needs viewed renders,
 and interaction proof needs an interactive runtime. No mandatory network.
 Size checks require Python 3.11+ and the bundled checker.
@@ -162,7 +162,7 @@ these principles.
 
 ## Developer links
 
-[Source](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/members/scoville-ui) | [Tests](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/development/instruction_tests) | [Notes](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/members/scoville-ui/development/README.md)
+[Source](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/members/scoville-ui) | [Tests](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/development/tests/test_build_suite.py) | [Notes](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/members/scoville-ui/development/README.md)
 
 ## License
 
