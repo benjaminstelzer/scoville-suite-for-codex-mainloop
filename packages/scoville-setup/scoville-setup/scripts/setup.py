@@ -12,7 +12,7 @@ import tempfile
 
 from ask_settings import diagnostic_value, merge_config_layer, resolve_settings
 from scoville_config import merge, read_config
-from workflow_settings import load_config, needs_cleanup, validate_pair
+from workflow_settings import load_config, needs_cleanup, validate_config, validate_pair
 
 ROOT = Path(__file__).resolve().parents[1]
 # Schema-1 defaults at this fork's baseline, used only to interpret migration.
@@ -22,7 +22,7 @@ LEGACY_KEYS = {"schema_version", "execute", "review", "explore", "context_thresh
 
 class SectionErrors(ValueError):
     def __init__(self, errors):
-        super().__init__('Invalid configuration sections; correct the listed diagnostics; no settings were saved.')
+        super().__init__('Invalid configuration sections; correct the listed diagnostics.')
         self.errors = errors
 
 
@@ -84,8 +84,17 @@ def effective(project_root: Path) -> dict:
     try:
         if not isinstance(workflow, dict):
             raise ValueError(f'{project_root / ".scoville/config.json"}: $.workflow must be an object')
-        values['workflow'] = (dict(schema_version=1, cleanup_required=True, **legacy_effective(workflow))
-                              if needs_cleanup(workflow) else load_config(ROOT / 'assets/workflow.toml', project_root))
+        if needs_cleanup(workflow) and type(workflow.get('schema_version')) is int and workflow['schema_version'] == 2:
+            legacy_fields = set(workflow) - {'schema_version', 'main', 'review', 'explore'}
+            unknown = legacy_fields - LEGACY_KEYS
+            if unknown:
+                raise ValueError(f'workflow has unsupported fields {sorted(unknown)}; resolve them explicitly before cleanup')
+            pairs = validate_config({key: value for key, value in workflow.items() if key not in legacy_fields})
+            values['workflow'] = dict(pairs, cleanup_required=True, legacy_fields=sorted(legacy_fields))
+        elif needs_cleanup(workflow):
+            values['workflow'] = dict(schema_version=1, cleanup_required=True, **legacy_effective(workflow))
+        else:
+            values['workflow'] = load_config(ROOT / 'assets/workflow.toml', project_root)
     except (ValueError, TypeError) as error:
         errors['workflow'] = str(error)
     if errors:

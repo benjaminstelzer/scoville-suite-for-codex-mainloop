@@ -44,8 +44,11 @@ temporary files before evaluation; evaluator failure must not require rerunning 
 | Saving forbidden | Narrow while preserving all required facts, or report the missing input. |
 | Reviewer reading sources | Read completely without saving source captures; the assigning agent supplies large inputs. |
 
-With `--run`, fitting output is returned directly even with `--publish-full`;
-larger output is saved from that execution. Direct machine output still needs
+With a supplied token limit, `--run` returns fitting output directly even with
+`--publish-full`; larger output is saved from that execution. Without a limit,
+`--run --publish-full --project-root "<workspace>"` always saves the streams and
+returns compact `exit_code`, `capture_complete` and `full_file` metadata without
+inline content or a fit claim. Direct machine output still needs
 evaluation before display. Capture supplies EOF on stdin. When native waiting
 cannot bound a command, an explicit `--timeout-seconds <positive-seconds>` before
 `--run` terminates its process family at that deadline; there is no default
@@ -55,11 +58,12 @@ on stderr gives `error`, `capture_complete`, `exit_code` and `full_file`.
 Timeout output remains incomplete; invalid encoding is not usable UTF-8.
 `timeout_cleanup_incomplete` also identifies a process whose termination is
 unconfirmed. Preserve it and resolve the process state before further work.
-Caught SIGINT/SIGTERM use the same bounded cleanup and report `interrupted`
+Caught SIGINT/SIGTERM and POSIX SIGHUP use the same bounded cleanup and report `interrupted`
 or `interrupted_cleanup_incomplete`. SIGKILL, Windows TerminateProcess and an
 uncontrolled host termination cannot be caught; a tool yield is no deadline.
 Atomic publication failure retains a complete own temporary file when writing
 finished; `publication_failed` gives its `full_file` and filesystem `reason`.
+An additional capture failure remains in `capture_error`, with `process_id` when cleanup is unconfirmed.
 Read that recovery source; do not repeat the producer. A storage failure before
 complete saving proves no recovery copy.
 Replacement characters introduced relative to the source also stop dependent work.

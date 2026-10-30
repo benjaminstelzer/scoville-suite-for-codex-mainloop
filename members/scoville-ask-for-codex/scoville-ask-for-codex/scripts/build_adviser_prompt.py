@@ -7,7 +7,6 @@ import json
 from pathlib import Path
 import re
 import sys
-import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -105,10 +104,9 @@ def main() -> int:
     if args.format == 'spawn':
         if len(prompt.encode('utf-8')) > 8192:
             from check_text_size import publish_full
-            storage = Path(tempfile.gettempdir()).resolve()
-            if (storage / '.scoville/temp').is_relative_to(args.workspace_root.resolve()):
-                parser.error('automatic assignment storage is inside the reviewed workspace; select a system temporary directory outside it before building the assignment')
+            from ask_claude import temporary_root
             try:
+                storage = temporary_root(args.workspace_root)
                 assignment = publish_full(storage, prompt.encode('utf-8'))
             except (OSError, ValueError) as error:
                 parser.error(f'cannot publish complete assignment: {error}; no adviser was started')

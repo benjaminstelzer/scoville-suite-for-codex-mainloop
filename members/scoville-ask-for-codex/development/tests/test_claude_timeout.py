@@ -13,6 +13,42 @@ from test_ask_behavior import ask, prepare_request, ADVISERS
 
 
 class ClaudeTimeoutTests(unittest.TestCase):
+    def test_paid_answer_survives_raw_storage_failures_without_retry(self):
+        import check_text_size
+        cases = ((check_text_size, 'publish_full', PermissionError('denied')),
+                 (check_text_size, 'publish_full', OSError('full disk')),
+                 (check_text_size, 'publish_full', ValueError('redirected storage')),
+                 (ask.ask_claude.tempfile, 'mkdtemp', PermissionError('private directory denied')))
+        for owner, operation, failure in cases:
+            with self.subTest(operation=operation, failure=type(failure).__name__), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                marker = root / 'once.txt'
+                code = 'import sys;from pathlib import Path;sys.stdin.read();p=Path(sys.argv[1]);p.write_text(p.read_text()+"x" if p.exists() else "x");print(\'{"type":"result","is_error":false,"result":"PAID ANSWER","session_id":"s-1"}\')'
+                request = {**self.request(), 'cwd': str(root)}
+                with mock.patch.object(ask.ask_claude, 'resolve_claude_command', return_value=[sys.executable, '-c', code, str(marker)]), mock.patch.object(owner, operation, side_effect=failure) as publish:
+                    result = ask.claude(request)
+                self.assertEqual(result['answer'], 'PAID ANSWER')
+                self.assertEqual(result['session_id'], 's-1')
+                self.assertIsNone(result['raw_file'])
+                self.assertIn(type(failure).__name__, result['raw_file_error'])
+                self.assertEqual(marker.read_text(), 'x')
+                publish.assert_called_once()
+
+    def test_private_storage_avoids_shared_scoville_collision(self):
+        import os
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / '.scoville').write_text('another user owns this path')
+            with mock.patch.object(ask.ask_claude.tempfile, 'gettempdir', return_value=str(root)):
+                result = ask.ask_claude.run_command([sys.executable, '-c', 'import sys;sys.stdin.read();print("ANSWER")'], root, 'question', 5)
+            self.assertEqual(result.stdout.strip(), 'ANSWER')
+            raw = Path(result.raw_file)
+            self.assertIn(b'ANSWER', raw.read_bytes())
+            self.assertTrue(raw.is_relative_to(root))
+            self.assertNotEqual(raw.parents[2], root)
+            if os.name != 'nt':
+                self.assertEqual(raw.parents[2].stat().st_mode & 0o777, 0o700)
+
     def test_raw_invalid_utf8_is_saved_before_decoding_without_rerun(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

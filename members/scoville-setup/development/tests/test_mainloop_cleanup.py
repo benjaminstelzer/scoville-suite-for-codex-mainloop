@@ -15,6 +15,24 @@ ROUTES = ('ultra_low', 'low', 'medium', 'high', 'ultra_high')
 
 
 class MainloopCleanupTests(unittest.TestCase):
+    def test_show_schema2_legacy_fields_names_cleanup_without_writing(self):
+        self.save({'workflow': dict(schema_version=2, **PAIRS, pin_threads=True)})
+        original = self.path.read_bytes()
+        status, result = self.run_setup('show')
+        self.assertEqual(status, 0, result)
+        workflow = result['effective']['workflow']
+        self.assertTrue(workflow['cleanup_required'])
+        self.assertEqual(workflow['legacy_fields'], ['pin_threads'])
+        self.assertEqual(workflow['main'], PAIRS['main'])
+        self.assertEqual(self.path.read_bytes(), original)
+        status, result = self.run_setup('cleanup')
+        self.assertEqual(status, 0, result)
+        self.assertNotIn('pin_threads', json.loads(self.path.read_text())['workflow'])
+        self.save({'workflow': []})
+        status, result = self.run_setup('show')
+        self.assertEqual(status, 1)
+        self.assertNotIn('no settings were saved', json.dumps(result))
+
     @classmethod
     def setUpClass(cls):
         cls.package = tempfile.TemporaryDirectory()

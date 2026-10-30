@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased - 2026-10-30 - Capture and diagnostic follow-up
+
+- Keep received Claude answers usable when raw-response storage fails and report the storage error without another consultation.
+- Use private user-owned temporary storage for responses and large assignments.
+- Support complete command capture without a numeric token limit and retain primary failure diagnostics.
+
 ## Unreleased - 2026-10-30 - Shared criteria and focused helper fixes
 
 - Deliver large native assignments through the existing complete-file route and apply common code-review criteria.

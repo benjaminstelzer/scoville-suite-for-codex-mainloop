@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased - 2026-10-30 - Capture and diagnostic follow-up
+
+- Report Schema 2 cleanup requirements with the affected legacy fields and keep read-only diagnostics free of save-failure claims.
+- Support complete command capture without a numeric token limit and retain primary failure diagnostics.
+
 ## Unreleased - 2026-10-30 - Shared criteria and focused helper fixes
 
 - Preserve configuration modes, reject redirected writes and report invalid sections without partial success.

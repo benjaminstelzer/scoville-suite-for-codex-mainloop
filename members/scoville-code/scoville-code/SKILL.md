@@ -63,12 +63,11 @@ permissions. A future task or a risk label adds no reading requirement.
 | Choose, run or interpret checks, or judge completion evidence | [Validation](references/validation.md) |
 | Request or read machine reports, logs or structured state; write instructions, reviews or a completion report; or answer a disputed factual or technical conclusion | Use fully loaded shared writing rules from the same build, including rules embedded in the assignment. If they are not loaded, read [Writing](references/writing.md) before that work. Do not reopen the file unless a stated reload reason applies. |
 
-Implementation needs Change, Validation and [Code quality](references/code-quality.md)
-before choosing the solution and before final scoped diff acceptance. Combine other routes only for work actually required. Recording future work does not authorize its
+Implementation needs Change and Validation. Implementation, implementation recommendations and every code review require
+[Code quality](references/code-quality.md) before choosing a solution or accepting the scoped diff.
+Combine other routes only for work actually required. Recording future work does not authorize its
 implementation or require its validation route. If a needed reference is
 unavailable, obtain its text before the dependent work.
-
-Every code review requires the same [Code quality](references/code-quality.md).
 
 ## Resolve material choices
 

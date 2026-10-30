@@ -25,6 +25,20 @@ SCRIPT = PACKAGE / "scripts/build_adviser_prompt.py"
 
 
 class AdviserPromptTests(unittest.TestCase):
+    def test_large_spawn_storage_failure_returns_no_assignment(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            wrapper = Path(temporary) / 'failed-storage.py'
+            wrapper.write_text('import runpy,sys\nfrom unittest.mock import patch\n'
+                               + f'sys.path.insert(0,{str(SCRIPT.parent)!r})\n'
+                               + 'with patch("check_text_size.publish_full", side_effect=PermissionError(13,"denied")):\n'
+                               + f'    runpy.run_path({str(SCRIPT)!r},run_name="__main__")\n', encoding='utf-8')
+            result = self.run_prompt('required question\n' + 'q' * 10000, extra=self.SPAWN, script=wrapper)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, '')
+        self.assertIn('cannot publish complete assignment', result.stderr)
+        self.assertIn('denied', result.stderr)
+        self.assertIn('no adviser was started', result.stderr)
+
     def test_large_spawn_uses_complete_file_without_changing_question(self):
         question = 'BEGIN literal café\n' + 'q' * 10000 + '\nEND literal\n'
         result = self.run_prompt(question, extra=self.SPAWN)

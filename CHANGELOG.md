@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased - 2026-10-30 - Capture and diagnostic follow-up
+
+- Preserve complete command captures without guessing a token budget. Catch POSIX SIGHUP and retain the original error when publication also fails.
+- Load Code quality before recommending implementations. Give precise Step and batch-date repair guidance.
+
+- Keep received Ask answers after storage failure and isolate temporary storage by ownership.
+- Identify Schema 2 legacy fields during read-only Setup inspection.
+
+
 ## Unreleased - 2026-10-30 - Shared criteria and focused helper fixes
 
 - Use the same Code quality criteria during design and acceptance. Keep roles, independent scope and output contracts distinct.

@@ -85,7 +85,10 @@ exact session ID. Permission denials are evidence gaps even when an answer is
 present. Missing session IDs mean continuation is unavailable, not success at
 creating a resumable session. A process error, timeout, malformed JSON or empty
 answer is a failed consultation; never reconstruct an answer from logs.
-The adapter retains raw stdout, stderr and original exit locally before parsing.
+The adapter attempts to retain raw stdout, stderr and original exit in a private
+user-owned temporary directory before parsing. A storage failure preserves the
+received answer and reports `raw_file_error`, with `raw_file: null` when no complete
+copy exists. Never repeat the consultation to repair storage.
 On response failure, `raw_file`, `exit_code` and any parsed `session_id` identify
 that record; inspect it without dumping it or repeating the paid call. Timeout
 captures are partial. Requested settings are not runtime proof: reported model

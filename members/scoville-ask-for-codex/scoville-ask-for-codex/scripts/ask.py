@@ -20,6 +20,7 @@ class ClaudeResponseError(ValueError):
         super().__init__(message)
         self.exit_code = result.returncode
         self.raw_file = raw_file
+        self.raw_file_error = getattr(result, 'raw_file_error', None)
         self.session_id = session_id
         self.capture_complete = True
 
@@ -116,7 +117,7 @@ def claude(request):
         session_persistence_default=config['session_persistence'], customizations_enabled=config['customizations'], web_tools=config['web_tools'])
     command = ask_claude.build_command(args, ask_claude.resolve_claude_command())
     result = ask_claude.run_command(command, cwd, text(request.get('prompt'), 'prompt'), timeout)
-    raw_file = getattr(result, 'raw_file', None) or ask_claude.retain_response(result)
+    raw_file = result.raw_file if hasattr(result, 'raw_file') else ask_claude.retain_response(result)
     try:
         payload = ask_claude.parse_claude_result(result.stdout)
     except ValueError as error:
@@ -132,7 +133,8 @@ def claude(request):
         'context_mode': 'continued' if resume else 'fresh',
         'requested_model': adviser['model'], 'requested_effort': adviser['effort'],
         'reported_model': None, 'reported_effort': None,
-        'permission_denials': payload.get('permission_denials') or []}
+        'permission_denials': payload.get('permission_denials') or [],
+        'raw_file': raw_file, 'raw_file_error': getattr(result, 'raw_file_error', None)}
 
 
 OPERATIONS = {'resolve': resolve, 'prepare': prepare, 'claude': claude}
@@ -292,7 +294,7 @@ def main(argv=()):
         if isinstance(error, ask_claude.ClaudeTimeout):
             failure['code'] = 'claude_timeout'
         if hasattr(error, 'raw_file'):
-            failure.update({key: getattr(error, key) for key in ('exit_code', 'raw_file', 'session_id', 'capture_complete') if hasattr(error, key)})
+            failure.update({key: getattr(error, key) for key in ('exit_code', 'raw_file', 'raw_file_error', 'session_id', 'capture_complete') if hasattr(error, key)})
         print(json.dumps(failure, ensure_ascii=False))
         return 1
 
