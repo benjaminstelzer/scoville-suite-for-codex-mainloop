@@ -19,6 +19,9 @@ and pass it unchanged to `collaboration.spawn_agent`. The object supplies
 `message`, `task_name`, `fork_turns="none"`, `model` and `reasoning_effort`.
 A helper error or incomplete output stops dispatch. Correct its named input;
 never repair the generated prompt. The host decides model/effort availability.
+Spawn assignments above 8 KiB UTF-8 use the existing complete-file route in
+system temporary storage outside the reviewed tree. Forward the generated
+message unchanged; the adviser reads the whole assignment before work.
 
 Retain adviser ID, requested settings, reference, scope and generated task name,
 then the returned exact native handle and canonical task path. The host

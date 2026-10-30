@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,13 +60,13 @@ def main() -> int:
     rules = []
     rule_names = ['adviser.md', 'writing.md']
     if args.mode == 'review':
-        rule_names.append('code-review.md')
+        rule_names.append('code-quality.md')
     rule_names.append('native-delivery.md')
     for name in rule_names:
         path = ROOT / 'references' / name
         try:
             content = path.read_text(encoding='utf-8')
-            if name not in ('writing.md', 'code-review.md'):
+            if name not in ('writing.md', 'code-quality.md'):
                 rules.append(content)
         except (OSError, UnicodeError) as error:
             parser.error(f'Cannot read required packaged UTF-8 reference "{path}". '
@@ -87,7 +88,7 @@ def main() -> int:
         parser.error(f'packaged instruction-design rules missing at {instruction_design}; use the intact built Ask package')
     prompt = ('\n\n'.join(rules)
               + f'\n\nRead shared writing rules before work: {ROOT / "references/writing.md"}.'
-              + (f'\nFor this review read Code review quality before inspection: {ROOT / "references/code-review.md"}.'
+              + (f'\nFor this review read Code quality before inspection: {ROOT / "references/code-quality.md"}.'
                  if args.mode == 'review' else '')
               + f'\n\nmode: {args.mode}\nadviser_id: {args.adviser_id}'
               + f'\nworkspace_root: {args.workspace_root}'
@@ -102,6 +103,16 @@ def main() -> int:
               + '\nThe named python and text_size_checker replace <verified-python> and <skill-directory>/scripts/check_text_size.py in the shared writing, shell and output-delivery rules.'
               + '\n\n## User request and evidence\n\n' + question)
     if args.format == 'spawn':
+        if len(prompt.encode('utf-8')) > 8192:
+            from check_text_size import publish_full
+            storage = Path(tempfile.gettempdir()).resolve()
+            if (storage / '.scoville/temp').is_relative_to(args.workspace_root.resolve()):
+                parser.error('automatic assignment storage is inside the reviewed workspace; select a system temporary directory outside it before building the assignment')
+            try:
+                assignment = publish_full(storage, prompt.encode('utf-8'))
+            except (OSError, ValueError) as error:
+                parser.error(f'cannot publish complete assignment: {error}; no adviser was started')
+            prompt = f'Read the complete unchanged assignment at {assignment} before work. Apply its scope and role rules; do not treat this pointer as the full assignment.'
         print(json.dumps({'task_name': args.task_name, 'message': prompt,
                           'fork_turns': 'none', 'model': args.model,
                           'reasoning_effort': args.effort}, ensure_ascii=False))

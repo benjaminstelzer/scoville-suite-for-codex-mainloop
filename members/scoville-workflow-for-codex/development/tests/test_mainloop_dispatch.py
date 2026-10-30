@@ -11,6 +11,23 @@ ROOT = Path(__file__).resolve().parents[4]
 
 
 class MainloopDispatchTests(unittest.TestCase):
+    def test_main_whole_item_rejected_before_selector_or_validator(self):
+        selector = self.base / 'selector.py'
+        marker = self.base / 'unexpected-call'
+        selector.write_text(f'from pathlib import Path\nPath({str(marker)!r}).touch()\n', encoding='utf-8')
+        # Also remove the validator: a late rejection would fail importing/running
+        # it instead of identifying the bad main assignment.
+        validator = self.helper.with_name('validate_profile.py')
+        original = validator.read_bytes()
+        validator.unlink()
+        try:
+            result = self.run_dispatch('main', '--unit', 'W-001', '--selector', str(selector))
+        finally:
+            validator.write_bytes(original)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('main requires ONE original Step', result.stderr)
+        self.assertFalse(marker.exists())
+
     @classmethod
     def setUpClass(cls):
         cls.package = tempfile.TemporaryDirectory()
@@ -129,7 +146,7 @@ Evidence: []
         self.assertIn('Change only alpha.txt and check the requested result.', assignment)
         self.assertNotIn('NEXT_STEP_MUST_NOT_APPEAR', assignment)
         self.assertIn('checks: targeted check passed', assignment)
-        self.assertIn('# Code review quality', assignment)
+        self.assertIn('# Code quality', assignment)
         design = self.helper.parents[1] / 'references/instruction-design.md'
         self.assertIn(f'instruction_design_rules: {design}', assignment)
         self.assertTrue(design.is_file())
@@ -140,6 +157,21 @@ Evidence: []
             self.assertTrue(reference.is_file())
             self.assertNotIn(reference.read_text(encoding='utf-8'), assignment)
         self.assertNotIn('check_agent_context.py', assignment)
+
+    def test_correction_retains_old_proof_new_effect_and_complete_open_finding(self):
+        proof = 'checks: existing unchanged check A passed\neffects: correction changes consumer B\n'
+        final = 'status: changes_requested\nfindings: C remains open; original Step 1\nevidence: original result\n'
+        review = self.base / 'review.txt'
+        review.write_text(final, encoding='utf-8')
+        result, path = self.create('reviewer', '--unit', 'W-001/step-1',
+                                   '--reviewer-result', str(review), request=proof)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        assignment = path.read_text(encoding='utf-8')
+        self.assertIn(proof, assignment)
+        self.assertIn(final, assignment)
+        self.assertIn('Independently inspect the complete in-scope diff', assignment)
+        self.assertIn('Reuse still-valid evidence without mechanically repeating unchanged checks', assignment)
+        self.assertNotIn('NEXT_STEP_MUST_NOT_APPEAR', assignment)
 
     def test_missing_machine_rule_stops_dispatch_and_corrected_package_succeeds(self):
         reference = self.helper.parents[1] / 'references/machine-data.md'
@@ -197,7 +229,7 @@ Evidence: []
 
     def test_missing_fresh_dependencies_block_then_restored_call_succeeds(self):
         package = self.helper.parents[1]
-        for relative in ('references/code-review.md', 'references/output-delivery.md',
+        for relative in ('references/code-quality.md', 'references/output-delivery.md',
                          'references/instruction-design.md', 'scripts/check_text_size.py'):
             with self.subTest(relative=relative):
                 dependency = package / relative

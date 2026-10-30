@@ -1,15 +1,9 @@
 ## How it was developed
 
-Setup reuses Ask and Workflow validation. Tests follow saved settings into
-those consumers, because a successful save alone says little about the next run.
+Setup grew from the need to keep Ask and Workflow settings consistent without
+editing configuration by hand. The important distinction was between saving a
+setting and having the next operation use it as intended.
 
-On 2026-10-29, actual gpt-6.1-sol / low recipients ran show, a requested
-partial save and explicit schema-2 cleanup in isolated projects. The requested
-pairs were saved, Ask and unrelated values were preserved, and Setup's effective
-pairs matched the Workflow resolver. A read-only PowerShell check needed a
-syntax correction. The save and cleanup were not repeated.
-
-There was no separate byte checkpoint around the initial show. The absence of
-writes during that call was therefore not independently verified. These cases
-did not test migration during a running Workflow, installation, actual host-model
-binding or adviser execution. No current Claude behavior test was run.
+Changes are tested through the Skills that consume those settings and examined
+in real project workflows. Configuration and migration problems feed back into
+Setup, followed by another round of testing and use.

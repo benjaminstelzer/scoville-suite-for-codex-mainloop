@@ -7,8 +7,10 @@ independent question.
 
 `--plan-root <directory>` reads records from that project instead of
 `--project-root`; it does not change the working workspace or configured pairs.
-`--selector <path>` selects a compatible Plan selector instead of the bundled
-script. Keep its required sibling libraries with it.
+`--selector <path>` replaces unit selection with a compatible Plan selector.
+Decision identity and binding projection still use the bundled Plan library;
+this option does not replace that library or its format contract. Keep the
+custom selector's own required sibling libraries with it.
 `--max-output-bytes <bytes>` forwards a success-payload budget to the selector;
 an insufficient budget returns a diagnostic and corrected call, not partial context.
 

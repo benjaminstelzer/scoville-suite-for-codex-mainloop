@@ -13,6 +13,21 @@ from test_ask_behavior import ask, prepare_request, ADVISERS
 
 
 class ClaudeTimeoutTests(unittest.TestCase):
+    def test_raw_invalid_utf8_is_saved_before_decoding_without_rerun(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            marker = root / 'once.txt'
+            code = 'import sys;from pathlib import Path;p=Path(sys.argv[1]);p.write_text(p.read_text()+"x" if p.exists() else "x");sys.stdout.buffer.write(b"\\xff");sys.stderr.buffer.write(b"private detail");sys.exit(7)'
+            with self.assertRaises(RuntimeError) as caught:
+                ask.ask_claude.run_command([sys.executable, '-c', code, str(marker)], root, 'literal café\n', 5)
+            failure = caught.exception
+            self.assertEqual(failure.exit_code, 7)
+            self.assertTrue(failure.capture_complete)
+            self.assertEqual(Path(failure.raw_file).read_bytes(),
+                             b'exit=7 stdout_bytes=1 stderr_bytes=14\nstdout:\n\xff\nstderr:\nprivate detail')
+            self.assertEqual(marker.read_text(), 'x')
+            self.assertNotIn('private detail', str(failure))
+
     def request(self):
         return ask.prepare(prepare_request([ADVISERS[1]]))["entries"][0]["request"]
 

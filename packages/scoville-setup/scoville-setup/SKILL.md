@@ -26,7 +26,7 @@ python "<setup-skill-directory>/scripts/setup.py" cleanup --project-root "<proje
 
 | Operation | Contract |
 | --- | --- |
-| show | Read only. Show effective fixed pairs or resolve old routes with cleanup_required. Create no file. |
+| show | Read only. Show effective fixed pairs or resolve old routes with cleanup_required. Report invalid sections together under ok:false, without partial effective success. Create no file. |
 | set | Save only explicitly requested fields. An old Workflow form requires cleanup before a Workflow save; Ask-only saves leave it unchanged. |
 | cleanup | Migrate old Workflow settings to schema 2 only when explicitly authorized. Ask and foreign values remain unchanged. An unchanged valid configuration returns saved: false. |
 | One-time Ask override | Load Scoville Ask for Codex and read its `references/configuration.md` for read-only settings resolution. Report resolved values without saving or starting advisers. |

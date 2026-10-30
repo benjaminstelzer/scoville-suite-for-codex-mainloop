@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import stat
 from pathlib import Path
 import sys
 import tempfile
@@ -17,6 +18,26 @@ ROOT = Path(__file__).resolve().parents[1]
 # Schema-1 defaults at this fork's baseline, used only to interpret migration.
 LEGACY_ROUTES = dict(ultra_low="low", low="medium", medium="high", high="xhigh", ultra_high="xhigh")
 LEGACY_KEYS = {"schema_version", "execute", "review", "explore", "context_threshold_percent", "context", "manager", "pin_threads"}
+
+
+class SectionErrors(ValueError):
+    def __init__(self, errors):
+        super().__init__('Invalid configuration sections; correct the listed diagnostics; no settings were saved.')
+        self.errors = errors
+
+
+def writable_config_path(project_root: Path):
+    path = project_root / '.scoville/config.json'
+    info = None
+    for candidate in (path.parent, path):
+        try:
+            info = candidate.lstat()
+        except FileNotFoundError:
+            info = None
+            continue
+        if stat.S_ISLNK(info.st_mode) or getattr(info, 'st_file_attributes', 0) & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0):
+            raise ValueError(f'{candidate} is a redirected path; Setup will not replace or write through it. Select a direct project configuration path; no settings were saved.')
+    return path, info
 
 
 def read_patch(required=True) -> dict:
@@ -53,37 +74,55 @@ def legacy_effective(value: dict) -> dict:
 
 
 def effective(project_root: Path) -> dict:
-    current = read_config(project_root)
+    current = read_config(project_root, sections=())
     workflow = current.get('workflow', {})
-    values = (dict(schema_version=1, cleanup_required=True, **legacy_effective(workflow))
-              if needs_cleanup(workflow) else load_config(ROOT / 'assets/workflow.toml', project_root))
-    return {'ask': resolve_settings(ROOT / 'assets/ask.default.json', {'project_root': project_root}),
-            'workflow': values}
+    values, errors = {}, {}
+    try:
+        values['ask'] = resolve_settings(ROOT / 'assets/ask.default.json', {'project_root': project_root})
+    except (ValueError, TypeError) as error:
+        errors['ask'] = str(error)
+    try:
+        if not isinstance(workflow, dict):
+            raise ValueError(f'{project_root / ".scoville/config.json"}: $.workflow must be an object')
+        values['workflow'] = (dict(schema_version=1, cleanup_required=True, **legacy_effective(workflow))
+                              if needs_cleanup(workflow) else load_config(ROOT / 'assets/workflow.toml', project_root))
+    except (ValueError, TypeError) as error:
+        errors['workflow'] = str(error)
+    if errors:
+        raise SectionErrors(errors)
+    return values
 
 
 def save_validated(project_root: Path, current: dict, proposed: dict, sections) -> dict:
+    path, existing = writable_config_path(project_root)
     content = json.dumps(proposed, ensure_ascii=False, indent=2) + '\n'
     with tempfile.TemporaryDirectory(prefix='scoville-setup-') as temporary:
         candidate = Path(temporary)
         (candidate / '.scoville').mkdir()
         (candidate / '.scoville/config.json').write_bytes(content.encode('utf-8'))
         values = {}
-        if 'workflow' in sections:
-            values['workflow'] = load_config(ROOT / 'assets/workflow.toml', candidate)
-        if 'ask' in sections:
-            values['ask'] = resolve_settings(ROOT / 'assets/ask.default.json', {'project_root': candidate})
+        try:
+            if 'workflow' in sections:
+                values['workflow'] = load_config(ROOT / 'assets/workflow.toml', candidate)
+            if 'ask' in sections:
+                values['ask'] = resolve_settings(ROOT / 'assets/ask.default.json', {'project_root': candidate})
+        except ValueError as error:
+            raise ValueError(str(error).replace(str(candidate / '.scoville/config.json'), str(path))) from error
     if proposed == current:
         return {'saved': False, 'effective': values}
-    path = project_root / '.scoville/config.json'
     path.parent.mkdir(exist_ok=True)
     staging = None
     try:
         with tempfile.NamedTemporaryFile(dir=path.parent, prefix='.config-', suffix='.tmp', delete=False) as stream:
             staging = Path(stream.name)
             stream.write(content.encode('utf-8'))
+        if existing is not None:
+            os.chmod(staging, stat.S_IMODE(existing.st_mode))
+        writable_config_path(project_root)
         os.replace(staging, path)
     finally:
         if staging is not None and staging.exists():
+            staging.chmod(stat.S_IRUSR | stat.S_IWUSR)
             staging.unlink()
     return {'saved': True, 'effective': values}
 
@@ -137,6 +176,7 @@ def cleanup(project_root: Path, patch: dict) -> dict:
     choices = patch.get('workflow', {})
     if set(choices) - {'main', 'review', 'explore'}:
         raise ValueError("cleanup workflow choices must be main, review and explore, each containing model and reasoning")
+    validate_setup_choices(patch)
     for key, pair in choices.items():
         validate_pair(pair, 'workflow.' + key)
     current = read_config(project_root)
@@ -145,6 +185,14 @@ def cleanup(project_root: Path, patch: dict) -> dict:
         if choices:
             return apply(project_root, {'workflow': choices})
         return {'saved': False, 'effective': {'workflow': load_config(ROOT / 'assets/workflow.toml', project_root)}}
+    if type(old.get('schema_version')) is int and old['schema_version'] == 2:
+        unknown = set(old) - (LEGACY_KEYS | {'main'})
+        if unknown:
+            raise ValueError(f'workflow has unsupported fields {sorted(unknown)}; resolve them explicitly before cleanup; no settings were discarded')
+        selected = {key: choices.get(key, old[key]) for key in ('main', 'review', 'explore') if key in old}
+        selected.update(choices)
+        return save_validated(project_root, current,
+                              dict(current, workflow=dict(schema_version=2, **selected)), ('workflow',))
     tables = legacy_effective(old)
     selected = dict(choices)
     missing = ['main'] if 'main' not in selected else []
@@ -182,7 +230,10 @@ def main() -> int:
         print(json.dumps({'ok': True, 'file': str(args.project_root / '.scoville/config.json'), **result}, ensure_ascii=False))
         return 0
     except (OSError, UnicodeError, ValueError, TypeError) as error:
-        print(json.dumps({'ok': False, 'diagnostic': str(error)}, ensure_ascii=False))
+        failure = {'ok': False, 'diagnostic': str(error)}
+        if isinstance(error, SectionErrors):
+            failure['diagnostics'] = error.errors
+        print(json.dumps(failure, ensure_ascii=False))
         return 1
 
 

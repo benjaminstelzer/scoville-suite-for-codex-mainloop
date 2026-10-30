@@ -1,6 +1,8 @@
 """Exercise shipped Setup, legacy config migration and real route consumers."""
 import importlib.util
 import json
+import os
+import stat
 from pathlib import Path
 import subprocess
 import sys
@@ -14,6 +16,133 @@ spec.loader.exec_module(builder)
 
 
 class SetupTests(unittest.TestCase):
+    def test_save_preserves_existing_mode_and_foreign_fields(self):
+        self.save({'other': {'keep': True}})
+        self.path.chmod(0o640)
+        before = stat.S_IMODE(self.path.stat().st_mode)
+        status, saved = self.run_setup('set', {'workflow': {'main': {'reasoning': 'medium'}}})
+        self.assertEqual(status, 0, saved)
+        self.assertEqual(stat.S_IMODE(self.path.stat().st_mode), before)
+        self.assertEqual(json.loads(self.path.read_text())['other'], {'keep': True})
+
+    def test_file_link_save_is_refused_without_replacing_link_or_target(self):
+        outside = self.base / 'outside.json'
+        outside.write_text('{"other":{"keep":true}}', encoding='utf-8')
+        self.path.parent.mkdir()
+        try:
+            self.path.symlink_to(outside)
+        except OSError as error:
+            self.skipTest(f'symlinks unavailable: {error}')
+        before = outside.read_bytes()
+        status, failed = self.run_setup('set', {'workflow': {'main': {'reasoning': 'medium'}}})
+        self.assertEqual(status, 1)
+        self.assertIn('redirected path', failed['diagnostic'])
+        self.assertTrue(self.path.is_symlink())
+        self.assertEqual(outside.read_bytes(), before)
+        self.assertEqual([p.name for p in self.path.parent.iterdir()], ['config.json'])
+
+    def test_directory_link_save_is_refused_without_writing_into_target(self):
+        outside = self.base / 'outside-directory'
+        outside.mkdir()
+        (outside / 'config.json').write_text('{}', encoding='utf-8')
+        try:
+            self.path.parent.symlink_to(outside, target_is_directory=True)
+        except OSError as error:
+            self.skipTest(f'symlinks unavailable: {error}')
+        status, failed = self.run_setup('set', {'workflow': {'main': {'reasoning': 'medium'}}})
+        self.assertEqual(status, 1)
+        self.assertIn('redirected path', failed['diagnostic'])
+        self.assertTrue(self.path.parent.is_symlink())
+        self.assertEqual((outside / 'config.json').read_text(), '{}')
+        self.assertEqual([p.name for p in outside.iterdir()], ['config.json'])
+
+    def test_readonly_mode_is_preserved_and_failed_save_leaves_no_staging_file(self):
+        self.save({'other': True})
+        self.path.chmod(stat.S_IRUSR)
+        before = self.path.read_bytes()
+        mode = stat.S_IMODE(self.path.stat().st_mode)
+        try:
+            status, result = self.run_setup('set', {'workflow': {'main': {'reasoning': 'medium'}}})
+            if os.name == 'nt':
+                self.assertEqual(status, 1, result)
+                self.assertEqual(self.path.read_bytes(), before)
+            else:
+                self.assertEqual(status, 0, result)
+            self.assertEqual(stat.S_IMODE(self.path.stat().st_mode), mode)
+            self.assertEqual([p.name for p in self.path.parent.iterdir()], ['config.json'])
+        finally:
+            self.path.chmod(stat.S_IRUSR | stat.S_IWUSR)
+
+    def test_cleanup_checks_explicit_choices_but_preserves_inherited_special_pairs(self):
+        routes = {key: {'model': 'gpt-6.1-sol', 'reasoning': 'max'}
+                  for key in ('ultra_low', 'low', 'medium', 'high', 'ultra_high')}
+        self.save({'workflow': {'schema_version': 1, 'review': routes, 'explore': routes}, 'other': 7})
+        before = self.path.read_bytes()
+        status, failed = self.run_setup('cleanup', {'workflow': {'main': {'model': 'gpt-6.1-sol', 'reasoning': 'max'}}})
+        self.assertEqual(status, 1)
+        self.assertEqual(self.path.read_bytes(), before)
+        status, saved = self.run_setup('cleanup', {'workflow': {'main': {'model': 'gpt-6.1-sol', 'reasoning': 'high'}}})
+        self.assertEqual(status, 0, saved)
+        actual = json.loads(self.path.read_text())
+        self.assertEqual(actual['workflow']['review']['reasoning'], 'max')
+        self.assertEqual(actual['workflow']['explore']['reasoning'], 'max')
+        self.assertEqual(actual['other'], 7)
+
+    def test_cleanup_schema_two_removes_known_legacy_fields_without_reinterpreting_pairs(self):
+        pairs = {key: {'model': 'gpt-6.1-sol', 'reasoning': level}
+                 for key, level in (('main', 'high'), ('review', 'max'), ('explore', 'low'))}
+        self.save({'workflow': {'schema_version': 2, **pairs, 'context_threshold_percent': 50}, 'ask': {}, 'other': True})
+        status, saved = self.run_setup('cleanup', {})
+        self.assertEqual(status, 0, saved)
+        self.assertEqual(json.loads(self.path.read_text()), {'workflow': {'schema_version': 2, **pairs}, 'ask': {}, 'other': True})
+        self.save({'workflow': {'schema_version': 2, **pairs, 'context': {}, 'unknown': 7}})
+        before = self.path.read_bytes()
+        status, failed = self.run_setup('cleanup', {})
+        self.assertEqual(status, 1)
+        self.assertIn('unknown', failed['diagnostic'])
+        self.assertEqual(self.path.read_bytes(), before)
+
+    def test_show_reports_both_invalid_sections_without_partial_effective_payload(self):
+        self.save({'ask': None, 'workflow': False})
+        before = self.path.read_bytes()
+        status, failed = self.run_setup('show')
+        self.assertEqual(status, 1)
+        self.assertFalse(failed['ok'])
+        self.assertEqual(set(failed['diagnostics']), {'ask', 'workflow'})
+        self.assertNotIn('effective', failed)
+        self.assertEqual(self.path.read_bytes(), before)
+
+    def test_bad_ask_type_does_not_block_workflow_config_or_main_config_boundary(self):
+        self.save({'ask': None, 'workflow': {'schema_version': 2}})
+        command = [sys.executable, str(self.workflow / 'resolve_model_pair.py'), '--project-root', str(self.project)]
+        result = subprocess.run([*command, '--show-config'], capture_output=True, text=True, encoding='utf-8', timeout=15)
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertTrue(json.loads(result.stdout)['valid'])
+        env = {key: value for key, value in os.environ.items() if key != 'CODEX_THREAD_ID'}
+        result = subprocess.run([*command, '--role', 'main'], env=env, capture_output=True, text=True, encoding='utf-8', timeout=15)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('CODEX_THREAD_ID', json.loads(result.stdout)['diagnostic'])
+        self.assertNotIn('$.ask', result.stdout)
+        self.path.write_text('{', encoding='utf-8')
+        result = subprocess.run([*command, '--show-config'], capture_output=True, text=True, encoding='utf-8', timeout=15)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('invalid JSON', result.stdout)
+
+    def test_failed_candidate_diagnostic_names_actual_project_config(self):
+        status, failed = self.run_setup('set', {'ask': {'presets': {'astra': {'model': 'bad model'}}}})
+        self.assertEqual(status, 1)
+        self.assertIn(str(self.path), failed['diagnostic'])
+        self.assertNotIn('scoville-setup-', failed['diagnostic'])
+        self.assertFalse(self.path.exists())
+
+    def test_workflow_model_rejects_all_whitespace_and_metadata_is_packaged(self):
+        self.assertTrue((self.helper.parents[1] / 'agents/openai.yaml').is_file())
+        for model in ('bad model', 'bad\tmodel', 'bad\nmodel'):
+            status, failed = self.run_setup('set', {'workflow': {'main': {'model': model}}})
+            self.assertEqual(status, 1)
+            self.assertIn('without whitespace', failed['diagnostic'])
+            self.assertFalse(self.path.exists())
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)

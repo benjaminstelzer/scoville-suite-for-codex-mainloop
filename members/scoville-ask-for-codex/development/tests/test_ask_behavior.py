@@ -57,7 +57,7 @@ class AskBehaviorTests(unittest.TestCase):
         request = ask.prepare(prepare_request([ADVISERS[1]], question=question))['entries'][0]['request']
         writing = (PACKAGE / 'references/writing.md').read_text(encoding='utf-8')
         self.assertEqual(1, request['prompt'].count(writing))
-        quality = (PACKAGE / 'references/code-review.md').read_text(encoding='utf-8')
+        quality = (PACKAGE / 'references/code-quality.md').read_text(encoding='utf-8')
         self.assertEqual(1, request['prompt'].count(quality))
         self.assertTrue(request['prompt'].endswith(question))
         machine_data = PACKAGE / 'references/machine-data.md'
@@ -81,7 +81,7 @@ class AskBehaviorTests(unittest.TestCase):
                     ask.prepare(prepare_request([ADVISERS[1]]))
                 (root / 'references/writing.md').write_bytes((PACKAGE / 'references/writing.md').read_bytes())
                 (root / 'references/machine-data.md').write_bytes((PACKAGE / 'references/machine-data.md').read_bytes())
-                (root / 'references/code-review.md').write_bytes((PACKAGE / 'references/code-review.md').read_bytes())
+                (root / 'references/code-quality.md').write_bytes((PACKAGE / 'references/code-quality.md').read_bytes())
                 (root / 'references/shell-commands.md').write_bytes((PACKAGE / 'references/shell-commands.md').read_bytes())
                 (root / 'references/instruction-design.md').write_bytes((PACKAGE / 'references/instruction-design.md').read_bytes())
                 self.assertEqual('claude', ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']['operation'])
@@ -90,7 +90,7 @@ class AskBehaviorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'references').mkdir()
-            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/code-review.md',
+            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/code-quality.md',
                          'references/instruction-design.md', 'references/machine-data.md'):
                 (root / name).write_bytes((PACKAGE / name).read_bytes())
             shell = root / 'references/shell-commands.md'
@@ -110,12 +110,12 @@ class AskBehaviorTests(unittest.TestCase):
                          'references/instruction-design.md', 'references/machine-data.md'):
                 (root / name).write_bytes((PACKAGE / name).read_bytes())
             with mock.patch.object(ask, 'ROOT', root):
-                with self.assertRaisesRegex(ValueError, 'code-review rules.*code-review.md'):
+                with self.assertRaisesRegex(ValueError, 'code-review rules.*code-quality.md'):
                     ask.prepare(prepare_request([ADVISERS[1]]))
                 consultation = ask.prepare(prepare_request([ADVISERS[1]], mode='consultation'))['entries'][0]['request']
-                quality = (PACKAGE / 'references/code-review.md').read_text(encoding='utf-8')
+                quality = (PACKAGE / 'references/code-quality.md').read_text(encoding='utf-8')
                 self.assertNotIn(quality, consultation['prompt'])
-                (root / 'references/code-review.md').write_text(quality, encoding='utf-8')
+                (root / 'references/code-quality.md').write_text(quality, encoding='utf-8')
                 corrected = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']
                 self.assertEqual(1, corrected['prompt'].count(quality))
 
@@ -408,20 +408,72 @@ class AskBehaviorTests(unittest.TestCase):
         ]:
             with self.subTest(error=error), \
                  mock.patch.object(ask.ask_claude, "resolve_claude_command", return_value=["claude"]), \
-                 mock.patch.object(ask.ask_claude, "run_command", return_value=completed), \
-                 self.assertRaisesRegex(ValueError, error):
+                 mock.patch.object(ask.ask_claude, "run_command", return_value=completed) as launch, \
+                 self.assertRaises(ask.ClaudeResponseError) as caught:
                 ask.claude(request)
+            launch.assert_called_once()
+            self.assertEqual(caught.exception.exit_code, completed.returncode)
+            capture = Path(caught.exception.raw_file).read_bytes()
+            self.assertIn(completed.stdout.encode('utf-8'), capture)
+            self.assertIn(completed.stderr.encode('utf-8'), capture)
+            self.assertIn(f'exit={completed.returncode} '.encode(), capture)
 
-    def test_claude_exit_error_uses_oauth_detail_from_stdout_json(self):
+    def test_claude_exit_error_retains_oauth_detail_without_dumping_response(self):
         request = ask.prepare(prepare_request([ADVISERS[1]]))["entries"][0]["request"]
         oauth_error = "Failed to authenticate: OAuth session expired and could not be refreshed"
         completed = subprocess.CompletedProcess(["claude"], 1,
             json.dumps({"is_error": True, "errors": [oauth_error]}), "")
         with mock.patch.object(ask.ask_claude, "resolve_claude_command", return_value=["claude"]), \
              mock.patch.object(ask.ask_claude, "run_command", return_value=completed) as launch, \
-             self.assertRaisesRegex(ValueError, oauth_error):
+             self.assertRaises(ask.ClaudeResponseError) as caught:
             ask.claude(request)
         launch.assert_called_once()
+        self.assertIn(oauth_error.encode(), Path(caught.exception.raw_file).read_bytes())
+        self.assertNotIn(oauth_error, str(caught.exception))
+
+    def test_error_keeps_actual_session_and_does_not_emit_large_private_stderr(self):
+        import io
+        request = {**ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request'], 'operation': 'claude'}
+        completed = subprocess.CompletedProcess([], 7, json.dumps({'is_error': True, 'session_id': 'actual-session'}), 'PRIVATE-ERROR-' * 40000)
+        with mock.patch.object(sys, 'stdin', io.StringIO(json.dumps(request))), \
+             mock.patch.object(sys, 'stdout', io.StringIO()) as output, \
+             mock.patch.object(ask.ask_claude, 'resolve_claude_command', return_value=['fake']), \
+             mock.patch.object(ask.ask_claude, 'run_command', return_value=completed) as launch:
+            self.assertEqual(ask.main(), 1)
+        failure = json.loads(output.getvalue())
+        self.assertEqual(failure['session_id'], 'actual-session')
+        self.assertEqual(failure['exit_code'], 7)
+        self.assertTrue(failure['capture_complete'])
+        self.assertNotIn('PRIVATE-ERROR', output.getvalue())
+        self.assertIn(completed.stderr.encode(), Path(failure['raw_file']).read_bytes())
+        launch.assert_called_once()
+
+    def test_json_request_bom_supported_on_stdin_and_file_without_stripping_question(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            request = {'operation': 'resolve', 'project_root': temporary}
+            data = b'\xef\xbb\xbf' + json.dumps(request).encode()
+            path = Path(temporary) / 'request.json'
+            path.write_bytes(data)
+            command = [sys.executable, str(SCRIPTS / 'ask.py')]
+            for args, stdin in (([], data), (['--input-file', str(path)], None)):
+                result = subprocess.run([*command, *args], input=stdin, capture_output=True, timeout=15)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertTrue(json.loads(result.stdout)['ok'])
+            question = Path(temporary) / 'literal.txt'
+            question.write_bytes(b'\xef\xbb\xbfLiteral question')
+            self.assertEqual(ask.read_utf8(question, 'question'), '\ufeffLiteral question')
+
+    def test_small_positive_budget_is_not_rounded_to_six_significant_digits(self):
+        request = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']
+        request['claude']['max_budget_usd'] = 0.123456789
+        completed = subprocess.CompletedProcess([], 0, '{"result":"ok"}', '')
+        with mock.patch.object(ask.ask_claude, 'resolve_claude_command', return_value=['fake']), \
+             mock.patch.object(ask.ask_claude, 'run_command', return_value=completed) as launch:
+            result = ask.claude(request)
+        command = launch.call_args.args[0]
+        self.assertEqual(float(command[command.index('--max-budget-usd') + 1]), 0.123456789)
+        self.assertIsNone(result['reported_model'])
+        self.assertIsNone(result['reported_effort'])
 
 
 if __name__ == "__main__":

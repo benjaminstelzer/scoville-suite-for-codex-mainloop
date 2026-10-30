@@ -17,7 +17,7 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
 - Show missing answers and failed starts alongside completed results.
 
 Native assignments carry role and delivery rights plus exact paths to the
-shared writing rules and, for reviews, Code review quality. Advisers read those
+shared writing rules and, for reviews, Code quality. Advisers read those
 before work; detailed data, command and delivery rules load when needed.
 Claude follow-ups still include the complete rule context.
 
@@ -40,20 +40,13 @@ native agents may create temporary files only for necessary oversized answers.
 ## How it was developed
 
 Early consultations made collecting answers and asking follow-up questions
-more complicated than the question warranted. Native adviser handles and
-saved Claude sessions gave each conversation a clear continuation path.
-Missing answers still have to remain visible: a partial panel is not a consensus.
+more complicated than the question warranted. Ask developed around independent
+advice and a clear continuation path for each conversation. Missing answers
+remain visible because a partial panel is not a consensus.
 
-### Current validation
-
-Current native review and consultation cases used `gpt-6.1-sol / low`. Advisers
-returned independent findings and respected the read-only scope. Local helper
-tests also checked prompt delivery and Claude request/resume handling with a
-CLI double. No current Claude provider behavior test was run.
-
-These are targeted cases, not a general success rate or proof of faster model
-execution. Encrypted native message records prevented an independent
-byte-for-byte comparison of transmitted assignments.
+Consultation tests and analysis of real project reviews guide changes. Useful
+findings, lost context and unnecessary coordination feed into the next revision,
+which is tested and used again.
 
 ## Compatibility
 

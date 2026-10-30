@@ -6,7 +6,6 @@ import argparse
 import json
 import math
 from pathlib import Path
-import re
 import subprocess
 import sys
 
@@ -14,6 +13,15 @@ import ask_claude
 from ask_settings import diagnostic_value, resolve_settings
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+class ClaudeResponseError(ValueError):
+    def __init__(self, message, result, raw_file, session_id=None):
+        super().__init__(message)
+        self.exit_code = result.returncode
+        self.raw_file = raw_file
+        self.session_id = session_id
+        self.capture_complete = True
 
 
 def require(condition, message):
@@ -46,7 +54,7 @@ def prepare(request):
     writing = read_utf8(ROOT / 'references/writing.md', 'packaged writing rules')
     machine_data = ROOT / 'references' / 'machine-data.md'
     require(machine_data.is_file(), f'packaged machine-data rules missing at {machine_data}; use the intact built Ask package')
-    code_review = (read_utf8(ROOT / 'references/code-review.md', 'packaged code-review rules')
+    code_review = (read_utf8(ROOT / 'references/code-quality.md', 'packaged code-review rules')
                    if mode == 'review' else '')
     shell_rules = ROOT / 'references' / 'shell-commands.md'
     require(shell_rules.is_file(), f'packaged shell rules missing at {shell_rules}; use the intact built Ask package')
@@ -104,25 +112,26 @@ def claude(request):
     require(type(timeout) in (int, float) and math.isfinite(timeout) and timeout > 0,
             f'request.timeout_seconds={diagnostic_value(timeout)} must be a positive finite number; use a value such as 3600')
     args = argparse.Namespace(model=adviser['model'], effort=adviser['effort'],
-        max_budget_usd=config['max_budget_usd'], fresh=False, persistent=False,
-        resume=resume, continue_session=False, session_name=None,
+        max_budget_usd=config['max_budget_usd'], resume=resume,
         session_persistence_default=config['session_persistence'], customizations_enabled=config['customizations'], web_tools=config['web_tools'])
     command = ask_claude.build_command(args, ask_claude.resolve_claude_command())
     result = ask_claude.run_command(command, cwd, text(request.get('prompt'), 'prompt'), timeout)
-    if result.returncode != 0:
-        detail = result.stderr.strip()
-        if not detail and result.stdout.strip():
-            detail = ask_claude.claude_error_details(ask_claude.parse_claude_result(result.stdout)) or 'no error details in response'
-        raise ValueError(f'Claude exited {result.returncode}: {detail or "no error details"}')
-    payload = ask_claude.parse_claude_result(result.stdout)
-    require(ask_claude.claude_error_details(payload) is None, 'Claude failed: ' + str(ask_claude.claude_error_details(payload)))
-    answer = text(payload.get('result'), 'Claude answer')
+    raw_file = getattr(result, 'raw_file', None) or ask_claude.retain_response(result)
+    try:
+        payload = ask_claude.parse_claude_result(result.stdout)
+    except ValueError as error:
+        raise ClaudeResponseError(f'Claude exit={result.returncode} returned invalid JSON; inspect raw_file locally; do not rerun the consultation.', result, raw_file) from error
     session = payload.get('session_id')
+    if result.returncode != 0:
+        raise ClaudeResponseError(f'Claude exited {result.returncode}; inspect raw_file locally; no retry was started.', result, raw_file, session)
+    if ask_claude.claude_error_details(payload) is not None or not isinstance(payload.get('result'), str) or not payload['result'].strip():
+        raise ClaudeResponseError('Claude reported failure or no complete answer; inspect raw_file locally; no retry was started.', result, raw_file, session)
+    answer = payload['result']
     return {'reference': request.get('reference'), 'scope': request.get('scope'), 'answer': answer,
         'session_id': session, 'continuation_available': bool(session) and config['session_persistence'],
         'context_mode': 'continued' if resume else 'fresh',
         'requested_model': adviser['model'], 'requested_effort': adviser['effort'],
-        'reported_model': payload.get('model'), 'reported_effort': payload.get('effort'),
+        'reported_model': None, 'reported_effort': None,
         'permission_denials': payload.get('permission_denials') or []}
 
 
@@ -138,7 +147,9 @@ def read_utf8(path, argument):
 
 def read_request(path, argument):
     try:
-        return json.loads(read_utf8(path, argument))
+        return json.loads(path.read_text(encoding='utf-8-sig'))
+    except (OSError, UnicodeError) as error:
+        raise ValueError(f'{argument} {path}: {error}; provide a readable UTF-8 JSON request') from error
     except json.JSONDecodeError as error:
         raise ValueError(f'{argument} {path} has invalid JSON at line {error.lineno}, column {error.colno}; correct the syntax near {error.msg}') from error
 
@@ -266,7 +277,7 @@ def main(argv=()):
             require(not (args.adviser or args.model is not None or args.effort is not None),
                     '--adviser, --model and --effort require --project-root; provide --project-root PATH')
             try:
-                request = json.load(sys.stdin)
+                request = json.loads(sys.stdin.read().removeprefix('\ufeff'))
             except json.JSONDecodeError as error:
                 raise ValueError(f'stdin has invalid JSON at line {error.lineno}, column {error.colno}; correct the syntax near {error.msg}') from error
         require(isinstance(request, dict), 'request must be a JSON object; provide an operation field such as {"operation": "resolve"}')
@@ -280,6 +291,8 @@ def main(argv=()):
         failure = {'ok': False, 'error': str(error)}
         if isinstance(error, ask_claude.ClaudeTimeout):
             failure['code'] = 'claude_timeout'
+        if hasattr(error, 'raw_file'):
+            failure.update({key: getattr(error, key) for key in ('exit_code', 'raw_file', 'session_id', 'capture_complete') if hasattr(error, key)})
         print(json.dumps(failure, ensure_ascii=False))
         return 1
 

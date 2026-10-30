@@ -183,8 +183,8 @@ a fresh agent; Explorer can retain context.
 
 With identical fixture inputs, generated fresh Explorer text fell from 2,560 to
 1,634 words and Step Reviewer text from 3,101 to 2,123 words. Explorer reuse stayed
-at 268 words. These are generated-text measurements, separate from the recipient
-tests below. They do not measure billed tokens, actual rule loads or execution time.
+at 268 words. These are generated-text measurements, not measurements of billed
+tokens, actual rule loads or execution time.
 
 [How to use Scoville Workflow for Codex](members/scoville-workflow-for-codex/README.md#how-to-use).
 
@@ -392,7 +392,7 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
 - Show missing answers and failed starts alongside completed results.
 
 Native assignments carry role and delivery rights plus exact paths to the
-shared writing rules and, for reviews, Code review quality. Advisers read those
+shared writing rules and, for reviews, Code quality. Advisers read those
 before work; detailed data, command and delivery rules load when needed.
 Claude follow-ups still include the complete rule context.
 
@@ -509,30 +509,22 @@ The Skill has no paid service calls. Host model usage and any explicitly request
 
 [How to use Scoville Skillwriter](members/scoville-skillwriter/README.md#how-to-use).
 
+## How it was developed
+
+Scoville grew from recurring problems in real software projects. Separate Skills
+addressed code, interfaces, planning and the work around them. Shared guidance
+keeps their foundations aligned, while the Codex workflow evolved toward a main
+chat supported by focused exploration and independent review.
+
+Development follows a repeated cycle: develop an idea, test it, and analyze how
+it behaves in real workflows on large projects. Those observations guide the
+next revision, which is tested and used again. The individual Skill READMEs
+describe the changes and lessons that shaped each one.
+
 ## Compatibility
 
 Requires Codex desktop, native agents and Python 3.11+.
 Claude consultations also need a signed-in Claude Code CLI (2.1.280+ for Opus 5.5).
-
-## Model checks and limits
-
-Earlier controlled native Codex cases covered all nine maintained Skills
-through Codex-edition packages. The cases ran with `gpt-6.1-sol` and `low` reasoning.
-The candidate cases preserved the tested
-task, authority and evidence boundaries, including complete data checks,
-one-time effects and continuation. The Skillwriter case also used the host's
-Skill Creator; the Handoff receiver applied its host rules.
-
-The latest follow-up checks used the same model and effort for native adviser
-and dispatch delivery, complete-file reading and large-report evaluation.
-They distinguish complete captures from command success and unreadable UTF-8.
-The [follow-up evidence](docs/testing/0060-fertige-skills-folgefixes.md) records
-the tested scope, correction cases and remaining transport limits.
-
-These are local case results, not a suite-wide reliability rate or proof of
-installed discovery, other hosts or product integrations. The revised
-instructions have no current Claude behavior tests. Technical Claude Code
-compatibility is separate from the observed Codex results.
 
 ## Install the suite
 

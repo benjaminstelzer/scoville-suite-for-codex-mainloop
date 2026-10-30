@@ -26,7 +26,9 @@ The checker executes argv without a shell, captures both streams completely,
 validates UTF-8 and measures rendered status and labels. Grouped streams do not
 prove chronological order. It preserves child exit status; signals use
 `128 + signal` and report the original status. Checker failures use 125 and
-stop dependent work. Start Python producers with `-X utf8`, including after
+stop dependent work. A child may also exit 125: complete `exit=125` output
+identifies its status; checker failure metadata identifies capture failure.
+Start Python producers with `-X utf8`, including after
 `--run --`; the outer Python runs only the checker.
 
 Run machine-data producers inside evaluating code that retains the complete
@@ -37,8 +39,8 @@ temporary files before evaluation; evaluator failure must not require rerunning 
 
 | Operation or role | Required capture choice |
 | --- | --- |
-| Effect or nonreproducible output | Configure UTF-8 and allowed `--publish-full --project-root "<workspace>"` before the first `--run`. |
-| Safely repeatable read-only query | One rerun with that option is allowed only if the role and phase permit the temporary write. |
+| Potentially large output, including diagnostics | Configure UTF-8 and allowed `--publish-full --project-root "<workspace>"` before the first `--run`. |
+| Effect or nonreproducible output | Preserve complete original streams and status from the first execution; never repeat to recover output. |
 | Saving forbidden | Narrow while preserving all required facts, or report the missing input. |
 | Reviewer reading sources | Read completely without saving source captures; the assigning agent supplies large inputs. |
 
@@ -53,6 +55,13 @@ on stderr gives `error`, `capture_complete`, `exit_code` and `full_file`.
 Timeout output remains incomplete; invalid encoding is not usable UTF-8.
 `timeout_cleanup_incomplete` also identifies a process whose termination is
 unconfirmed. Preserve it and resolve the process state before further work.
+Caught SIGINT/SIGTERM use the same bounded cleanup and report `interrupted`
+or `interrupted_cleanup_incomplete`. SIGKILL, Windows TerminateProcess and an
+uncontrolled host termination cannot be caught; a tool yield is no deadline.
+Atomic publication failure retains a complete own temporary file when writing
+finished; `publication_failed` gives its `full_file` and filesystem `reason`.
+Read that recovery source; do not repeat the producer. A storage failure before
+complete saving proves no recovery copy.
 Replacement characters introduced relative to the source also stop dependent work.
 
 A saved command capture contains `exit=<n> stdout_bytes=<n> stderr_bytes=<n>`,

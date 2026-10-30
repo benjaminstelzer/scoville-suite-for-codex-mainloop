@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased - 2026-10-30 - Shared criteria and focused helper fixes
+
+- Use the same Code quality criteria during design and acceptance. Keep roles, independent scope and output contracts distinct.
+- Preserve complete captures on publication failure, handle controlled interruptions and distinguish child status from capture failure.
+- Align Plan format consumers, selection boundaries and compact actionable diagnostics without adding a parser framework or snapshot guarantee.
+- Describe development through ideas, tests, real project analysis and refinement. Keep standalone siblings optional.
+
+- Focus correction-review depth on the change, its effects and open findings while retaining full independent scope and valid evidence.
+- Deliver large native Ask assignments through complete files and retain original Claude responses before interpretation.
+- Preserve Setup rights and section boundaries, repair explicit cleanup and include normal host metadata.
+
+
 ## Unreleased - 2026-10-29 - Packaged Skill review fixes
 
 - Align Plan section boundaries and actionable diagnostics; retain nested Goal headings and reject incomplete ID inventories.

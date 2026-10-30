@@ -21,10 +21,6 @@ Preserve scope, stops, independent Decisions and unrelated work. An authorized
 correction stays on its affected original Step; optional ideas and hypothetical
 hardening do not expand it.
 
-All Skills in this suite must be installed and enabled. Use the applicable
-owner without rechecking sibling availability; load only task-needed instructions.
-Explicit activation requirements and user exclusions apply in either layout.
-
 ## Start and continue
 
 For a NEW run, before Plan writes, require Git and empty
@@ -69,10 +65,10 @@ and required field names. Internal messages use only necessary labelled fields.
 | --- | --- |
 | Work Item start | Select authorized Plan/item in order with dependencies met. Record HEAD in existing Evidence for closure. Save actual start/resume through Plan before coding; selection alone starts nothing. |
 | Step start | Save the selected original Step in_progress. Use the main-task helper: it validates saved start and explicit old execute bindings. Do not rewrite the task or choose another model per Step. Retain its start HEAD in existing context. |
-| Implementation | Perform only this Step and required checks. Preserve completed effects. Finish or safely stop owned write, test and restore processes before review. Read required sources completely; reuse unchanged passing checks. |
+| Implementation | Apply [Code quality](code-quality.md) before choosing the implementation; fully retained unchanged rules satisfy the read. Perform only this Step and required checks. Preserve completed effects. Finish or safely stop owned write, test and restore processes before review. Read required sources completely; reuse unchanged passing checks. |
 | Review decision | Use Git status/diff and observed file, configuration and behavior effects for the diagram's review decision. Closure checks unchanged Steps; record no invented review pass. |
 | Changed Step | Supply the SAME original Step, needed check/effect evidence and relevant complete open review results. Dispatch supplies the independent full-diff, dependency, consumer and Acceptance review contract. |
-| Correction | Retain unchanged objections and select the ONE affected original Step. Resolve each objection by a correction, by narrowing an unsupported claim, or by refuting it with evidence; complete required checks and obtain a fresh review that rechecks that answer. Preserve relevant open findings and still-valid evidence. |
+| Correction | Select the ONE affected original Step. Resolve each objection by correction, narrowing an unsupported claim, or refutation with evidence. Complete required checks and obtain a fresh review focused on the correction, its effects and open findings, within the original full independent scope. Preserve and reuse still-valid evidence. |
 | Repeated finding without new evidence or changed conditions | Follow Code's Stop repetition rule: continue only with a supported next diagnosis or correction. Otherwise keep the Step open; report the unresolved finding and record any actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
 | Accepted change | After completion and required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Never stage foreign or unreviewed work. Failed or forbidden commit stops advancement. Confirm the resulting clean Git state; make no empty commit. |
 

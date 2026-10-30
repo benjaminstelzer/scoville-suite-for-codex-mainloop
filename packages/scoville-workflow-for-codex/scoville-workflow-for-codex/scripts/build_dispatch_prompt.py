@@ -215,7 +215,7 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
                     'references/machine-data.md', 'references/python-discovery.md',
                     'references/instruction-design.md']
     if role == 'reviewer':
-        dependencies.append('references/code-review.md')
+        dependencies.append('references/code-quality.md')
     for relative in dependencies:
         if not (skill / relative).is_file():
             raise ValueError(f'bundled dependency missing: {skill / relative}; restore the matching package before dispatch')
@@ -240,13 +240,14 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
     if role == 'explorer':
         lines.append('Investigate only the supplied question, idea or planning preparation. Return proposals, scope and open questions; the main thread writes the Plan. Source facts affected by concurrent main-thread writes are provisional.')
     else:
-        lines.append((skill / 'references/code-review.md').read_text(encoding='utf-8'))
+        lines.append((skill / 'references/code-quality.md').read_text(encoding='utf-8'))
         lines.extend([
             'Independently inspect the complete in-scope diff, dependencies and affected consumers, including existing assertions of changed behavior, for defects and regressions. Supplied focus and conclusions do not limit this review. Recheck supplied open findings, including corrections and evidence follow-ups.',
+            'For a correction follow-up, focus depth on the correction, its effects and open findings. Reuse still-valid evidence without mechanically repeating unchanged checks; this does not narrow the independent original scope.',
             ('Step review: inspect this original Step, its actual diff, relevant effects and affected Acceptance using Git status, git diff HEAD, necessary sources and supplied check/effect evidence. Risk changes depth, not scope. Do not expand to other Steps, the whole Plan or unrelated changes. Plan records maintained by the main thread are not implementation changes. Foreign or unattributed changes prevent pass; name the gap. Read unchanged files only for necessary dependencies and affected consumers.'
              if '/' in context['work_item']['unit'] else
              'Closure review: check EVERY original Step and FULL Work Item Acceptance against current sources and necessary evidence. Use the Git range from the Work Item start commit where source preservation matters. Do not expand into an unrelated audit. Give concise coverage; missing implementation with no matching Step uses affected Step: none.'),
-            'Git does not prove behavior, non-file effects or ignored outputs. Evaluate whether supplied checks exercise the required behavior on the actual code path and could detect its failure. A passing check of an incidental implementation detail does not prove that behavior. For generated outputs, current successful generation and observed expected outputs suffice unless the Step, Acceptance, project contract or a concrete defect requires content inspection. Missing required evidence returns blocked; an actual defect returns changes_requested. Do not rerun tests or treat earlier coverage as a current pass.',
+            'Git does not prove behavior, non-file effects or ignored outputs. Evaluate whether supplied checks exercise the required behavior on the actual code path and could detect its failure. A passing check of an incidental implementation detail does not prove that behavior. For generated outputs, current successful generation and observed expected outputs suffice unless the Step, Acceptance, project contract or a concrete defect requires content inspection. Missing required evidence returns blocked; an actual defect under the embedded Code quality rules returns changes_requested; missing hypothetical protection without their required basis is not a defect. Do not rerun tests or treat earlier coverage as a current pass.',
             'This Reviewer receives no further assignment. After the complete native final, the main thread may close it if that native operation is available.',
         ])
     lines.extend(result_contract(role))
@@ -326,6 +327,8 @@ def main() -> int:
             raise ValueError('--plan requires --unit; omit both for an Explorer question without Plan context')
         if args.role != 'explorer' and not args.unit:
             raise ValueError('--unit is required for main and reviewer')
+        if args.role == 'main' and not re.fullmatch(r'W-[0-9]{3}/step-[1-9][0-9]*', args.unit):
+            raise ValueError('main requires ONE original Step, e.g. --unit W-001/step-1; a whole Work Item is only valid for reviewer closure')
         if args.agent_id:
             single_line(args.agent_id, '--agent-id')
             if args.role != 'explorer' or args.format != 'create':

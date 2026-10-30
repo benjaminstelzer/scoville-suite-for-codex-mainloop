@@ -43,7 +43,7 @@ class CompactNewFileTests(unittest.TestCase):
                 self.assertNotIn(rules, reuse)
                 self.assertEqual(1, fresh.count(rules))
                 self.assertEqual(1, review.count(rules))
-            quality = (PACKAGE / 'references/code-review.md').read_text(encoding='utf-8')
+            quality = (PACKAGE / 'references/code-quality.md').read_text(encoding='utf-8')
             self.assertEqual(1, review.count(quality))
             self.assertNotIn(quality, main + reuse + fresh)
             for text in (main, fresh, reuse, review):
@@ -61,11 +61,11 @@ class CompactNewFileTests(unittest.TestCase):
             inputs = {'supplemental_context': 'checks: observed; limits: none'}
             copy = Path(directory) / 'package'
             shutil.copytree(PACKAGE, copy)
-            policy = copy / 'references/code-review.md'
+            policy = copy / 'references/code-quality.md'
             original = policy.read_bytes()
             policy.unlink()
             with mock.patch.object(prompt_builder, '__file__', str(copy / 'scripts/build_dispatch_prompt.py')):
-                with self.assertRaisesRegex(ValueError, 'bundled dependency missing.*code-review.md'):
+                with self.assertRaisesRegex(ValueError, 'bundled dependency missing.*code-quality.md'):
                     prompt_builder.build_prompt('reviewer', root, context, inputs, 'German')
                 prompt_builder.build_prompt('explorer', root, {}, inputs, 'German', reuse=True)
                 prompt_builder.build_prompt('main', root, context, {}, 'German')

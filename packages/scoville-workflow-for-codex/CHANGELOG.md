@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased - 2026-10-30 - Shared criteria and focused helper fixes
+
+- Apply common Code quality in implementation and independent review. Focus correction depth while reusing valid evidence.
+- Reject whole-item Main assignments before dependent helpers and document the custom selector boundary.
+- Retain complete captures and describe the general development cycle.
+
 ## Unreleased - 2026-10-29 - Dispatch and correction boundaries
 
 - Resolve linked workspace ancestors without accepting a linked root or redirected records; validate simple inputs early and document existing selector and output options.

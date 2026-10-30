@@ -25,6 +25,24 @@ SCRIPT = PACKAGE / "scripts/build_adviser_prompt.py"
 
 
 class AdviserPromptTests(unittest.TestCase):
+    def test_large_spawn_uses_complete_file_without_changing_question(self):
+        question = 'BEGIN literal café\n' + 'q' * 10000 + '\nEND literal\n'
+        result = self.run_prompt(question, extra=self.SPAWN)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        arguments = json.loads(result.stdout)
+        pointer = arguments['message']
+        prefix = 'Read the complete unchanged assignment at '
+        self.assertTrue(pointer.startswith(prefix))
+        path = Path(pointer[len(prefix):].split(' before work.', 1)[0])
+        try:
+            assignment = path.read_text(encoding='utf-8')
+            self.assertTrue(assignment.endswith(question))
+            self.assertIn('scope: Patch ä', assignment)
+            self.assertIn('adviser_id: custom-sol', assignment)
+            self.assertLess(len(result.stdout.encode()), 8192)
+        finally:
+            path.unlink()
+
     SPAWN = ['--format', 'spawn', '--task-name', 'ask_custom_sol_1',
              '--model', 'gpt-6-sol', '--effort', 'high']
 
@@ -220,7 +238,7 @@ class AdviserPromptTests(unittest.TestCase):
         for name in ('adviser.md', 'native-delivery.md'):
             rules = (PACKAGE / 'references' / name).read_text(encoding='utf-8')
             self.assertEqual(result.stdout.count(rules), 1)
-        for name in ('writing.md', 'code-review.md'):
+        for name in ('writing.md', 'code-quality.md'):
             self.assertIn(str(PACKAGE / 'references' / name), result.stdout)
             self.assertNotIn((PACKAGE / 'references' / name).read_text(encoding='utf-8'), result.stdout)
 
@@ -228,7 +246,7 @@ class AdviserPromptTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             copy = Path(directory) / PACKAGE.name
             shutil.copytree(PACKAGE, copy)
-            policy = copy / 'references/code-review.md'
+            policy = copy / 'references/code-quality.md'
             original = policy.read_bytes()
             script = copy / 'scripts/build_adviser_prompt.py'
             policy.unlink()
@@ -277,7 +295,7 @@ class AdviserPromptTests(unittest.TestCase):
                 self.assertTrue(message.endswith(question))
                 for name in ('adviser.md', 'native-delivery.md'):
                     self.assertIn((copy / 'references' / name).read_text(encoding='utf-8'), message)
-                for name in ('writing.md', 'code-review.md'):
+                for name in ('writing.md', 'code-quality.md'):
                     self.assertIn(str(copy / 'references' / name), message)
             consume(**payload)
 

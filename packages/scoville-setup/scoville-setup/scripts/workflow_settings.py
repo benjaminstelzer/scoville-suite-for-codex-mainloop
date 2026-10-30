@@ -15,8 +15,8 @@ def validate_pair(pair: dict, field: str) -> None:
     if not isinstance(pair, dict) or set(pair) != {"model", "reasoning"}:
         raise ValueError(f"{field} must contain exactly model and reasoning; "
                          "e.g. {\"model\": \"gpt-6.1-sol\", \"reasoning\": \"high\"}")
-    if not isinstance(pair["model"], str) or not pair["model"].strip() or any(c in pair["model"] for c in "\r\n"):
-        raise ValueError(f"{field}.model must be a nonempty single-line model ID")
+    if not isinstance(pair["model"], str) or not pair["model"].strip() or any(c.isspace() for c in pair["model"]):
+        raise ValueError(f"{field}.model must be a nonempty model ID without whitespace")
     if not isinstance(pair["reasoning"], str) or pair["reasoning"] not in EFFORTS:
         raise ValueError(f"{field}.reasoning must be one of {', '.join(sorted(EFFORTS))}")
 

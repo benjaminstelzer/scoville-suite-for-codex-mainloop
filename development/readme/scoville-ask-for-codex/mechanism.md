@@ -7,6 +7,6 @@
 - Show missing answers and failed starts alongside completed results.
 
 Native assignments carry role and delivery rights plus exact paths to the
-shared writing rules and, for reviews, Code review quality. Advisers read those
+shared writing rules and, for reviews, Code quality. Advisers read those
 before work; detailed data, command and delivery rules load when needed.
 Claude follow-ups still include the complete rule context.

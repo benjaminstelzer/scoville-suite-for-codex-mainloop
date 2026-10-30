@@ -44,6 +44,9 @@ Legacy ask.pin_threads booleans remain readable and are preserved when other
 settings change, but have no effect. Native advisers are subagents without
 sidebar chats. Use Scoville Setup for agent-driven configuration changes.
 Users can edit `.scoville/config.json` manually for supported special reasoning levels.
+After such an edit, validate read-only with
+`python -X utf8 "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-root>"`.
+Nonzero exit or `ok:false` leaves the edit unvalidated; this command never migrates it.
 
 The selected project root owns `.scoville/config.json`. Its `ask` section
 overrides this Skill's defaults. Missing files or fields use those defaults.

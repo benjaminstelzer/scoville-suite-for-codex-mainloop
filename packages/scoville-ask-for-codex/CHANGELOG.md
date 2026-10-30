@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased - 2026-10-30 - Shared criteria and focused helper fixes
+
+- Deliver large native assignments through the existing complete-file route and apply common code-review criteria.
+- Retain original CLI responses and exits before interpretation, preserve literal requests and exact budget values, and leave unproven runtime metadata unknown.
+- Document read-only manual configuration validation and the general development cycle.
+
 ## Unreleased - 2026-10-29 - Focused native delivery
 
 - Give native advisers exact Writing and review-rule paths instead of embedding those complete texts; retain role rights, delivery contracts and original questions.

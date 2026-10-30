@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased - 2026-10-30 - Shared criteria and focused helper fixes
+
+- Preserve configuration modes, reject redirected writes and report invalid sections without partial success.
+- Repair explicit mixed-format cleanup, retain valid inherited pairs and separate unrelated section reads.
+- Add normal host interface metadata and describe the development cycle.
+
 ## Unreleased - 2026-10-29 - Actionable choices
 
 - Name the rejected scalar choice and its field while withholding nested settings payloads; preserve existing files on failure.

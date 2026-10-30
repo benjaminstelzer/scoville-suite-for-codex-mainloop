@@ -24,7 +24,8 @@ python "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-
 
 Use the requested adviser ID and `--mode consultation` for advice. The helper
 returns the saved file path and resolved settings. Preparation does not start
-Claude. Execute the generated file unchanged:
+Claude. Configure complete capture under the shared output-delivery rule before
+the first paid execution, then execute the generated file unchanged:
 
 ```text
 python "<ask-skill-directory>/scripts/ask.py" --input-file "<temporary>/claude-request.json"
@@ -84,6 +85,11 @@ exact session ID. Permission denials are evidence gaps even when an answer is
 present. Missing session IDs mean continuation is unavailable, not success at
 creating a resumable session. A process error, timeout, malformed JSON or empty
 answer is a failed consultation; never reconstruct an answer from logs.
+The adapter retains raw stdout, stderr and original exit locally before parsing.
+On response failure, `raw_file`, `exit_code` and any parsed `session_id` identify
+that record; inspect it without dumping it or repeating the paid call. Timeout
+captures are partial. Requested settings are not runtime proof: reported model
+and effort remain null until their actual producer schema is established.
 
 Do not retry automatically after an uncertain process result. Completion and
 retention follow the Skill's "Follow-up after completion" rules.

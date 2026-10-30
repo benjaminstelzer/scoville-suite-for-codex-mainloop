@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scoville Setup"
+  short_description: "Show or change project Ask and Workflow settings"
+  default_prompt: "Use $scoville-setup to show or change the selected project's settings as requested."

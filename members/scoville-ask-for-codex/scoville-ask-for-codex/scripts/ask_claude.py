@@ -2,18 +2,15 @@
 """Claude CLI command and response adapter; settings belong to config.default.json."""
 from __future__ import annotations
 
-import argparse
 import json
 import os
 import signal
 import subprocess
-import re
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
-
-from ask_settings import EFFORT_LEVELS, MODEL_PATTERN
 
 READ_ONLY_TOOLS = "Read,Grep,Glob"
 
@@ -73,19 +70,15 @@ def claude_error_details(payload: dict[str, Any]) -> str | None:
     return "Claude reported an unspecified error"
 
 
-def session_mode(args: argparse.Namespace) -> str:
-    if args.fresh:
-        return "fresh"
+def session_mode(args) -> str:
     if args.resume:
         return "resume"
-    if args.continue_session:
-        return "continue"
-    if args.persistent or args.session_persistence_default:
+    if args.session_persistence_default:
         return "persistent"
     return "fresh"
 
 
-def build_command(args: argparse.Namespace, claude_command: list[str]) -> list[str]:
+def build_command(args, claude_command: list[str]) -> list[str]:
     allowed_tools = READ_ONLY_TOOLS + (",WebSearch,WebFetch" if args.web_tools else "")
     command = [
         *claude_command,
@@ -105,17 +98,13 @@ def build_command(args: argparse.Namespace, claude_command: list[str]) -> list[s
     ]
 
     if args.max_budget_usd != 0:
-        command.extend(["--max-budget-usd", format(args.max_budget_usd, "g")])
+        command.extend(["--max-budget-usd", str(args.max_budget_usd)])
 
     mode = session_mode(args)
     if mode == "fresh":
         command.append("--no-session-persistence")
     elif mode == "resume":
         command.extend(["--resume", args.resume])
-    elif mode == "continue":
-        command.append("--continue")
-    elif args.session_name:
-        command.extend(["--name", args.session_name])
 
     if not args.customizations_enabled:
         command.append("--safe-mode")
@@ -127,16 +116,27 @@ class ClaudeTimeout(RuntimeError):
     """The consultation exceeded its deadline; no retry is implied."""
 
 
+def retain_response(result) -> str:
+    """Keep original streams locally before any response interpretation."""
+    from check_text_size import PublicationError, publish_full
+    stdout = result.stdout.encode('utf-8') if isinstance(result.stdout, str) else result.stdout or b''
+    stderr = result.stderr.encode('utf-8') if isinstance(result.stderr, str) else result.stderr or b''
+    data = f'exit={result.returncode} stdout_bytes={len(stdout)} stderr_bytes={len(stderr)}\n'.encode('ascii') + b'stdout:\n' + stdout + b'\nstderr:\n' + stderr
+    try:
+        return publish_full(Path(tempfile.gettempdir()), data, '.bin')
+    except PublicationError as error:
+        return error.recovery_file  # Complete own capture, not a publication pass.
+
+
 def run_command(command: list[str], cwd: Path, prompt: str, timeout: float):
     """Own one CLI process family and stop it when its deadline expires."""
     with subprocess.Popen(command, cwd=cwd, stdin=subprocess.PIPE,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                          text=True, encoding="utf-8",
                           start_new_session=sys.platform != "win32",
                           creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0) as process:
         try:
-            stdout, stderr = process.communicate(prompt, timeout=timeout)
-        except subprocess.TimeoutExpired:
+            stdout, stderr = process.communicate(prompt.encode('utf-8'), timeout=timeout)
+        except subprocess.TimeoutExpired as timeout_error:
             cleanup_error = None
             try:
                 if sys.platform == "win32":
@@ -157,5 +157,20 @@ def run_command(command: list[str], cwd: Path, prompt: str, timeout: float):
             detail = f"Claude exceeded timeout_seconds={timeout:g}; no retry was started."
             if cleanup_error:
                 detail += f" Process-family cleanup could not be confirmed: {cleanup_error}"
-            raise ClaudeTimeout(detail) from None
-    return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+            failure = ClaudeTimeout(detail)
+            failure.exit_code = process.returncode
+            failure.capture_complete = False
+            failure.raw_file = retain_response(subprocess.CompletedProcess(command, process.returncode,
+                timeout_error.stdout, timeout_error.stderr))
+            raise failure from None
+    raw = subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+    raw_file = retain_response(raw)
+    try:
+        result = subprocess.CompletedProcess(command, process.returncode, stdout.decode('utf-8'), stderr.decode('utf-8'))
+    except UnicodeError as error:
+        failure = RuntimeError('Claude response is not UTF-8; inspect raw_file locally; no retry was started.')
+        failure.exit_code, failure.raw_file = process.returncode, raw_file
+        failure.capture_complete = True
+        raise failure from error
+    result.raw_file = raw_file
+    return result
