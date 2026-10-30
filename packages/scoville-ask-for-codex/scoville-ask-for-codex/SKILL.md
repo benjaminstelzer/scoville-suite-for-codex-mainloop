@@ -113,7 +113,7 @@ session implicitly.
 
 All Skills in this suite must be installed and enabled. Use the applicable
 owner without rechecking sibling availability; load only task-needed instructions.
-Explicit activation requirements and user exclusions apply in either layout.
+Explicit activation requirements and user exclusions remain applicable.
 
 Only necessary oversized-answer delivery permits native advisers to create
 temporary files, under [native delivery](references/native-delivery.md).

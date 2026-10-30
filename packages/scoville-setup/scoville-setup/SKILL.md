@@ -8,7 +8,7 @@ compatibility: "Codex Suite with Python 3.11+, bundled configuration helpers and
 
 All Skills in this suite must be installed and enabled. Use the applicable
 owner without rechecking sibling availability; load only task-needed instructions.
-Explicit activation requirements and user exclusions apply in either layout.
+Explicit activation requirements and user exclusions remain applicable.
 
 Manage `.scoville/config.json` in the known absolute project root. Overrides
 apply per field. There is no personal layer or parent-directory search.
