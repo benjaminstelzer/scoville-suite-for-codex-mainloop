@@ -525,6 +525,8 @@ describe the changes and lessons that shaped each one.
 
 Requires Codex desktop, native agents and Python 3.11+.
 Claude consultations also need a signed-in Claude Code CLI (2.1.280+ for Opus 5.5).
+Use at least `gpt-6.1-sol` at medium reasoning effort; lower effort skips steps more often. Code, Plan, UI,
+Handoff and Skillwriter are tested with it.
 
 ## Install the suite
 
