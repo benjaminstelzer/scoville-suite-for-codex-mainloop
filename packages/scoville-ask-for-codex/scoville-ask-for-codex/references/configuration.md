@@ -1,8 +1,5 @@
 # Settings and helper inputs
 
-Before invoking this Skill's task helpers, apply the policy below and
-read [shell command rules](shell-commands.md).
-
 ## Runtime helpers
 
 Use the bundled helpers for their operations. Read their invocation instructions,
@@ -24,7 +21,8 @@ python "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-
 Optional repeated `--adviser <configured-id>` selects only those advisers.
 For one selected adviser, use `--model <id>` and `--effort <level>` for unsaved
 overrides. For more complex settings, use a helper-generated or automatically
-serialized UTF-8 JSON request; never hand-write transport JSON:
+serialized UTF-8 JSON request, since hand-written transport JSON breaks on
+quoting:
 
 ```text
 python "<ask-skill-directory>/scripts/ask.py" --input-file "<request.json>"
@@ -80,7 +78,7 @@ Shipped settings, generated from their canonical file:
     "astra": {"route": "native", "model": "gpt-6-astra", "effort": "high"},
     "sol": {"route": "native", "model": "gpt-6.1-sol", "effort": "high"},
     "claude": {"route": "claude-cli", "model": "claude-opus-5-5", "effort": "high"},
-    "fable": {"route": "claude-cli", "model": "claude-fable-5-1", "effort": "medium"}
+    "fable": {"route": "claude-cli", "model": "claude-fable-5-2", "effort": "medium"}
   },
   "claude": {
     "max_budget_usd": 10,

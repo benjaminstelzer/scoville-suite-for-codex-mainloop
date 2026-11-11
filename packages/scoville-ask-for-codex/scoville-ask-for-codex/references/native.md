@@ -17,8 +17,9 @@ Use a unique task name with lowercase letters, digits and underscores, such as
 `ask_sol_1`. Use `--mode consultation` for advice. Parse complete successful stdout as JSON
 and pass it unchanged to `collaboration.spawn_agent`. The object supplies
 `message`, `task_name`, `fork_turns="none"`, `model` and `reasoning_effort`.
-A helper error or incomplete output stops dispatch. Correct its named input;
-never repair the generated prompt. The host decides model/effort availability.
+On a helper error or incomplete output, correct the named input and run the
+helper again before dispatch; a hand-repaired prompt would no longer be what
+the helper validated. The host decides model/effort availability.
 Spawn assignments above 8 KiB UTF-8 use the existing complete-file route in
 system temporary storage outside the reviewed tree. Forward the generated
 message unchanged; the adviser reads the whole assignment before work.
@@ -27,17 +28,21 @@ Retain adviser ID, requested settings, reference, scope and generated task name,
 then the returned exact native handle and canonical task path. The host
 identifies the final's sender; no startup callback is required.
 
-Do not infer free capacity from an assumed limit or idle-agent count. Unknown
-capacity permits an actual spawn attempt, not a claim that all advisers fit.
+Free capacity is known only from an actual spawn attempt, not from an assumed
+limit or a count of idle agents. Unknown capacity therefore permits the
+attempt, not a claim that all advisers fit.
 | Spawn result | Action |
 | --- | --- |
 | Capacity refusal | Retain the diagnostic and running advisers; mark undispatched ones pending. |
 | Rejected spawn | Retain the failure. |
 | Ambiguous result | Use `collaboration.list_agents` with the narrowest known canonical `path_prefix` that can resolve the retained task name and handle. Broaden only for that uncertainty; if unresolved, report the adviser unresolved with partial results. |
 
-Never retry automatically, substitute an unmatched agent, change settings or
-create replacement advisers or Codex chats. Completion provides no capacity
-proof; do not wake advisers for cleanup or assume a `close_agent` tool exists.
+After a refused, rejected or ambiguous spawn, or a failed collection, a
+further attempt needs the user's go-ahead: respawning on your own, substituting an unmatched agent,
+changing settings or creating replacement advisers or Codex chats would occupy
+more host capacity and deliver advisers the user did not select. A finished
+adviser proves no free capacity; leave it as it is rather than waking it for
+cleanup or assuming a `close_agent` tool exists.
 
 ## Collect and follow up
 
@@ -74,4 +79,4 @@ and explicit scope. Retain the intended message before sending; reconcile an
 uncertain result instead of resending blindly. Keep each adviser independent.
 
 Follow the entrypoint's follow-up settings policy; this tool cannot override
-model or effort. Never replace an unavailable handle silently.
+model or effort. Report an unavailable handle instead of replacing it.

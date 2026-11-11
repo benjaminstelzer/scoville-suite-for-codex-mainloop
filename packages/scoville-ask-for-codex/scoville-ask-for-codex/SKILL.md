@@ -1,7 +1,7 @@
 ---
 name: scoville-ask-for-codex
 description: Ask one or more configured advisers for independent advice or reviews from Codex, through fresh Codex subagents or Claude CLI. Use when the user requests an Ask consultation, a second opinion, or a review by specified advisers. Ordinary questions to the current assistant do not trigger a consultation.
-compatibility: "Codex desktop online, Python 3.11+ and filesystem access. Native advisers require collaboration agent tools. Claude advisers require authenticated Claude Code CLI; Opus 5.5 requires CLI 2.1.280+."
+compatibility: "Codex desktop online, Python 3.11+ and filesystem access. Native advisers require collaboration agent tools. Claude advisers require authenticated Claude Code CLI; Opus 5.5 requires CLI 2.1.280+, Fable 5.2 requires 2.1.321+."
 ---
 
 # Scoville Ask for Codex
@@ -11,19 +11,16 @@ assess the same evidence; a general consultation combines independent answers
 into a synthesis. The caller owns subsequent changes; advisers inspect without
 changing the subject, running tests or delegating.
 
-Before requesting or reading machine reports, logs or structured state, or writing adviser
-framing or results, read and apply the
-[shared writing rules](references/writing.md). The helpers include those rules
-for adviser answers while preserving the literal user question.
-For composed adviser questions and follow-ups, apply
-[agent instruction design](references/instruction-design.md).
+The helpers give advisers the shared writing rules for their answers and keep
+the literal user question unchanged. Adviser questions and follow-ups that you
+compose follow [agent instruction design](references/instruction-design.md).
 
 ## Choose the consultation
 
 Infer `review` or `consultation` from the actual question; an explicit mode wins.
 “Could this patch lose data?” is a review even without “for review”. If the
-intended outcome is ambiguous, clarify before dispatch. Do not ask again when
-the request already establishes the mode, advisers or permission.
+intended outcome is ambiguous, clarify before dispatch. A request that already
+establishes the mode, advisers or permission needs no further question.
 
 Resolve settings with `scripts/ask.py`:
 
@@ -48,10 +45,10 @@ Native spawn_agent validates the requested model and effort on the actual host.
 Report a host rejection without substituting another model or route.
 
 An explicit Ask request commissions the full consultation: create the needed
-adviser subagents, exchange necessary questions and answers, and return results.
-Do not ask for separate agent or message approval or require authorization fields.
-Respect explicit user limits and host requirements. Native Ask uses direct
-collaboration tools in the calling chat.
+adviser subagents, exchange necessary questions and answers, and return the
+results, without separate approval for agents or messages and without
+authorization fields. Respect explicit user limits and host requirements.
+Native Ask uses direct collaboration tools in the calling chat.
 
 ## Ask and collect
 
@@ -84,7 +81,8 @@ flowchart TD
 Dispatch selected advisers independently with fresh context and resolved
 settings, within host capacity and process limits. Each route governs handle
 retention, collection and necessary follow-ups. Keep partial answers and
-failures visible; never silently replace advisers.
+failures visible, and report an adviser that failed instead of replacing it,
+because the user chose these advisers.
 
 For a consultation, synthesize agreement, differences and useful conclusions
 without inventing consensus. No mandatory second exchange round. For reviews,
@@ -105,17 +103,32 @@ Retain the answer, evidence, exact native handle or Claude session ID and
 settings. Resume only for an explicitly requested follow-up. Native follow-ups
 keep the same settings. A requested change needs a fresh adviser: explain that
 choice and obtain it unless already authorized. Claude follow-ups retain settings unless explicitly overridden.
-Do not ask whether a completed review should stay open or close it when the user
-changes topic.
+A completed review simply stays available: it needs no question about keeping
+it open and is not closed when the user changes topic.
 Claude print-mode exits after its answer; a retained ID is saved history,
-not a running agent. Follow the original route and never select the most recent
-session implicitly.
+not a running agent. Follow the original route with the exact retained ID; the
+most recent session may belong to another consultation.
 
-All Skills in this suite must be installed and enabled. Use the applicable
-owner without rechecking sibling availability; load only task-needed instructions.
-Explicit activation requirements and user exclusions remain applicable.
+All Skills in this suite are installed and enabled together. Use the
+applicable owner without checking sibling availability, and load only the
+instructions the task needs.
+A Skill that needs explicit activation stays out until it is activated, and
+one the user excluded stays out.
 
-Only necessary oversized-answer delivery permits native advisers to create
-temporary files, under [native delivery](references/native-delivery.md).
-Native spawning adds no technical write barrier or separate sandbox. The
-Claude route owns its tool restrictions and opt-in web access.
+Native advisers create temporary files only for necessary oversized-answer
+delivery, under [native delivery](references/native-delivery.md). Native
+spawning adds no technical write barrier or separate sandbox. The Claude route
+owns its tool restrictions and opt-in web access.
+
+## Shared references
+
+Read one when its condition holds. A complete copy already in context from
+this build, including one embedded in your assignment, counts as read; read it
+again when it is incomplete or uncertain or a reload is requested.
+
+- [Writing](references/writing.md): a plan, decision, instruction, review, handoff or report; a disputed conclusion.
+- [Machine data](references/machine-data.md): a test report, log or structured state as a result.
+- [Shell commands](references/shell-commands.md): composed text or scripts passed through a shell; quoting, PowerShell encoding, exact bytes or several exit statuses matter.
+- [Output delivery](references/output-delivery.md): before a command whose output may exceed the display limit or whose effect or result cannot be repeated; text that must fit a known limit; delivery as a file.
+- [Python discovery](references/python-discovery.md): a Python command or bundled helper, no interpreter verified this session.
+- [Instruction design](references/instruction-design.md): a reusable instruction, Skill rule or prompt template.

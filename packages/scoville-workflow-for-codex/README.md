@@ -240,7 +240,7 @@ Questions, change requests and planning preparation go to a read-only Explorer.
 Explorer returns its findings; the main thread answers, writes the Plan and
 implements within authorized scope.
 
-"Start Scoville Workflow" also activates it. "Execute the Plan" alone does not.
+That `$scoville-workflow-for-codex` call is the one way to start or resume it. "Execute the Plan" alone does not.
 
 All roles communicate in the language of your current message unless you request
 another language. Required field names and technical literals stay unchanged;

@@ -129,7 +129,7 @@ class AdviserPromptTests(unittest.TestCase):
             self.assertEqual((copy / 'references/machine-data.md').resolve(), machine)
             self.assertTrue(machine.is_file())
             self.assertNotIn(machine.read_text(encoding='utf-8'), prompt)
-            self.assertIn('read before shell commands.', prompt)
+            self.assertIn('read when a command depends on shell quoting', prompt)
             planned = root / 'Vollständige Rückgabe.txt'
             complete = ('Required café 漢字 facts.\n' * 220 + 'FINAL_REQUIRED_FACT\n').encode('utf-8')
             planned.write_bytes(complete)

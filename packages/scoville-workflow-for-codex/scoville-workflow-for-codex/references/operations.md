@@ -1,8 +1,5 @@
 # Main-thread operations
 
-Before invoking this Skill's task helpers, apply the policy below and
-read [shell command rules](shell-commands.md).
-
 ## Runtime helpers
 
 Use the bundled helpers for their operations. Read their invocation instructions,
@@ -21,13 +18,22 @@ Preserve scope, stops, independent Decisions and unrelated work. An authorized
 correction stays on its affected original Step; optional ideas and hypothetical
 hardening do not expand it.
 
+## Contents
+
+- Start and continue
+- Execute one Step
+- Close the Work Item
+- Questions, results and missing evidence
+- Stop, compaction and failure
+
 ## Start and continue
 
 For a NEW run, before Plan writes, require Git and empty
 `git status --porcelain --untracked-files=all`. A failed command or listed path
-blocks that start. Never discard, stash, stage or commit earlier work to become
-clean. Exception: if all listed paths are under `.scoville/temp` and it has no
-`.gitignore`, create `.scoville/temp/.gitignore` containing `*` and check again.
+blocks that start. Earlier work is not this run's to dispose of, so the tree
+is not made clean by discarding, stashing, staging or committing it; the one
+exception is a listing confined to `.scoville/temp` without a `.gitignore`,
+where you create `.scoville/temp/.gitignore` containing `*` and check again.
 
 An authorized continuation of the SAME started work reconciles actual Git
 changes, results, processes and open reviews. It does not require committing
@@ -37,8 +43,8 @@ ownership; foreign or uncertain work needs clarification.
 On activation or authorized resumption, verify the configured main pair with
 the own active native session through dispatch. Repeat only after its required
 pair changes, a visible host-model change or concrete loss of the binding.
-Unknown or mismatching evidence stops Coding; planning and clarification remain
-allowed. Retain the valid binding between unchanged Steps. Invisible model
+Unknown or mismatching evidence holds Coding until it is resolved; planning and
+clarification continue. Retain the valid binding between unchanged Steps. Invisible model
 changes cannot be promised detected. Setup does not change the host model.
 
 Require the native spawn, wait, inspection and interruption operations actually
@@ -50,8 +56,8 @@ Use a scoped native listing only to resolve uncertain startup, state or a missin
 result. A retained matching complete final needs no routine new inventory.
 Optional agent types and close operations are used only if exposed; emulate
 neither. After saving the complete final, close a finished Reviewer if supported.
-Interruption alone proves neither termination nor a freed agent slot. Do not
-raise thread limits automatically.
+Interruption alone proves neither termination nor a freed agent slot. Raising
+thread limits is the user's decision.
 
 When the Plan is known, set this chat's title to `SC-WFL <Plan-ID>` with
 set_thread_title and no threadId. Report rename errors. Keep the title through
@@ -69,8 +75,8 @@ and required field names. Internal messages use only necessary labelled fields.
 | Review decision | Use Git status/diff and observed file, configuration and behavior effects for the diagram's review decision. Closure checks unchanged Steps; record no invented review pass. |
 | Changed Step | Supply the SAME original Step, needed check/effect evidence and relevant complete open review results. Dispatch supplies the independent full-diff, dependency, consumer and Acceptance review contract. |
 | Correction | Select the ONE affected original Step. Resolve each objection by correction, narrowing an unsupported claim, or refutation with evidence. Complete required checks and obtain a fresh review focused on the correction, its effects and open findings, within the original full independent scope. Preserve and reuse still-valid evidence. |
-| Repeated finding without new evidence or changed conditions | Follow Code's Stop repetition rule: continue only with a supported next diagnosis or correction. Otherwise keep the Step open; report the unresolved finding and record any actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
-| Accepted change | After completion and required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Never stage foreign or unreviewed work. Failed or forbidden commit stops advancement. Confirm the resulting clean Git state; make no empty commit. |
+| Repeated finding without new evidence or changed conditions | Follow Code Validation's rule for ending repair loops: continue only with a supported next diagnosis or correction. Otherwise keep the Step open; report the unresolved finding and record any actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
+| Accepted change | After completion and required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, because the commit records what the review accepted; never stage foreign or unreviewed changes. A failed or forbidden commit holds advancement until it is resolved. Confirm the resulting clean Git state; make no empty commit. |
 
 Ordinary Plan maintenance adds no review phase.
 
@@ -78,7 +84,7 @@ Git HEAD is the Step review base; closure uses the Work Item start commit.
 Before editing, read linked accepted Decisions completely unless their unchanged
 complete text or valid original binding projection is retained. Restore this
 binding after compaction; reread uncertain sources. Do not select or paraphrase
-binding sections yourself.
+binding sections yourself, because that could drop a condition.
 If HEAD moved unexpectedly, reconcile actual commits and effects before treating
 an empty diff as unchanged. A known accepted source baseline does not prove
 behavior, ignored outputs or non-file effects. Keep necessary nonrepeatable
@@ -90,8 +96,8 @@ Use the existing supplemental-context transport for check results, effects,
 attribution and limits. Inspect generated content only when the original Step,
 Acceptance, project contract or a concrete defect requires it. Current successful
 generation plus observed expected outputs normally suffices. Missing required
-proof stops dependent work; do not rerun successful or nonrepeatable effects
-merely to reconstruct it.
+proof holds the work that depends on it; recover it from existing results
+rather than rerunning a successful or nonrepeatable effect to reconstruct it.
 
 ## Close the Work Item
 
@@ -130,9 +136,10 @@ literal-safe write before supplying it to another assignment. A brief Plan
 summary is not its substitute. The main thread handles review evidence gaps
 itself: recover existing proof or complete missing authorized checks, retain
 both original changes and relevant open review result, then create a fresh
-Reviewer for the SAME scope. Missing proof is not permission to repeat an
-unchanged successful check, nonrepeatable effect or broaden work. Name unavailable
-proof and stop that dependent work.
+Reviewer for the SAME scope. Missing proof is closed by recovering it or by an
+authorized check that has not passed yet, not by repeating an unchanged
+successful check or a nonrepeatable effect, and not by broadening the work.
+Name proof that stays unavailable and hold the work that depends on it.
 
 ## Stop, compaction and failure
 
@@ -143,11 +150,13 @@ alone proves no termination. Save and validate the observed Plan position,
 unfinished checks, effects and open reviews. Resume only when authorized.
 
 After compaction, recover this same main thread's actual Plan, Git, processes,
-results and effects before continuing. Do not redo completed work to rebuild
-history. A confirmed failed child can be replaced only after its termination
-and retained work are understood. Give the new role the remaining original
-scope, valid evidence and open findings. Uncertain startup or result forbids a
-duplicate dispatch. A completed blocked result is not a failed agent.
+results and effects before continuing; completed work is recovered, not redone
+to rebuild history. A confirmed failed child can be replaced only once its
+termination and retained work are understood; give the new role the remaining
+original scope, valid evidence and open findings. While a child's startup or
+result is uncertain, resolve its state before dispatching again, because a
+duplicate would do the same work twice. A completed blocked result is not a
+failed agent.
 
 Only for an explicitly authorized upgrade or migration, use Scoville Setup's
 "Workflow pairs and migration" section before switching a running project.

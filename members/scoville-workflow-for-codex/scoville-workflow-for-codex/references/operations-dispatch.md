@@ -14,6 +14,13 @@ custom selector's own required sibling libraries with it.
 `--max-output-bytes <bytes>` forwards a success-payload budget to the selector;
 an insufficient budget returns a diagnostic and corrected call, not partial context.
 
+## Contents
+
+- Fixed pairs
+- Original main task
+- Child selection
+- Build and deliver child assignments
+
 ## Fixed pairs
 
 ```text
@@ -26,8 +33,9 @@ the own active native model and effort against main. It binds CODEX_THREAD_ID,
 session_meta, task_started and turn_context; configuration, self-report and user
 confirmation alone are not that proof. Retain its session_path for later required
 checks through `--session-path`. A missing or mismatching proof stops coding.
-The main-thread triggers and invisible-change limit are in operations; do not
-query per Step. Change the host pair through Codex, never through Setup.
+The main-thread triggers and invisible-change limit are in operations; query
+only on those triggers, not per Step. The host pair is changed in Codex; Setup only stores
+the configured pair.
 
 Use fixed main, review and explore pairs. Routes select no models.
 The dispatcher compares existing execute annotations against main,
@@ -48,8 +56,9 @@ current item and in_progress Step. It creates no child or rule reload and reuses
 the verified main pair without another native query.
 Main output lists Decision identities, not bodies. Before editing, read each linked
 accepted source completely unless its unchanged full text or valid original binding
-projection is already retained. After compaction, restore that binding first;
-reread uncertain sources. Do not compose a shortened projection yourself.
+projection is already retained. After compaction, restore that binding first
+and reread uncertain sources. Do not compose a shortened projection yourself,
+because it could drop a condition.
 
 ## Child selection
 
@@ -75,16 +84,17 @@ flowchart TD
 
 Confirmed failure follows operations before fresh work. No context measurement,
 threshold or replacement protocol is part of dispatch. Use native type selection
-only if exposed and compatible with the fixed pair; do not emulate it or install
-custom agent files. Operations owns native waits, complete finals and closing.
+only if it is exposed and compatible with the fixed pair, without emulating it
+or installing custom agent files. Operations owns native waits, complete finals
+and closing.
 
 ## Build and deliver child assignments
 
-Before preparing an assignment or review input, apply the
-[agent instruction design](instruction-design.md) rules at this producing step.
-Keep original Plan text and complete native finals unchanged; include the checks,
-effects, attribution and limits the selected role needs. The helper supplies the
-role and result contracts; do not add the authoring workflow to its message.
+Supplemental context that you write for an assignment or review input follows
+[agent instruction design](instruction-design.md). Keep original Plan text and
+complete native finals unchanged, and include the checks, effects, attribution
+and limits the selected role needs. The helper supplies the role and result
+contracts, so add no authoring instructions to its message.
 
 ```text
 python "<workflow>/scripts/build_dispatch_prompt.py" --project-root "<absolute-workspace>" --plan PLAN-NNNN --unit W-001/step-2 --role reviewer --communication-language "<language>" --format create --project-name "<project>" --agent-number <number> --supplemental-context -
@@ -94,8 +104,9 @@ Send needed checks, effects, attribution and limits through stdin with
 `--supplemental-context -`, or pass an existing UTF-8 file's path, not literal text.
 `--reviewer-result` carries
 the relevant complete native review final unchanged, including a closure finding
-when correcting one Step. Only one input may use stdin. Never compose a replacement
-final or rewrite Plan text as supplemental context.
+when correcting one Step. Only one input may use stdin. Pass finals and Plan
+text as they are; a composed replacement or rewrite would give the Reviewer
+your reading instead of the source.
 
 The helper derives Plan identity, Goal, Non-goals, Work Item fields, Instructions,
 selected original Step and linked Decision sources. Fresh children receive full
@@ -133,11 +144,14 @@ absolute readable path. Keep it through the assignment. Children read it complet
 before work using their chosen method. `--format prompt` returns text only.
 
 Prepare complete UTF-8 files with literal-safe writes before dependent calls.
-Require exit zero and complete successful output. Missing inputs, inaccessible
-assignment files, capacity or helper failures stop that operation. Uncertain
-publication or spawn effects require reconciliation before retry; no duplicates,
-truncation, fabricated results or sidebar workaround. Internal selection budgets
-can be corrected explicitly; binding user/host caps require their actual decision.
+Require exit zero and complete successful output. A missing input, inaccessible
+assignment file, capacity refusal or helper failure stops that operation:
+correct the named cause before running it again, and respawn after a capacity
+refusal only when a slot is actually free. Where a publication or spawn may
+already have taken effect, establish its actual state before another attempt.
+Never duplicate a dispatch, truncate or fabricate a result or substitute a
+sidebar chat. Internal selection budgets can be corrected explicitly; binding
+user or host caps need their owner's decision.
 
 Match complete native results to retained handles and assignments. Partial messages
 and metadata are not results. Read complete externalized results under shared

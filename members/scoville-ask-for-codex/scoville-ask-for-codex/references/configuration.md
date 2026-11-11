@@ -1,8 +1,5 @@
 # Settings and helper inputs
 
-Before invoking this Skill's task helpers, apply the policy below and
-read [shell command rules](shell-commands.md).
-
 {{ include: helper.policy }}
 
 Resolve locally with one complete command:
@@ -14,7 +11,8 @@ python "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-
 Optional repeated `--adviser <configured-id>` selects only those advisers.
 For one selected adviser, use `--model <id>` and `--effort <level>` for unsaved
 overrides. For more complex settings, use a helper-generated or automatically
-serialized UTF-8 JSON request; never hand-write transport JSON:
+serialized UTF-8 JSON request, since hand-written transport JSON breaks on
+quoting:
 
 ```text
 python "<ask-skill-directory>/scripts/ask.py" --input-file "<request.json>"

@@ -52,7 +52,7 @@ which is tested and used again.
 
 Requires Codex desktop online, Python 3.11+ and filesystem access. Native
 advisers need collaboration agent tools. Claude consultations need a signed-in
-Claude Code CLI, version 2.1.280 or newer for Opus 5.5.
+Claude Code CLI, version 2.1.280 or newer for Opus 5.5 and 2.1.321 or newer for Fable 5.2.
 
 ## Install
 
@@ -72,7 +72,7 @@ The host needs permission to write to its Skills directory. The
 ### Set up Claude consultations
 
 1. Install [Claude Code](https://code.claude.com/docs/en/setup) if needed. Open a terminal or PowerShell window.
-2. Run `claude --version`. Opus 5.5 needs **2.1.280 or newer**. For an older version, run `claude update`, then check again. Keep running Claude sessions open.
+2. Run `claude --version`. Opus 5.5 needs **2.1.280 or newer**, the `fable` preset (Fable 5.2) **2.1.321 or newer**. For an older version, run `claude update`, then check again. Keep running Claude sessions open.
 3. Run `claude auth login` and complete sign-in in your browser.
 4. Run `claude auth status` to check that you are signed in.
 

@@ -86,16 +86,16 @@ def main() -> int:
     if not instruction_design.is_file():
         parser.error(f'packaged instruction-design rules missing at {instruction_design}; use the intact built Ask package')
     prompt = ('\n\n'.join(rules)
-              + f'\n\nRead shared writing rules before work: {ROOT / "references/writing.md"}.'
-              + (f'\nFor this review read Code quality before inspection: {ROOT / "references/code-quality.md"}.'
+              + f'\n\nRead the shared writing rules; your work and answer follow them: {ROOT / "references/writing.md"}.'
+              + (f'\nThis review applies the Code quality rules; read them before inspection: {ROOT / "references/code-quality.md"}.'
                  if args.mode == 'review' else '')
               + f'\n\nmode: {args.mode}\nadviser_id: {args.adviser_id}'
               + f'\nworkspace_root: {args.workspace_root}'
               + f'\ntext_size_checker: {checker}\npython: {sys.executable}'
-              + f'\nshell_command_rules: {shell_rules}; read before shell commands.'
-              + f'\nmachine_data_rules: {machine_data}; read before requesting or reading machine reports, logs or structured state; the writing reference to machine-data.md resolves here.'
-              + f'\noutput_delivery_rules: {delivery_rules}; read when the writing or shell rules require it.'
-              + f'\ninstruction_design_rules: {instruction_design}; the shared writing reference to instruction-design.md resolves here.'
+              + f'\nshell_command_rules: {shell_rules}; read when a command depends on shell quoting, PowerShell encoding or several exit statuses.'
+              + f'\nmachine_data_rules: {machine_data}; read when a result is machine data such as a test report, log or structured state.'
+              + f'\noutput_delivery_rules: {delivery_rules}; read when output may exceed the display limit or the answer must be delivered as a file.'
+              + f'\ninstruction_design_rules: {instruction_design}; read when the question concerns a reusable instruction or prompt.'
               + f'\nconsultation_reference: {args.reference}\nscope: {args.scope}'
               + '\n\nInspect only the supplied scope in this workspace. Resolve relative evidence paths there.'
               + '\nFor command capture, size checks and oversized-result delivery, invoke the named Python interpreter and text-size checker even when they are outside the workspace. This exception permits no unrelated external inspection, commands or project writes; delivery follows the native delivery contract and shared complete-file procedure.'
