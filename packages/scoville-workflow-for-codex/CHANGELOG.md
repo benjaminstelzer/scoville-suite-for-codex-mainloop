@@ -1,12 +1,12 @@
 # Changelog
 
-## Unreleased - 2026-11-12 - Concrete instructions and release command
+## 2026-11-12 - Concrete instructions and release command
 
 - State each rule as a trigger, an action and a result the agent can check itself, and remove statements that reach the same reader twice.
 - Reword the shared writing, machine-data, shell and output-delivery rules the same way.
 - Reword the assignment texts the helpers emit to child agents and advisers the same way: one statement per sentence, with the reason where a rule restricts.
 
-## Unreleased - 2026-11-10 - Leaner instructions and Plan validator fixes
+## 2026-11-10 - Leaner instructions and Plan validator fixes
 
 - Use `$scoville-workflow-for-codex` as the single explicit invocation. The phrase triggers and the `$scw` alias are gone.
 - State scope and reason for the clean-Git gate, staging and duplicate-dispatch rules.
@@ -15,33 +15,33 @@
 - Reduce output delivery to when the checker is needed, its three calls and how to read a result. Every capture failure now names its next step in the helper's `instruction` field.
 - Add contents lists to the operations references.
 
-## Unreleased - 2026-10-30 - Source reading and UTF-8 diagnostics
+## 2026-10-30 - Source reading and UTF-8 diagnostics
 
 - Clarify direct source reading and producer-owned instruction-design loading while preserving report evaluation.
 - Explain retained bytes, child status and unresolved text interpretation after invalid UTF-8.
 - Remove redundant layout wording without changing activation or sibling requirements.
 
-## Unreleased - 2026-10-30 - Capture and diagnostic follow-up
+## 2026-10-30 - Capture and diagnostic follow-up
 
 - Support complete command capture without a numeric token limit and retain primary failure diagnostics.
 
-## Unreleased - 2026-10-30 - Shared criteria and focused helper fixes
+## 2026-10-30 - Shared criteria and focused helper fixes
 
 - Apply common Code quality in implementation and independent review. Focus correction depth while reusing valid evidence.
 - Reject whole-item Main assignments before dependent helpers and document the custom selector boundary.
 - Retain complete captures and describe the general development cycle.
 
-## Unreleased - 2026-10-29 - Dispatch and correction boundaries
+## 2026-10-29 - Dispatch and correction boundaries
 
 - Resolve linked workspace ancestors without accepting a linked root or redirected records; validate simple inputs early and document existing selector and output options.
 - Stop unsupported repeated repairs with findings open; continue supported corrections without a fixed retry counter.
 - Use bounded native waits with retained handles and preserve original bytes when command capture fails.
 
-## Unreleased - 2026-10-29 - Follow-up corrections
+## 2026-10-29 - Follow-up corrections
 
 - Explicitly review defects and regressions across the complete assigned diff; test child read-only scope and clarify copied validator diagnostics.
 
-## Unreleased - 2026-10-29
+## 2026-10-29
 
 - Consolidate Step, closure and child-selection rules at their existing owners; keep independent full-diff review, original Step scope and complete evidence.
 - Embed writing and shell rules once for fresh children. Load machine-data, interpreter and output-delivery rules when needed; keep retained Explorer rules and Decision identities on follow-up.
@@ -49,13 +49,13 @@
 - Compare generated prompts with identical inputs separately from model behavior. Fresh Explorer and Reviewer text is shorter; Explorer reuse retains its task and binding context.
 - Exercise actual fresh/reused Explorer and Step/closure Reviewer assignments with `gpt-6.1-sol / low`, plus two receivers of the actual Reviewer finals. Correct Step selection and open findings are observed; a complete correction-review-commit loop and successful closure remain untested. Strict native transport byte identity is not claimed.
 
-## Unreleased - 2026-10-28 - Review corrections
+## 2026-10-28 - Review corrections
 
 - Resolve the shared instruction-design reference explicitly in fresh child assignments and reject an incomplete package before dispatch.
 - Direct a mismatched retained Explorer to a fresh agent with the current pair; preserve the configured settings.
 - Use main-thread terminology in the Step-review assignment.
 
-## Unreleased - 2026-10-28
+## 2026-10-28
 
 - Split Step and Work Item control, use the shared instruction-design owner for assignment writing, and give each fresh Reviewer only its selected review policy. Preserve complete evidence and fixed result fields without repeated preflight prose.
 
@@ -67,7 +67,7 @@
 - Independently review the complete assigned diff, including affected consumers and existing assertions, and judge whether supplied checks distinguish the claimed result from the relevant failure. Supplied focus does not replace that review.
 - Avoid repeating Explorer sources and limits across result fields while preserving distinct findings.
 
-## Unreleased - 2026-10-27
+## 2026-10-27
 
 - Distinguish selecting a child from starting it: helper success precedes the unchanged native call; clarify supplemental-context input as file path or stdin.
 - Reuse an Explorer only within the same investigation or for follow-ups on its findings; independent requests start fresh without topic IDs or another registry.
@@ -80,35 +80,35 @@
 - Require code reviews to inspect simplicity, maintainability, foreseeable extension and clarity for later agents. Trace loops, recursion and scanning calls for avoidable nonlinear repeated work without requiring benchmarks.
 - Supply the complete code-review policy to fresh Reviewers and retain it on reuse without adding a review phase.
 
-## Unreleased - 2026-10-20
+## 2026-10-20
 
 - Keep required text complete when choosing how to read it. File size and metadata remain optional, and completed reads need no verification reread.
 
-## Unreleased - 2026-10-19
+## 2026-10-19
 
 - Write reports as compact lists of checked scope, results and relevant gaps. Group equivalent outcomes and refer to existing evidence instead of retelling the run.
 - Apply one shared evidence rule in user and agent exchanges: defend supported conclusions, correct demonstrated errors, and respect user decisions without treating them as factual proof.
 
-## Unreleased - 2026-10-18
+## 2026-10-18
 
 - Keep implementation and its checks with the Executor, including tests, project scripts and temporary-script changes. Fix requests keep the current Manager role.
 - Retain matching complete results and narrow necessary native state queries by canonical task path, without weakening writer quiescence or context handovers.
 
-## Unreleased - 2026-10-17
+## 2026-10-17
 
 - Raise the shared context default to 50% for Explorer, Executor and Reviewer.
 - Subagents check their own active context at natural work boundaries and return safely at the shared threshold or after compaction. The manager uses the complete result and actual quiescence for same-task replacement; its duplicate context measurement is removed.
 
-## Unreleased - 2026-10-16
+## 2026-10-16
 
 - Group equivalent checks in internal results while preserving checked scope, decisive values, deviations and closure coverage.
 - Follow Work Item control, Step review, agent selection and Explorer requests in four focused diagrams with explicit handoffs and correction paths.
 
-## Unreleased - 2026-10-15
+## 2026-10-15
 
 - Process complete reports in code, including saved captures and failures. Load the rules before data, preserve required original text, and keep parser errors from echoing stored state. Evaluate producer output before display, retain one-time results, and distinguish saved captures from missing output.
 
-## Unreleased - 2026-10-14
+## 2026-10-14
 
 - Compare nested report data in code and display only decisive results and necessary diagnostics, including structured state stored in text fields.
 
@@ -119,7 +119,7 @@
 - Parse machine reports completely and display checked facts and all in-scope deviations. Reuse fully read shared rules across Skills without hiding required inputs.
 - Recover through scoped Plan selection while retaining assignments, results and completed effects.
 
-## Unreleased - 2026-10-13
+## 2026-10-13
 
 - Keep repeated assignments lean and wait for inactive agents before replacement. Preserve original Steps, model pairs and required reviews.
 - Load detailed command capture and full-file delivery only when needed. Keep complete output, failure diagnostics and role permissions.
@@ -162,7 +162,7 @@
   use an assignment file. Save native finals without a separate comparison and
   send oversized results as a file path only, without hash checks.
 
-## Unreleased - 2026-10-12
+## 2026-10-12
 
 - Return complete command output directly when it fits; save only oversized
   captures. Verify supplied artifacts once and compare saved native Finals
@@ -188,7 +188,7 @@
 - Review actual assignment changes, including attributable omissions, and verify
   required preservation during closure before accepting the Work Item.
 
-## Unreleased - 2026-10-11
+## 2026-10-11
 
 - Validate saved execution state before publishing Executor assignments. Keep
   read-only assignments and valid corrections available.
@@ -219,7 +219,7 @@
 - Generate unchanged spawn or follow-up assignments through the same helper. Remove active grouped dispatch, always-fresh agents and early-review branches.
 - Send selected Step texts unchanged with their binding Work Item fields. Keep other Steps and accumulated history out of Step assignments and reviews. Full context remains available for Work Item closure.
 
-## Unreleased - 2026-10-10
+## 2026-10-10
 
 - Delegate planning preparation to the read-only Explorer; the manager writes authorized Plan changes.
 - Load command capture and large-result delivery only when needed; preserve complete outputs and role permissions.
