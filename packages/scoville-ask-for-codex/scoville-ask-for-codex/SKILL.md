@@ -6,21 +6,20 @@ compatibility: "Codex desktop online, Python 3.11+ and filesystem access. Native
 
 # Scoville Ask for Codex
 
-Collect independent answers in the calling task. A review asks each adviser to
-assess the same evidence; a general consultation combines independent answers
-into a synthesis. The caller owns subsequent changes; advisers inspect without
-changing the subject, running tests or delegating.
+Ask collects independent answers in the calling task. In a review, each
+adviser assesses the same evidence. In a consultation, you synthesize the
+independent answers. Advisers only inspect; they change nothing, run no tests
+and do not delegate. Later changes are the caller's.
 
-The helpers give advisers the shared writing rules for their answers and keep
-the literal user question unchanged. Adviser questions and follow-ups that you
-compose follow [agent instruction design](references/instruction-design.md).
+The helpers give advisers the shared writing rules and keep the user's literal
+question unchanged. For an adviser question or follow-up you compose, apply
+[agent instruction design](references/instruction-design.md).
 
 ## Choose the consultation
 
-Infer `review` or `consultation` from the actual question; an explicit mode wins.
-“Could this patch lose data?” is a review even without “for review”. If the
-intended outcome is ambiguous, clarify before dispatch. A request that already
-establishes the mode, advisers or permission needs no further question.
+Infer `review` or `consultation` from the actual question; an explicit mode
+wins. “Could this patch lose data?” is a review even without “for review”. If
+you cannot tell which outcome the user wants, ask before dispatch. Do not ask about a mode, advisers or permission the request already establishes.
 
 Resolve settings with `scripts/ask.py`:
 
@@ -35,31 +34,35 @@ Resolve settings with `scripts/ask.py`:
 | Explicitly named | Exactly those presets, even if absent from the default list. |
 | None named | Default adviser list; it is not an allowlist. |
 
-Select exactly the requested routes, models and efforts. Adviser IDs identify
-results; display names are not agent handles. Resolve selected presets in one
-call and report each adviser's settings. Read
-[configuration and helper inputs](references/configuration.md) for resolution,
-migration or the first helper invocation.
+Use exactly the requested routes, models and efforts. Identify results by
+adviser ID; a display name is not an agent handle. Resolve selected
+presets in one call and report each adviser's settings. Read
+[configuration and helper inputs](references/configuration.md) for settings
+resolution, migration or the first helper call.
 
-Native spawn_agent validates the requested model and effort on the actual host.
-Report a host rejection without substituting another model or route.
+The actual host validates the requested model and effort when native
+spawn_agent runs. Report a rejection; substitute no other model or route.
 
-An explicit Ask request commissions the full consultation: create the needed
-adviser subagents, exchange necessary questions and answers, and return the
+An explicit Ask request authorizes the full consultation: create the needed
+adviser subagents, exchange the necessary questions and answers and return the
 results, without separate approval for agents or messages and without
 authorization fields. Respect explicit user limits and host requirements.
 Native Ask uses direct collaboration tools in the calling chat.
 
 ## Ask and collect
 
-Style generated framing only; preserve literal user questions, quotations,
-technical data and hidden expectation keys unchanged, subject to authorized
-edits and required secret redaction.
+Apply style rules only to the framing you write. Keep the user's literal
+questions, quotations, technical data and hidden expectation keys unchanged,
+except for authorized edits and required secret redaction.
 
-Prepare a self-contained question, scope, requirements and raw evidence. Include
-paths and working-tree scope when relevant. Exclude the caller's verdict,
-intermediate reasoning, previous adviser answers, unrelated history and secrets
-from fresh consultations. Read [native operation](references/native.md) or
+Prepare a self-contained question:
+
+- Include scope, requirements and raw evidence, with paths and the
+  working-tree scope when relevant.
+- From a fresh consultation exclude your verdict and intermediate reasoning,
+  previous adviser answers, unrelated history and secrets.
+
+Read [native operation](references/native.md) or
 [Claude operation](references/claude.md) for each selected route.
 
 ```mermaid
@@ -78,53 +81,59 @@ flowchart TD
   state -->|complete| report["Report evidence, differences and limits"]
 ```
 
-Dispatch selected advisers independently with fresh context and resolved
-settings, within host capacity and process limits. Each route governs handle
-retention, collection and necessary follow-ups. Keep partial answers and
-failures visible, and report an adviser that failed instead of replacing it,
-because the user chose these advisers.
+Dispatch each selected adviser independently, with fresh context and its
+resolved settings, within host capacity and process limits. The route's
+reference governs handle retention, collection and necessary follow-ups. Keep
+partial answers and failures visible. Report a failed adviser instead of
+replacing it: the user chose these advisers.
 
-For a consultation, synthesize agreement, differences and useful conclusions
-without inventing consensus. No mandatory second exchange round. For reviews,
-distinguish findings from untested concerns and verify findings before authorized fixes.
+| Mode | Do |
+| --- | --- |
+| consultation | Synthesize agreement, differences and useful conclusions; invent no consensus. |
+| review | Keep findings apart from untested concerns; verify findings before authorized fixes. |
+
+Neither mode requires a second exchange round.
 
 Apply [Evidence-based conclusions](references/writing.md#evidence-based-conclusions)
-to exchanges. Present claims and evidence neutrally, including candidate
-acceptance or objection questions, without pressuring advisers to agree.
-An unexplained concession does not resolve a finding; consensus does not
-replace required review acceptance.
+to exchanges with advisers. Present claims and evidence neutrally, also when
+you ask whether an adviser accepts or objects, and do not press for agreement.
+An unexplained concession does not resolve a finding. Consensus does not
+replace a required review acceptance.
 
-Retain requested and actually reported model/effort separately; unavailable
-telemetry is unknown.
+Retain requested and actually reported model and effort separately; unreported
+values are unknown.
 
 ## Follow-up after completion
 
-Retain the answer, evidence, exact native handle or Claude session ID and
-settings. Resume only for an explicitly requested follow-up. Native follow-ups
-keep the same settings. A requested change needs a fresh adviser: explain that
-choice and obtain it unless already authorized. Claude follow-ups retain settings unless explicitly overridden.
-A completed review simply stays available: it needs no question about keeping
-it open and is not closed when the user changes topic.
-Claude print-mode exits after its answer; a retained ID is saved history,
-not a running agent. Follow the original route with the exact retained ID; the
-most recent session may belong to another consultation.
+Retain the answer, evidence, settings and the exact native handle or Claude
+session ID. Resume only for an explicitly requested follow-up, on the original
+route with that exact ID; the most recent session may belong to another
+consultation.
+
+| Route | Follow-up settings |
+| --- | --- |
+| Native | Unchanged. A requested change needs a fresh adviser: explain that choice and obtain it unless already authorized. |
+| Claude | Unchanged unless explicitly overridden. |
+
+A completed review stays available: do not ask about keeping it open and do
+not close it when the user changes topic. Claude print mode exits after its
+answer; a retained ID is saved history, not a running agent.
 
 All Skills in this suite are installed and enabled together. Use the
-applicable owner without checking sibling availability, and load only the
+Skill that owns a concern without checking its availability, and load only the
 instructions the task needs.
-A Skill that needs explicit activation stays out until it is activated, and
-one the user excluded stays out.
+Do not use a Skill that needs explicit activation before it is activated, or
+one the user excluded.
 
-Native advisers create temporary files only for necessary oversized-answer
-delivery, under [native delivery](references/native-delivery.md). Native
-spawning adds no technical write barrier or separate sandbox. The Claude route
-owns its tool restrictions and opt-in web access.
+A native adviser creates temporary files only to deliver an oversized answer,
+under [native delivery](references/native-delivery.md). Native spawning adds
+no technical write barrier or separate sandbox. The Claude route has its own
+tool restrictions and opt-in web access.
 
 ## Shared references
 
-Read one when its condition holds. A complete copy already in context from
-this build, including one embedded in your assignment, counts as read; read it
-again when it is incomplete or uncertain or a reload is requested.
+Read one when its condition holds. A complete copy from this build already in
+context counts as read, including one embedded in your assignment. Read it again when it is incomplete, when you are not certain it is the complete copy from this build, or when a reload is requested.
 
 - [Writing](references/writing.md): a plan, decision, instruction, review, handoff or report; a disputed conclusion.
 - [Machine data](references/machine-data.md): a test report, log or structured state as a result.

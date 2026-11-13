@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased - 2026-11-12 - Concrete instructions and release command
+
+- State each rule as a trigger, an action and a result the agent can check itself.
+- Reword the shared writing, machine-data, shell and output-delivery rules the same way.
+
 ## Unreleased - 2026-11-10 - Leaner instructions and Plan validator fixes
 
 - Link the shared writing, machine-data, shell, output-delivery and Python references directly from SKILL.md, each with its reading condition, instead of chained read-first rules.

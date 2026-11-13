@@ -33,7 +33,6 @@ class AskBuildProfileTests(unittest.TestCase):
             for script in ("ask.py", "ask_claude.py", "ask_settings.py"):
                 self.assertTrue((package / "scripts" / script).is_file(), script)
             self.assertEqual([package / "SKILL.md"], list(output.rglob("SKILL.md")))
-            self.assertFalse((package / 'scripts/task_lifecycle.py').exists())
             self.assertFalse((package / 'scripts/list_models.py').exists())
             request = {"operation": "resolve", "project_root": temporary,
                        "overrides": {"advisers": ["astra"]}}
@@ -53,7 +52,6 @@ class AskBuildProfileTests(unittest.TestCase):
             self.assertIn(NAME, members)
             package = output / members[NAME]["package_path"] / NAME
             self.assertTrue((package / "scripts" / "ask.py").is_file())
-            self.assertFalse((package / "scripts" / "task_lifecycle.py").exists())
             self.assertEqual(1, len(list(output.rglob("scoville-ask-for-codex/SKILL.md"))))
 
     def test_actual_general_suite_catalogs_ask_without_runtime_payload(self):

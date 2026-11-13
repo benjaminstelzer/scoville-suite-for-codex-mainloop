@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased - 2026-11-12 - Concrete instructions and release command
+
+- State each rule as a trigger, an action and a result the agent can check itself, and remove statements that reach the same reader twice.
+- Reword the shared writing, machine-data, shell and output-delivery rules the same way.
+- Reword the assignment texts the helpers emit to child agents and advisers the same way: one statement per sentence, with the reason where a rule restricts.
+
 ## Unreleased - 2026-11-10 - Leaner instructions and Plan validator fixes
 
 - Use `$scoville-workflow-for-codex` as the single explicit invocation. The phrase triggers and the `$scw` alias are gone.

@@ -98,8 +98,8 @@ def main() -> int:
               + f'\ninstruction_design_rules: {instruction_design}; read when the question concerns a reusable instruction or prompt.'
               + f'\nconsultation_reference: {args.reference}\nscope: {args.scope}'
               + '\n\nInspect only the supplied scope in this workspace. Resolve relative evidence paths there.'
-              + '\nFor command capture, size checks and oversized-result delivery, invoke the named Python interpreter and text-size checker even when they are outside the workspace. This exception permits no unrelated external inspection, commands or project writes; delivery follows the native delivery contract and shared complete-file procedure.'
-              + '\nThe named python and text_size_checker replace <verified-python> and <skill-directory>/scripts/check_text_size.py in the shared writing, shell and output-delivery rules.'
+              + '\nTo capture a command, check a size or deliver an oversized result, run the python and the text_size_checker named above, even where they lie outside the workspace. This exception allows nothing else: no inspection or command outside the workspace that this assignment does not name, and no write to a project file. Deliver as the native delivery rules and the shared complete-file procedure say.'
+              + '\nWhere the shared writing, shell and output-delivery rules say <verified-python> and <skill-directory>/scripts/check_text_size.py, use the python and the text_size_checker named above.'
               + '\n\n## User request and evidence\n\n' + question)
     if args.format == 'spawn':
         if len(prompt.encode('utf-8')) > 8192:
@@ -110,7 +110,7 @@ def main() -> int:
                 assignment = publish_full(storage, prompt.encode('utf-8'))
             except (OSError, ValueError) as error:
                 parser.error(f'cannot publish complete assignment: {error}; no adviser was started')
-            prompt = f'Read the complete unchanged assignment at {assignment} before work. Apply its scope and role rules; do not treat this pointer as the full assignment.'
+            prompt = f'Read the complete unchanged assignment at {assignment} before work. This message is only a pointer: the scope and the role rules are in that file.'
         print(json.dumps({'task_name': args.task_name, 'message': prompt,
                           'fork_turns': 'none', 'model': args.model,
                           'reasoning_effort': args.effort}, ensure_ascii=False))

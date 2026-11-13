@@ -76,7 +76,7 @@ def prepare(request):
                       + f'\noutput_delivery_rules: {ROOT / "references/output-delivery.md"}; read when judging evidence that was captured or delivered as a file.'
                       + f'\nmachine_data_rules: {machine_data}; read when a result is machine data such as a test report, log or structured state.'
                       + f'\ninstruction_design_rules: {instruction_design}; read when the question concerns a reusable instruction or prompt.'
-                      + '\nThis Claude adviser may use only Read, Grep, Glob and any web tools explicitly enabled for this request. Do not run shell commands or create delivery files. If a required machine-data check needs code execution, ask the caller for the checked result and state the remaining evidence gap.'
+                      + '\nAs this Claude adviser you may use only Read, Grep, Glob and the web tools this request explicitly enables. Run no shell command and create no delivery file. Where a required check of machine data needs code to run, ask the caller for the checked result and name the evidence that is still missing.'
                       + '\n\nInspect only the supplied scope in this workspace. Resolve relative evidence paths there.'
                       + '\n\n## User request and evidence\n\n' + question)
             entry['request'] = {'operation': 'claude', 'adviser': adviser, 'claude': settings['claude'],

@@ -12,11 +12,11 @@ not their source, unless diagnosing a failure.
 
 Helpers: `scripts/build_dispatch_prompt.py`, `scripts/validate_profile.py`, `scripts/resolve_model_pair.py`, `scripts/select_context.py`.
 
-Use Plan for records and [dispatch](operations-dispatch.md) for helper inputs.
-The main thread owns implementation, required checks, records and commits.
-Preserve scope, stops, independent Decisions and unrelated work. An authorized
-correction stays on its affected original Step; optional ideas and hypothetical
-hardening do not expand it.
+Use Scoville Plan for records and [dispatch](operations-dispatch.md) for
+helper commands. The main thread implements, runs required checks, writes
+records and commits. Keep the authorized scope, the user's stops, independent
+Decisions and unrelated work. An authorized correction changes only its
+affected original Step; add no optional ideas or hypothetical hardening.
 
 ## Contents
 
@@ -28,101 +28,108 @@ hardening do not expand it.
 
 ## Start and continue
 
-For a NEW run, before Plan writes, require Git and empty
-`git status --porcelain --untracked-files=all`. A failed command or listed path
-blocks that start. Earlier work is not this run's to dispose of, so the tree
-is not made clean by discarding, stashing, staging or committing it; the one
-exception is a listing confined to `.scoville/temp` without a `.gitignore`,
-where you create `.scoville/temp/.gitignore` containing `*` and check again.
+Before a new run's first Plan write:
 
-An authorized continuation of the SAME started work reconciles actual Git
-changes, results, processes and open reviews. It does not require committing
-unreviewed work or repeating the new-run gate. Same paths alone do not prove
-ownership; foreign or uncertain work needs clarification.
+1. Run `git status --porcelain --untracked-files=all`.
+2. If it fails or lists a path, do not start. Earlier work is not this run's
+   to dispose of: do not discard, stash, stage or commit it to clean the tree.
+3. Exception: all listed paths are under `.scoville/temp`, which has no
+   `.gitignore`. Create `.scoville/temp/.gitignore` containing `*` and check
+   again.
 
-On activation or authorized resumption, verify the configured main pair with
-the own active native session through dispatch. Repeat only after its required
-pair changes, a visible host-model change or concrete loss of the binding.
-Unknown or mismatching evidence holds Coding until it is resolved; planning and
-clarification continue. Retain the valid binding between unchanged Steps. Invisible model
-changes cannot be promised detected. Setup does not change the host model.
+An authorized continuation of the same started work reconciles what actually
+exists: Git changes, results, processes and open reviews. It need neither
+repeat the new-run gate nor commit unreviewed work first. Same paths alone do
+not show that a change is this run's; clarify foreign or uncertain work before
+touching it.
 
-Require the native spawn, wait, inspection and interruption operations actually
-needed for the run; Explorer reuse also needs followup. Retain exact child
-handles, launched pairs, assignments, complete finals and per-role counters.
-Match results by sender and assignment, not titles or sidebar IDs. While a
-child works, use native waits and keep the turn active. Timeout is not failure.
-Use a scoped native listing only to resolve uncertain startup, state or a missing
-result. A retained matching complete final needs no routine new inventory.
-Optional agent types and close operations are used only if exposed; emulate
-neither. After saving the complete final, close a finished Reviewer if supported.
-Interruption alone proves neither termination nor a freed agent slot. Raising
-thread limits is the user's decision.
+On activation and on authorized resumption, run dispatch's `--role main` check
+of this session's actual model and effort against the configured main pair.
+Repeat it only when that pair changed, the host visibly changed the model or
+the verified result is lost. Between unchanged Steps keep the verified
+result. On an unknown or mismatching result, do not implement until it is resolved; planning and clarification continue. Do not
+promise to detect a model change the host does not show.
+
+Native child operations:
+
+- Require those this run actually needs: spawn, wait, inspect, interrupt, and
+  followup for Explorer reuse.
+- Keep each child's exact handle, launched pair, assignment and complete
+  final, and a counter per role.
+- Match results by sender and assignment, not title or sidebar ID.
+- While a child works, use native waits and keep the turn active. A timeout is
+  not a failure.
+- List agents, narrowly scoped, only to resolve uncertain startup or state or
+  a missing result, not when you hold the matching complete final.
+- Use agent types and close operations only if exposed; emulate neither. Close
+  a finished Reviewer, if supported, after saving its complete final.
+- An interrupt alone proves neither termination nor a free agent slot.
+- Raising thread limits is the user's decision.
 
 When the Plan is known, set this chat's title to `SC-WFL <Plan-ID>` with
 set_thread_title and no threadId. Report rename errors. Keep the title through
-pauses and compaction. Communicate changed positions briefly in the current
-user's language. Plan owns record language; preserve quotes, technical literals
-and required field names. Internal messages use only necessary labelled fields.
+pauses and compaction. Report position changes briefly in the user's current
+language. Records use the language Plan prescribes; keep quotes, technical
+literals and required field names exact. Messages between main thread and children carry only the labelled fields they need.
 
 ## Execute one Step
 
 | Boundary | Required action |
 | --- | --- |
-| Work Item start | Select authorized Plan/item in order with dependencies met. Record HEAD in existing Evidence for closure. Save actual start/resume through Plan before coding; selection alone starts nothing. |
-| Step start | Save the selected original Step in_progress. Use the main-task helper: it validates saved start and explicit old execute bindings. Do not rewrite the task or choose another model per Step. Retain its start HEAD in existing context. |
-| Implementation | Apply [Code quality](code-quality.md) before choosing the implementation; fully retained unchanged rules satisfy the read. Perform only this Step and required checks. Preserve completed effects. Finish or safely stop owned write, test and restore processes before review. Read required sources completely; reuse unchanged passing checks. |
-| Review decision | Use Git status/diff and observed file, configuration and behavior effects for the diagram's review decision. Closure checks unchanged Steps; record no invented review pass. |
-| Changed Step | Supply the SAME original Step, needed check/effect evidence and relevant complete open review results. Dispatch supplies the independent full-diff, dependency, consumer and Acceptance review contract. |
-| Correction | Select the ONE affected original Step. Resolve each objection by correction, narrowing an unsupported claim, or refutation with evidence. Complete required checks and obtain a fresh review focused on the correction, its effects and open findings, within the original full independent scope. Preserve and reuse still-valid evidence. |
-| Repeated finding without new evidence or changed conditions | Follow Code Validation's rule for ending repair loops: continue only with a supported next diagnosis or correction. Otherwise keep the Step open; report the unresolved finding and record any actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
-| Accepted change | After completion and required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, because the commit records what the review accepted; never stage foreign or unreviewed changes. A failed or forbidden commit holds advancement until it is resolved. Confirm the resulting clean Git state; make no empty commit. |
+| Work Item start | Select the authorized Plan and Work Item in order, dependencies met. Record HEAD in existing Evidence for closure. Before coding, save the actual start or resume through Plan; selecting starts nothing. |
+| Step start | Save the selected original Step as in_progress. Run the main-task helper; it checks the saved start and an existing `[execute: ...]` annotation. Use its task unchanged; choose no other model per Step. Keep the Step's start HEAD in context. |
+| Implementation | Apply [Code quality](code-quality.md) when choosing the implementation; its complete unchanged text in context counts as read. Do only this Step and its required checks. Preserve completed effects. Before review, finish or safely stop your write, test and restore processes. Read required sources completely. Reuse unchanged passing checks. |
+| Review decision | Answer the diagram's change question from `git status`, `git diff` and the observed file, configuration and behavior effects. Closure checks unchanged Steps. Record no review pass that no Reviewer returned. |
+| Changed Step | Give the review helper the same original Step, the needed check and effect evidence and each relevant complete open review result. The helper adds the independent review rules: full diff, dependencies, consumers and Acceptance. |
+| Correction | Select the one affected original Step. Resolve each finding: correct it, narrow a statement the evidence does not support, or refute it with evidence. Complete required checks. Obtain a fresh review; it focuses on the correction, its effects and open findings within the full original scope. Reuse still-valid evidence. |
+| Repeated finding without new evidence or changed conditions | Follow Code Validation's rule for ending repair loops: continue only with a supported next diagnosis or correction. Otherwise keep the Step open, report the unresolved finding and record an actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
+| Accepted change | After completion and the required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, never foreign or unreviewed changes, because the commit records what the review accepted. A failed or forbidden commit holds advancement until resolved. Confirm that Git is clean. Make no empty commit. |
 
-Ordinary Plan maintenance adds no review phase.
+Updating Plan records alone needs no review.
 
-Git HEAD is the Step review base; closure uses the Work Item start commit.
-Before editing, read linked accepted Decisions completely unless their unchanged
-complete text or valid original binding projection is retained. Restore this
-binding after compaction; reread uncertain sources. Do not select or paraphrase
-binding sections yourself, because that could drop a condition.
-If HEAD moved unexpectedly, reconcile actual commits and effects before treating
-an empty diff as unchanged. A known accepted source baseline does not prove
-behavior, ignored outputs or non-file effects. Keep necessary nonrepeatable
-evidence available for closure through existing results or artifacts, referenced
-in existing Evidence. No synthetic execution final, new per-Step report or
-source archive is required.
+A Step review compares against Git HEAD; closure against the Work Item's start
+commit. If HEAD moved unexpectedly, find the commits and effects that moved it
+before treating an empty diff as unchanged. An accepted source baseline
+proves nothing about behavior, ignored outputs or non-file effects.
 
-Use the existing supplemental-context transport for check results, effects,
-attribution and limits. Inspect generated content only when the original Step,
-Acceptance, project contract or a concrete defect requires it. Current successful
-generation plus observed expected outputs normally suffices. Missing required
-proof holds the work that depends on it; recover it from existing results
-rather than rerunning a successful or nonrepeatable effect to reconstruct it.
+Pass check results, effects, attribution and limits to a child through
+`--supplemental-context`. Inspect generated content only when the original
+Step, Acceptance, a project rule or a concrete defect requires it; normally
+current successful generation plus observed expected outputs suffices.
+
+Missing required proof holds the work that depends on it. Recover it from
+existing results or run the authorized check that has not passed yet. Do not
+repeat an unchanged successful check or a nonrepeatable action, and do not
+widen the work. Name proof that stays unavailable. Keep nonrepeatable evidence
+that closure needs as the existing result or artifact, referenced in existing
+Evidence; no synthetic execution final, new per-Step report or source archive is required.
 
 ## Close the Work Item
 
-For the diagram's closure review, supply necessary current source/effect evidence,
-retained proof and relevant complete open reviews. Earlier review coverage is
-evidence, not a current pass; closure stays within the original Work Item.
+For the diagram's closure review, give the helper the needed current source
+and effect evidence, retained proof and each relevant complete open review. An earlier review, Step or closure, is evidence, not a current pass. Closure stays within the
+original Work Item.
 
-A finding keeps the same item open. Select one affected Step and use its
-correction loop. If no Step covers an omitted implementation of an already
-binding unchanged criterion, append one bounded Step through Plan and run the
-normal loop. Changed scope, Acceptance, contradictions or unclear intent need
-the user. Preserve original Steps, order and completed effects.
+| Closure finding; the item stays open | Action |
+| --- | --- |
+| Affects an existing Step | Select that one Step; use its correction loop. |
+| An unchanged, already binding criterion lacks implementation and no Step covers it | Append one bounded Step through Plan; run the normal loop. |
+| Changed scope or Acceptance, a contradiction or unclear intent | Ask the user. |
 
-After Acceptance and closure pass, validate and commit coherent records under
-repository checks. Retain this thread's Explorers and counters.
+Keep original Steps, order and completed effects. After Acceptance and closure
+pass, validate and commit the records as one consistent state under repository
+checks. Keep this thread's Explorers and counters.
 
 ## Questions, results and missing evidence
 
-Send questions, ideas, changes and planning preparation with the complete request
-and necessary context to an Explorer selected through dispatch. The same project
-or file alone does not make independent questions one investigation. Use retained
-assignments and handles, not topic IDs or a registry. The main thread answers
-the user and writes authorized Plans from the findings and proposals.
-Stop invalidated implementation before exploring a proposed change.
-Known progress and stop/resume handling need no exploration.
+Send a question, idea, proposed change or planning preparation to an Explorer
+selected through dispatch, with the complete request and needed context.
+The same project or file alone does not make independent questions one
+investigation. Find the Explorer through retained assignments and handles, not
+topic IDs or a registry. From its findings and proposals the main thread
+answers the user and writes authorized Plans. Stop implementation that a
+proposed change invalidates before exploring it. Known progress and stop or
+resume need no Explorer.
 
 | Child result | Meaning |
 | --- | --- |
@@ -131,38 +138,44 @@ Known progress and stop/resume handling need no exploration.
 | changes_requested | Actual defect with location, effect, correction and affected Step, or none. |
 | blocked | An actual prerequisite or required decision is missing. |
 
-Capture each relevant native final completely and unchanged through a permitted
-literal-safe write before supplying it to another assignment. A brief Plan
-summary is not its substitute. The main thread handles review evidence gaps
-itself: recover existing proof or complete missing authorized checks, retain
-both original changes and relevant open review result, then create a fresh
-Reviewer for the SAME scope. Missing proof is closed by recovering it or by an
-authorized check that has not passed yet, not by repeating an unchanged
-successful check or a nonrepeatable effect, and not by broadening the work.
-Name proof that stays unavailable and hold the work that depends on it.
+Before passing a relevant native final to another assignment, save it
+complete and unchanged with a permitted literal-safe write. A brief Plan
+summary does not replace it.
+
+The main thread closes a review's evidence gap itself:
+
+1. Apply the missing-proof rules in "Execute one Step".
+2. Keep the original changes and the relevant open review result.
+3. Create a fresh Reviewer for the same scope.
 
 ## Stop, compaction and failure
 
-On user stop, start no new work. Safely finish or stop the currently started
-write/test/restore operation and interrupt running children by exact handle.
-Establish actual termination and process state; an interrupt's previous status
-alone proves no termination. Save and validate the observed Plan position,
-unfinished checks, effects and open reviews. Resume only when authorized.
+When the user stops the run:
 
-After compaction, recover this same main thread's actual Plan, Git, processes,
-results and effects before continuing; completed work is recovered, not redone
-to rebuild history. A confirmed failed child can be replaced only once its
-termination and retained work are understood; give the new role the remaining
-original scope, valid evidence and open findings. While a child's startup or
-result is uncertain, resolve its state before dispatching again, because a
-duplicate would do the same work twice. A completed blocked result is not a
-failed agent.
+1. Start no new work.
+2. Finish or safely stop the running write, test or restore operation, and
+   interrupt running children by exact handle. Then establish their actual
+   termination and the process state; the status an interrupt returns proves
+   no termination.
+3. Save and validate the observed Plan position, unfinished checks, effects
+   and open reviews.
+4. Resume only when authorized.
+
+After compaction, read this same thread's actual Plan, Git, processes, results
+and effects before continuing. Do not redo completed work to rebuild history.
+
+Replace a child only when its failure is confirmed, it has ended and you know
+what it left behind. Give the new child the remaining original scope, valid
+evidence and open findings. While a child's startup or result is uncertain,
+resolve its state before dispatching again; a duplicate would do the same
+work twice. A child that completed with `blocked` did not fail.
 
 Only for an explicitly authorized upgrade or migration, use Scoville Setup's
 "Workflow pairs and migration" section before switching a running project.
 
-Before leaving, commit pending owned records only if no unreviewed implementation
-remains; otherwise report the paths. Completion requires requested Acceptance,
-required Step reviews, closure, coherent Plan closure and quiescent processes
-and children. Report actual outcome and limits in the user's language. A pause
-or blocker is not completion and creates no automatic successor.
+Before ending, commit this run's pending records only if no unreviewed implementation
+remains; otherwise report the paths. The run is complete only when the
+requested Acceptance is met, every required Step review and closure passed,
+the Plan is closed consistently and no process or child still runs. Report the
+actual outcome and limits in the user's language. A pause or blocker is not
+completion and creates no automatic successor.

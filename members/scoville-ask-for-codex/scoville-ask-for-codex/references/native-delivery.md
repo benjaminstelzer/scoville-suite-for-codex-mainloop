@@ -1,27 +1,28 @@
 # Native agent delivery
 
-Prepare the complete answer; select its permitted delivery route before emission:
+Finish the complete answer, then choose its permitted delivery route before
+you send anything:
 
-1. Include adviser_id, consultation_reference, unchanged scope and material
-   evidence limits. Report actual model and effort only when exposed by the
-   host; otherwise they are unknown.
-2. Use the native final. Before a limited channel, apply the shared size-check
-   procedure and compact wording without losing required content.
-3. If required content still cannot fit the declared or explicitly selected
-   limit, including an applicable outer tool-output limit, use the shared
-   complete-file route. Return the same fields, path and an instruction
-   to read the entire file before treating it as complete.
-4. If permissions or host tools prevent that route, follow the shared caller-
-   capture rule. Report remaining delivery limits; claim no completeness.
-5. End after the native final without waiting for acknowledgement. The caller
-   may resume the retained handle for a necessary follow-up.
+1. Include adviser_id, consultation_reference, the unchanged scope and
+   material evidence limits.
+2. Deliver through the native final. If the channel has a size limit, run the
+   shared size check first and tighten wording without losing required
+   content.
+3. If required content still exceeds the declared or explicitly selected
+   limit, or an applicable outer tool-output limit, use the shared
+   complete-file route. Return the same fields, the path and the instruction
+   to read the whole file before treating the answer as complete.
+4. If permissions or host tools prevent that route, follow the shared
+   caller-capture rule. Report the delivery limits that remain; do not claim completeness.
+5. Stop after the native final; do not wait for an acknowledgement. The caller
+   may resume you for a necessary follow-up.
 
-Native Codex Ask advisers may discover Python and run the named checker for
-capture and size checks, including from outside the workspace. Only necessary
-oversized-answer delivery permits temporary artifacts under the project's
-`.scoville/temp`. The read-only role and host tool restrictions still apply;
-this exception does not apply to Ask Claude.
+As a native Codex Ask adviser you may locate Python and run the named checker
+for capture and size checks, also outside the workspace. Create temporary
+files under the project's `.scoville/temp` only to deliver an oversized
+answer. Your read-only role and the host's tool restrictions still apply.
+Ask Claude has neither permission.
 
-If a material fact is missing, return the concrete question instead of guessing.
-The caller resumes this same agent with the answer. Follow-ups preserve the
-reference and scope unless the caller supplies a new question or changed scope.
+If a material fact is missing, return the concrete question; do not guess. The
+caller resumes you with the answer. In a follow-up keep the reference and
+scope unless the caller supplies a new question or changed scope.

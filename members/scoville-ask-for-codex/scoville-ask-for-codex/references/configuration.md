@@ -8,10 +8,10 @@ Resolve locally with one complete command:
 python "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-root>"
 ```
 
-Optional repeated `--adviser <configured-id>` selects only those advisers.
-For one selected adviser, use `--model <id>` and `--effort <level>` for unsaved
-overrides. For more complex settings, use a helper-generated or automatically
-serialized UTF-8 JSON request, since hand-written transport JSON breaks on
+Add `--adviser <configured-id>`, repeated as needed, to select only those
+advisers. With one selected adviser, `--model <id>` and `--effort <level>`
+override its settings without saving. For other overrides, pass a UTF-8 JSON
+request written by a helper or a serializer; hand-written JSON breaks on
 quoting:
 
 ```text
@@ -31,9 +31,10 @@ The JSON response's `config.advisers` entries supply these settings directly:
 - `model` supplies the `spawn_agent` model.
 - `effort` supplies the `spawn_agent` reasoning_effort.
 
-These are technical settings, not a dispatch prompt. Dispatch questions and adviser answers remain
-plain text. A nonzero exit or ok:false stops the operation with its diagnostic.
-Stdin JSON requests remain supported, including Ask Claude.
+These are technical settings, not a dispatch prompt. Questions to advisers
+and their answers stay plain text. On a nonzero exit or ok:false, stop the
+operation and report its diagnostic. JSON requests through stdin remain
+supported, including Ask Claude.
 
 ask_settings.py, scoville_config.py and ask_claude.py are imported modules, not
 separate commands. Use the bundled ask.py from this installed package.
@@ -44,19 +45,25 @@ sidebar chats. Use Scoville Setup for agent-driven configuration changes.
 Users can edit `.scoville/config.json` manually for supported special reasoning levels.
 After such an edit, validate read-only with
 `python -X utf8 "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-root>"`.
-Nonzero exit or `ok:false` leaves the edit unvalidated; this command never migrates it.
+On a nonzero exit or `ok:false` the edit is not validated. This command never
+migrates it.
 
-The selected project root owns `.scoville/config.json`. Its `ask` section
-overrides this Skill's defaults. Missing files or fields use those defaults.
-Reads never create a file and never search parent directories.
-Objects merge by field;
-`advisers` replaces the entire list so an explicit selection never adds unwanted
-advisers. Select named advisers with strings such as `["sol", "fable"]`, or use
-objects with `id` and per-call overrides. A matching ID inherits its configured
-preset. Custom IDs need `route` (`native` or `claude-cli`), exact `model` and
-`effort`; `name` is optional. One, two and more advisers use the same structure.
-Explicit named requests select only those presets. Read the actual config for
-current defaults rather than inferring model or effort from a Skill name.
+Settings are in `.scoville/config.json` of the selected project root. Its
+`ask` section overrides this Skill's defaults; a missing file or field uses
+the default. Reading never creates a file and never searches parent
+directories.
+
+- Objects merge by field.
+- `advisers` replaces the entire list, so an explicit selection contains only
+  the named presets.
+- Name advisers as strings such as `["sol", "fable"]`, or as objects with `id`
+  and per-call overrides. A matching ID inherits its configured preset.
+- A custom ID needs `route` (`native` or `claude-cli`), exact `model` and
+  `effort`; `name` is optional.
+- One adviser and several use the same structure.
+
+Take current defaults from the actual config; do not infer model or effort
+from a Skill name.
 
 Shipped settings, generated from their canonical file:
 
@@ -68,16 +75,16 @@ Save only changed values, for example:
 `{"ask":{"advisers":["sol","fable"],"presets":{"sol":{"effort":"medium"}}}}`.
 Request overrides use the fields inside `ask`.
 
-`resolve` accepts `project_root` and optional unsaved `overrides`. Pass the
-selected project's absolute root. When omitted, `cwd` supplies the root, or
-the process working directory if neither was supplied. `project_config` is
-rejected with migration guidance. Keep settings unchanged during a run.
-Display resolved settings when configuration is requested.
+Pass the selected project's absolute root as `project_root`. Without it,
+`resolve` uses `cwd`, and without both the process working directory. It
+rejects `project_config` with migration guidance. Do not change settings
+during a run. Show the resolved settings when the user asks about
+configuration.
 
-`claude.max_budget_usd` accepts a finite amount of 0 or more. Zero removes this
-helper's spend limit; it does not mean free use or remove provider, account or
-timeout limits. Positive amounts set the CLI spend cap. Request overrides do
-not save project settings.
+`claude.max_budget_usd` accepts a finite amount of 0 or more. A positive
+amount sets the CLI spend cap. Zero removes this helper's spend limit by
+omitting the CLI flag; use is not free, and provider, account and timeout
+limits remain. Request overrides do not save project settings.
 
 The Claude-only `prepare` request contains:
 

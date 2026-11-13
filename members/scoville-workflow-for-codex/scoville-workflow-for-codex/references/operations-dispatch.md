@@ -1,18 +1,13 @@
 # Original tasks and native dispatch
 
-`--unit W-001/step-2` selects one original Step for main or Step review.
-`--unit W-001` selects Reviewer closure. `--plan PLAN-NNNN` selects the canonical
-Plan (default: active). Explorer may include it or omit both flags for an
-independent question.
-
-`--plan-root <directory>` reads records from that project instead of
-`--project-root`; it does not change the working workspace or configured pairs.
-`--selector <path>` replaces unit selection with a compatible Plan selector.
-Decision identity and binding projection still use the bundled Plan library;
-this option does not replace that library or its format contract. Keep the
-custom selector's own required sibling libraries with it.
-`--max-output-bytes <bytes>` forwards a success-payload budget to the selector;
-an insufficient budget returns a diagnostic and corrected call, not partial context.
+| Option | Effect |
+| --- | --- |
+| `--unit W-001/step-2` | One original Step, for main or Step review. |
+| `--unit W-001` | Reviewer closure. |
+| `--plan PLAN-NNNN` | The canonical Plan; default is the active Plan. An Explorer may pass it, or omit both flags for a question without Plan context. |
+| `--plan-root <directory>` | Reads Plan records from that project instead of `--project-root`; workspace and configured pairs stay unchanged. |
+| `--selector <path>` | Replaces unit selection with a compatible Plan selector. Decision identity and binding projection still use the bundled Plan library and its format. Keep the custom selector's required sibling libraries with it. |
+| `--max-output-bytes <bytes>` | Size budget for the selector's success payload. Too small a budget returns a diagnostic and a corrected call, never partial context. |
 
 ## Contents
 
@@ -28,20 +23,20 @@ python "<workflow>/scripts/resolve_model_pair.py" --show-config --project-root "
 python "<workflow>/scripts/resolve_model_pair.py" --role main --project-root "<workspace>"
 ```
 
-The first command resolves schema-2 settings without writing. The second checks
-the own active native model and effort against main. It binds CODEX_THREAD_ID,
-session_meta, task_started and turn_context; configuration, self-report and user
-confirmation alone are not that proof. Retain its session_path for later required
-checks through `--session-path`. A missing or mismatching proof stops coding.
-The main-thread triggers and invisible-change limit are in operations; query
-only on those triggers, not per Step. The host pair is changed in Codex; Setup only stores
-the configured pair.
+The first command resolves schema-2 settings without writing. The
+second compares this session's actual model and effort with the main pair. It
+reads them from the session's own record: CODEX_THREAD_ID, session_meta,
+task_started and turn_context. Configuration, self-report and user
+confirmation alone are not that proof. Keep its session_path for later
+required checks through `--session-path`. Missing or mismatching proof stops
+coding. Operations names the check's triggers and what it cannot see; do not
+run it per Step. The host pair is changed in Codex, not by Setup; Setup only stores the configured pair.
 
-Use fixed main, review and explore pairs. Routes select no models.
-The dispatcher compares existing execute annotations against main,
-including partial annotations. A match needs no stop; a mismatch or unknown
-fulfilment needs a user choice before coding, not a per-Step model change.
-Old Workflow forms require explicit Setup cleanup; reading never migrates them.
+Use the fixed main, review and explore pairs; routes select no models. The
+main-task helper compares an existing `[execute: ...]` annotation, even a
+partial one, with main. On a match, continue. On a mismatch or unknown
+fulfilment, obtain the user's choice before coding. Old Workflow settings need
+an explicit Setup cleanup; reading never migrates them.
 
 ## Original main task
 
@@ -51,14 +46,14 @@ Save start/resume through Plan, then use the helper before the first edit:
 python "<workflow>/scripts/build_dispatch_prompt.py" --project-root "<absolute-workspace>" --plan PLAN-NNNN --unit W-001/step-2 --role main --communication-language "<language>"
 ```
 
-The helper returns the original Step to main and validates the saved active Plan,
-current item and in_progress Step. It creates no child or rule reload and reuses
-the verified main pair without another native query.
-Main output lists Decision identities, not bodies. Before editing, read each linked
-accepted source completely unless its unchanged full text or valid original binding
-projection is already retained. After compaction, restore that binding first
-and reread uncertain sources. Do not compose a shortened projection yourself,
-because it could drop a condition.
+The helper checks the saved active Plan, current item and in_progress Step,
+then returns the original Step to main. It creates no child, reloads no rules
+and reuses the verified main pair without another session query. Its output
+lists Decision identities, not bodies. Before editing, read each linked
+accepted Decision completely from its listed source, unless you still hold its
+unchanged full text or valid original binding projection. After compaction,
+restore that first and reread uncertain sources. Do not write a shortened
+projection yourself; it could drop a condition.
 
 ## Child selection
 
@@ -82,78 +77,82 @@ flowchart TD
   valid -->|yes| call["Call native tool with returned arguments unchanged"]
 ```
 
-Confirmed failure follows operations before fresh work. No context measurement,
-threshold or replacement protocol is part of dispatch. Use native type selection
-only if it is exposed and compatible with the fixed pair, without emulating it
-or installing custom agent files. Operations owns native waits, complete finals
-and closing.
+After a confirmed child failure, follow operations before selecting a fresh
+child. Dispatch measures no context and has no threshold or replacement
+protocol. Use a native agent type only if the host exposes one compatible with
+the fixed pair; do not emulate one or install custom agent files. Native
+waits, complete finals and closing follow operations.
 
 ## Build and deliver child assignments
 
-Supplemental context that you write for an assignment or review input follows
-[agent instruction design](instruction-design.md). Keep original Plan text and
-complete native finals unchanged, and include the checks, effects, attribution
-and limits the selected role needs. The helper supplies the role and result
-contracts, so add no authoring instructions to its message.
+Write supplemental context under
+[agent instruction design](instruction-design.md). Include the check results,
+effects, attribution and limits the selected role needs. The helper adds the
+role rules and result fields; add no role, result or writing instructions of your own.
 
 ```text
 python "<workflow>/scripts/build_dispatch_prompt.py" --project-root "<absolute-workspace>" --plan PLAN-NNNN --unit W-001/step-2 --role reviewer --communication-language "<language>" --format create --project-name "<project>" --agent-number <number> --supplemental-context -
 ```
 
-Send needed checks, effects, attribution and limits through stdin with
-`--supplemental-context -`, or pass an existing UTF-8 file's path, not literal text.
-`--reviewer-result` carries
-the relevant complete native review final unchanged, including a closure finding
-when correcting one Step. Only one input may use stdin. Pass finals and Plan
-text as they are; a composed replacement or rewrite would give the Reviewer
-your reading instead of the source.
+Send it through stdin with `--supplemental-context -` or as the path of an
+existing UTF-8 file, never as literal text. Pass the relevant complete native
+review final with `--reviewer-result`; when correcting one Step after closure,
+that includes the closure finding. Only one input may use stdin. Pass finals
+and Plan text unchanged; a summary or rewrite would give the Reviewer your
+reading instead of the source.
 
-The helper derives Plan identity, Goal, Non-goals, Work Item fields, Instructions,
-selected original Step and linked Decision sources. Fresh children receive full
-accepted Decisions or their valid unchanged binding-section projection under
-Plan's Decision format. The main thread selects IDs, not sections or paraphrases.
-Step assignments exclude other Step bodies, accumulated Evidence and Work Item
-Next action. Closure includes the full original Work Item and Acceptance.
-The helper's fixed scope sentence prevents Goal and Decisions granting role rights.
+The helper takes the rest from the Plan:
 
-Fresh children receive complete role, writing, shell and result rules once;
-Reviewers also receive the code-review policy. Embedded rules satisfy their
-required reads. Codex supplies project instructions; add no AGENTS.md loader.
-Explorer reuse sends the new task, current binding context, complete necessary
-inputs and communication language, with Decision identities instead of retained
-bodies. Read new, changed or uncertain Decisions completely; omitted nonbinding
-background is no reread reason. Retained unchanged rules and Skills stay loaded;
-load newly relevant sources and specialized references as needed.
+- Plan identity, Goal, Non-goals, Work Item fields, Instructions, the selected
+  original Step and linked Decision sources.
+- Fresh child: each accepted Decision in full, or its valid unchanged
+  binding-section projection under Plan's Decision format. The main thread
+  selects IDs, never sections or paraphrases.
+- Step: without other Step bodies, accumulated Evidence and the Work Item's
+  Next action.
+- Closure: the full original Work Item and Acceptance.
+- A fixed sentence that keeps Goal and Decisions from granting role rights.
 
-For Explorer, use `--role explorer --supplemental-context "<request.txt>"` or stdin.
-Preserve the user's exact request and requested response format with investigation
-constraints.
-For reuse, add `--agent-id`, its retained `--model` and `--thinking`
-and the same agent number. If that pair conflicts with new settings, create a
-fresh Explorer rather than silently changing followup's model.
+| Child | Message |
+| --- | --- |
+| Fresh | Complete role, writing, shell and result rules, once; a Reviewer also the code-review policy. Embedded rules count as read. |
+| Reused Explorer | New task, current binding context, complete needed inputs and communication language; Decision identities instead of retained bodies. It reads new, changed or uncertain Decisions completely; omitted nonbinding background is no reason to reread. Its unchanged rules and Skills stay loaded; it loads newly relevant sources and specialized references. |
 
-Pass the user's current or explicitly chosen language with `--communication-language`;
-Plan language and locale do not select it. Call the native direct tool with the
-helper's arguments unchanged: fresh spawn or Explorer followup. Settings fix fresh
-pairs; manual flags cannot bypass them. Number agents per role across items and
-compaction; reuse keeps the number.
+Codex supplies project instructions; add no AGENTS.md loader.
 
-Assignments up to 8 KiB UTF-8 go directly into native messages. Larger assignments
-use a new external system temporary file; `--assignment-file` can choose a new
-absolute readable path. Keep it through the assignment. Children read it completely
-before work using their chosen method. `--format prompt` returns text only.
+For an Explorer, use `--role explorer --supplemental-context "<request.txt>"`
+or stdin. Keep the user's exact request, the requested response format and the
+investigation limits. For reuse, add `--agent-id`, the retained `--model` and
+`--thinking` and the same agent number. If that pair conflicts with current
+settings, create a fresh Explorer instead of silently changing followup's
+model.
+
+Pass the user's current or explicitly chosen language with
+`--communication-language`; Plan language and locale do not select it.
+Settings fix a fresh child's pair; manual flags cannot bypass them.
+Number agents per role across Work Items and compaction; reuse keeps the
+number.
+
+An assignment up to 8 KiB UTF-8 goes directly into the native message. A
+larger one uses a new system temporary file outside the project;
+`--assignment-file` chooses a new absolute readable path instead. Keep the
+file until the assignment ends. The child reads it completely before work, by
+its chosen method. `--format prompt` returns text only.
 
 Prepare complete UTF-8 files with literal-safe writes before dependent calls.
-Require exit zero and complete successful output. A missing input, inaccessible
-assignment file, capacity refusal or helper failure stops that operation:
-correct the named cause before running it again, and respawn after a capacity
-refusal only when a slot is actually free. Where a publication or spawn may
-already have taken effect, establish its actual state before another attempt.
-Never duplicate a dispatch, truncate or fabricate a result or substitute a
-sidebar chat. Internal selection budgets can be corrected explicitly; binding
-user or host caps need their owner's decision.
+A missing input,
+inaccessible assignment file, capacity refusal or helper failure stops that
+operation:
 
-Match complete native results to retained handles and assignments. Partial messages
-and metadata are not results. Read complete externalized results under shared
-delivery rules. Read-only children may prepare only necessary oversized results;
-they run no project tests, write no Plan records and create no other agents.
+- Correct the named cause before running it again.
+- After a capacity refusal, spawn again only when a slot is actually free.
+- Where the assignment file or spawn may already have taken effect, establish
+  its actual state before another attempt.
+
+Never dispatch twice, shorten or invent a result, or substitute a sidebar
+chat. You may correct `--max-output-bytes` explicitly; a binding user or host
+cap needs that party's decision.
+
+Match complete native results to retained handles and assignments. Partial
+messages and metadata are not results. Read a result delivered as a file
+completely, under the shared output-delivery rules.
