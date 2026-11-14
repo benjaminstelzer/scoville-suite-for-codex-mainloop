@@ -136,7 +136,7 @@ def validate_execution_start(root: Path, context: dict) -> None:
 
 def result_contract(role: str) -> list[str]:
     fields = ("""status: pass | changes_requested | blocked
-evidence: <sources, checked scope and results; group equivalent checks, preserve decisive values and limits; closure covers every Step and Acceptance criterion>
+evidence: <decisive sources and results behind the status and each finding; group equivalent checks, preserve decisive values and limits>
 findings: <none, or location, effect, smallest correction and affected Step number or none>
 blocker: <only for blocked: exact missing prerequisite or decision>
 limits: <required missing evidence, or none>
@@ -226,8 +226,8 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
         f'scoville_role={role}', 'dispatch_contract=SCOVILLE_AGENT_DISPATCH_V2',
         f'workspace_root={workspace}', f'python: {sys.executable}',
         f'text_size_checker: {skill / "scripts/check_text_size.py"}',
-        f'output_delivery_rules: {skill / "references/output-delivery.md"}; read when output may exceed the display limit, a command cannot be repeated or text must be delivered complete as a file.',
-        f'machine_data_rules: {skill / "references/machine-data.md"}; read when a result is machine data such as a test report, log or structured state.',
+        f'output_delivery_rules: {skill / "references/output-delivery.md"}; read when output may exceed the display limit or text must be delivered complete as a file.',
+        f'machine_data_rules: {skill / "references/machine-data.md"}; read when a result is machine data: a structured report, log file or saved state you must evaluate, not a test runner\'s console summary.',
         f'python_discovery_rules: {skill / "references/python-discovery.md"}; read only if the python named above is unavailable.',
         f'suite_directory: {suite}',
         f'instruction_design_rules: {skill / "references/instruction-design.md"}; read when the assigned unit or request concerns a reusable instruction or prompt.',
@@ -238,16 +238,16 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
         writing, shell.read_text(encoding='utf-8'),
     ]
     if role == 'explorer':
-        lines.append('Investigate only the supplied question, idea or planning preparation. Return proposals, their scope and the open questions; the main thread writes the Plan. The main thread may edit while you read: report a source fact its writes can change as provisional.')
+        lines.append('Investigate only the supplied question, idea or planning preparation. Answer a question directly. For planning preparation, return proposals with their scope and the open questions; the main thread writes the Plan.')
     else:
         lines.append((skill / 'references/code-quality.md').read_text(encoding='utf-8'))
         lines.extend([
             'Independently inspect the complete in-scope diff, its dependencies and the affected consumers, including existing assertions about the changed behavior, for defects and regressions. A focus or conclusion supplied with this assignment does not limit the review. Recheck every supplied open finding, including its correction or the evidence added for it.',
             'In a review that follows a correction, look deepest at the correction, its effects and the open findings. Reuse still-valid evidence without mechanically repeating unchanged checks; the review stays independent and keeps its original scope.',
-            ('Step review: inspect this original Step, its actual diff, the effects that matter and the Acceptance criteria it touches. Use Git status, git diff HEAD, the sources you need and the supplied evidence of checks and effects. Risk changes how deep you look, not what you look at: do not extend the review to other Steps, the whole Plan or unrelated changes. Plan records the main thread maintains are not implementation changes. A change from someone else, or one you cannot attribute to this Step, prevents pass; name it as the gap. Read unchanged files only where a dependency or an affected consumer requires it.'
+            ('Step review: inspect this original Step, its actual diff, the effects that matter and the Acceptance criteria it touches. Use Git status, git diff HEAD, the sources you need and the supplied evidence of checks and effects. Risk changes how deep you look, not what you look at: do not extend the review to other Steps, the whole Plan or unrelated changes. Plan records the main thread maintains are not implementation changes. A change from someone else, or one you cannot attribute to this Step, prevents pass; name it as the gap. Read unchanged files only where a dependency, an affected consumer or the Code quality search for existing logic requires it. When the supplied evidence says the Work Item has only this Step, check the full Work Item Acceptance, including criteria no change implements, because this review then also closes the Work Item.'
              if '/' in context['work_item']['unit'] else
-             'Closure review: check EVERY original Step and the FULL Work Item Acceptance against the current sources and the evidence you need. Where it matters that earlier source was preserved, use the Git range from the start commit of the Work Item. Do not turn this into an audit of unrelated code. State the coverage briefly. For missing implementation that no Step covers, write affected Step: none.'),
-            'Git shows file changes; it does not prove behavior, effects outside files or ignored outputs. For each supplied check, decide whether it exercises the required behavior on the code path actually used and would fail if that behavior broke. A passing check of an incidental implementation detail does not prove the behavior. For generated outputs, a current successful generation with the expected outputs observed is enough, unless the Step, the Acceptance, a project contract or a concrete defect requires reading the content. Return blocked when required evidence is missing, and changes_requested for an actual defect under the Code quality rules above. A missing protection against a hypothetical failure, without the basis those rules require, is not a defect. Do not rerun tests, and do not count earlier coverage as a current pass.',
+             'Closure review: check EVERY original Step and the FULL Work Item Acceptance against the current sources and the evidence you need. Where it matters that earlier source was preserved, use the Git range from the start commit of the Work Item. Do not turn this into an audit of unrelated code. For missing implementation that no Step covers, write affected Step: none.'),
+            'Git shows file changes; it does not prove behavior, effects outside files or ignored outputs. For each supplied check, decide whether it exercises the required behavior on the code path actually used and would fail if that behavior broke. A passing check of an incidental implementation detail does not prove the behavior. For generated outputs, a current successful generation with the expected outputs observed is enough, unless the Step, the Acceptance, a project contract or a concrete defect requires reading the content. Return blocked when required evidence is missing, and changes_requested for an actual defect under the Code quality rules above; when both occur, return changes_requested and name the missing evidence under limits. A missing protection against a hypothetical failure, without the basis those rules require, is not a defect. Do not rerun tests, and do not count earlier coverage as a current pass.',
             'You receive no further assignment after this one. Once you have sent the complete native final, the main thread may close this thread where the host offers that operation.',
         ])
     lines.extend(result_contract(role))
@@ -384,7 +384,7 @@ def main() -> int:
             message = (f'You are the assigned read-only {args.role}: run no tests and change no project files. '
                        'The one write you may make is a file under .scoville/temp that delivers a result too large to return directly. '
                        f'{communication_rule(args.communication_language)} Before any work, read the complete UTF-8 assignment '
-                       f'in {args.assignment_file}; read it the way that suits you and follow the Skill paths it names. '
+                       f'in {args.assignment_file}; read it the way that suits you and follow it. '
                        f'Return the native final it requires. Assignment: {title}\n')
             if args.agent_id:
                 message = (f'Read the complete UTF-8 assignment in {args.assignment_file}, follow it and return the native final it requires. '

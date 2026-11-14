@@ -45,7 +45,7 @@ authorize a partial save. The user can edit `.scoville/config.json` manually
 for supported special reasoning levels; agent-driven changes use the helpers
 above.
 
-Before reporting success, check the returned file, the saved flag and that
+Before reporting success, check the returned `file` path, the saved flag and that
 each requested value is effective. Report a mismatch or error with its
 concrete diagnostic. Saving again, or saving fewer, other or wider values,
 needs the user. `saved: false` means this operation wrote nothing; overrides
@@ -84,8 +84,9 @@ support still determines execution. Cleanup only rewrites
 `.scoville/config.json`: it starts no agents or tests and leaves Plans and
 `.codex` settings alone. Migrate between runs or at the safe boundary below.
 
-To upgrade a running project, the user must explicitly authorize the upgrade,
-the cleanup, the migration commits and the continuation; these steps grant none:
+To upgrade a running project, the upgrade, the cleanup, the migration commits
+and the continuation each need the user's explicit authorization; one request
+can cover several, and the steps below grant none:
 
 1. Let the old version reach a reviewed, quiescent commit boundary, preferably
    Work Item closure.
@@ -130,12 +131,13 @@ Helpers: `scripts/setup.py`.
 
 ## Shared references
 
-Read one when its condition holds. A complete copy from this build already in
-context counts as read, including one embedded in your assignment. Read it again when it is incomplete, when you are not certain it is the complete copy from this build, or when a reload is requested.
+Read one when its condition holds. A complete copy already in context counts
+as read, including one embedded in your assignment. Read it again only when
+that copy is incomplete or a reload is requested.
 
-- [Writing](references/writing.md): a plan, decision, instruction, review, handoff or report; a disputed conclusion.
-- [Machine data](references/machine-data.md): a test report, log or structured state as a result.
+- [Writing](references/writing.md): a plan, decision, instruction, review, handoff or a report the user asked for as the result; a disputed conclusion.
+- [Machine data](references/machine-data.md): a structured report, log file or saved state you must evaluate, such as JUnit XML or coverage data; a test runner's console summary is not one.
 - [Shell commands](references/shell-commands.md): composed text or scripts passed through a shell; quoting, PowerShell encoding, exact bytes or several exit statuses matter.
-- [Output delivery](references/output-delivery.md): before a command whose output may exceed the display limit or whose effect or result cannot be repeated; text that must fit a known limit; delivery as a file.
+- [Output delivery](references/output-delivery.md): before a command whose output may exceed the display limit; text that must fit a known limit; delivery as a file.
 - [Python discovery](references/python-discovery.md): a Python command or bundled helper, no interpreter verified this session.
 - [Instruction design](references/instruction-design.md): a reusable instruction, Skill rule or prompt template.

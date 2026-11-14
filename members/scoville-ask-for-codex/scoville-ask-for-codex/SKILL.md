@@ -52,8 +52,8 @@ Native Ask uses direct collaboration tools in the calling chat.
 ## Ask and collect
 
 Apply style rules only to the framing you write. Keep the user's literal
-questions, quotations, technical data and hidden expectation keys unchanged,
-except for authorized edits and required secret redaction.
+questions, quotations and technical data unchanged, except for authorized
+edits and required secret redaction.
 
 Prepare a self-contained question:
 

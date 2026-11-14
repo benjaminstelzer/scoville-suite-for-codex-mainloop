@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-14 - Goodhart corrections
+
+- A Work Item with one Step needs no separate closure review when its passing Step review checked the full Acceptance.
+- A question the main thread can answer from what it holds needs no Explorer.
+- The Reviewer may read unchanged files to search for existing logic, and no longer writes a coverage statement.
+- After a commit, check that none of the Step's work is uncommitted instead of requiring a clean tree; saved review results go to the system temporary directory.
+- Shared rules: a final report after a small change no longer loads the writing reference, a test runner's console summary is not machine data, and a complete copy of a reference in context counts as read.
+
 ## 2026-11-12 - Concrete instructions and release command
 
 - State each rule as a trigger, an action and a result the agent can check itself, and remove statements that reach the same reader twice.

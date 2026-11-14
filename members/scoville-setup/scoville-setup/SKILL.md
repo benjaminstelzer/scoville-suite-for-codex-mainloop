@@ -41,7 +41,7 @@ authorize a partial save. The user can edit `.scoville/config.json` manually
 for supported special reasoning levels; agent-driven changes use the helpers
 above.
 
-Before reporting success, check the returned file, the saved flag and that
+Before reporting success, check the returned `file` path, the saved flag and that
 each requested value is effective. Report a mismatch or error with its
 concrete diagnostic. Saving again, or saving fewer, other or wider values,
 needs the user. `saved: false` means this operation wrote nothing; overrides
@@ -80,8 +80,9 @@ support still determines execution. Cleanup only rewrites
 `.scoville/config.json`: it starts no agents or tests and leaves Plans and
 `.codex` settings alone. Migrate between runs or at the safe boundary below.
 
-To upgrade a running project, the user must explicitly authorize the upgrade,
-the cleanup, the migration commits and the continuation; these steps grant none:
+To upgrade a running project, the upgrade, the cleanup, the migration commits
+and the continuation each need the user's explicit authorization; one request
+can cover several, and the steps below grant none:
 
 1. Let the old version reach a reviewed, quiescent commit boundary, preferably
    Work Item closure.

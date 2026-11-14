@@ -5,15 +5,16 @@ you send anything:
 
 1. Include adviser_id, consultation_reference, the unchanged scope and
    material evidence limits.
-2. Deliver through the native final. If the channel has a size limit, run the
-   shared size check first and tighten wording without losing required
-   content.
+2. Deliver through the native final. If a known size limit applies to the
+   final, run the shared size check first and tighten wording without losing
+   required content.
 3. If required content still exceeds the declared or explicitly selected
    limit, or an applicable outer tool-output limit, use the shared
    complete-file route. Return the same fields, the path and the instruction
    to read the whole file before treating the answer as complete.
-4. If permissions or host tools prevent that route, follow the shared
-   caller-capture rule. Report the delivery limits that remain; do not claim completeness.
+4. If permissions or host tools prevent that route, name that limit and the
+   content it leaves undelivered in the final; the caller handles delivery.
+   Do not claim completeness.
 5. Stop after the native final; do not wait for an acknowledgement. The caller
    may resume you for a necessary follow-up.
 

@@ -66,7 +66,7 @@ directories.
 - Objects merge by field.
 - `advisers` replaces the entire list, so an explicit selection contains only
   the named presets.
-- Name advisers as strings such as `["sol", "fable"]`, or as objects with `id`
+- Name advisers as strings such as `["astra"]`, or as objects with `id`
   and per-call overrides. A matching ID inherits its configured preset.
 - A custom ID needs `route` (`native` or `claude-cli`), exact `model` and
   `effort`; `name` is optional.
@@ -98,7 +98,7 @@ Shipped settings, generated from their canonical file:
 ```
 
 Save only changed values, for example:
-`{"ask":{"advisers":["sol","fable"],"presets":{"sol":{"effort":"medium"}}}}`.
+`{"ask":{"claude":{"timeout_seconds":1800}}}`.
 Request overrides use the fields inside `ask`.
 
 Pass the selected project's absolute root as `project_root`. Without it,

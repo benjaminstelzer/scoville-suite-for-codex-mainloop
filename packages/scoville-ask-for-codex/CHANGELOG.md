@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-14 - Goodhart corrections
+
+- The adviser applies the Code quality rules to a code review only.
+- The Claude adviser names a missing checked result as an evidence gap instead of asking back.
+- Remove test-harness wording from the request rules and replace a configuration example that matched a test task.
+- Shared rules: a final report after a small change no longer loads the writing reference, a test runner's console summary is not machine data, and a complete copy of a reference in context counts as read.
+
 ## 2026-11-12 - Concrete instructions and release command
 
 - State each rule as a trigger, an action and a result the agent can check itself, and remove statements that reach the same reader twice.

@@ -27,7 +27,7 @@ Before a new run's first Plan write:
    `.gitignore`. Create `.scoville/temp/.gitignore` containing `*` and check
    again.
 
-An authorized continuation of the same started work reconciles what actually
+An authorized resumption of the same started work reconciles what actually
 exists: Git changes, results, processes and open reviews. It need neither
 repeat the new-run gate nor commit unreviewed work first. Same paths alone do
 not show that a change is this run's; clarify foreign or uncertain work before
@@ -70,10 +70,10 @@ literals and required field names exact. Messages between main thread and childr
 | Step start | Save the selected original Step as in_progress. Run the main-task helper; it checks the saved start and an existing `[execute: ...]` annotation. Use its task unchanged; choose no other model per Step. Keep the Step's start HEAD in context. |
 | Implementation | Apply [Code quality](code-quality.md) when choosing the implementation; its complete unchanged text in context counts as read. Do only this Step and its required checks. Preserve completed effects. Before review, finish or safely stop your write, test and restore processes. Read required sources completely. Reuse unchanged passing checks. |
 | Review decision | Answer the diagram's change question from `git status`, `git diff` and the observed file, configuration and behavior effects. Closure checks unchanged Steps. Record no review pass that no Reviewer returned. |
-| Changed Step | Give the review helper the same original Step, the needed check and effect evidence and each relevant complete open review result. The helper adds the independent review rules: full diff, dependencies, consumers and Acceptance. |
+| Changed Step | Give the review helper the same original Step, the needed check and effect evidence and each relevant complete open review result. When the Work Item has only this Step, say so in that evidence; the Reviewer then checks the full Acceptance. The helper adds the independent review rules: full diff, dependencies, consumers and Acceptance. |
 | Correction | Select the one affected original Step. Resolve each finding: correct it, narrow a statement the evidence does not support, or refute it with evidence. Complete required checks. Obtain a fresh review; it focuses on the correction, its effects and open findings within the full original scope. Reuse still-valid evidence. |
-| Repeated finding without new evidence or changed conditions | Follow Code Validation's rule for ending repair loops: continue only with a supported next diagnosis or correction. Otherwise keep the Step open, report the unresolved finding and record an actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
-| Accepted change | After completion and the required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, never foreign or unreviewed changes, because the commit records what the review accepted. A failed or forbidden commit holds advancement until resolved. Confirm that Git is clean. Make no empty commit. |
+| Repeated finding without new evidence or changed conditions | Continue only with a supported next diagnosis or correction. Otherwise keep the Step open, report the unresolved finding and record an actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
+| Accepted change | After completion and the required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, never foreign or unreviewed changes, because the commit records what the review accepted. A failed or forbidden commit holds advancement until resolved. Afterwards check with `git status` that none of this Step's work is left uncommitted; foreign changes stay untouched. Make no empty commit. |
 
 Updating Plan records alone needs no review.
 
@@ -96,9 +96,12 @@ Evidence; no synthetic execution final, new per-Step report or source archive is
 
 ## Close the Work Item
 
-For the diagram's closure review, give the helper the needed current source
-and effect evidence, retained proof and each relevant complete open review. An earlier review, Step or closure, is evidence, not a current pass. Closure stays within the
-original Work Item.
+When the Work Item has exactly one Step and its passing Step review checked
+the full Acceptance, that review is the closure review; dispatch no second
+Reviewer. Every other Work Item gets the diagram's closure review: give the
+helper the needed current source and effect evidence, retained proof and each
+relevant complete open review. An earlier review, Step or closure, is
+evidence, not a current pass. Closure stays within the original Work Item.
 
 | Closure finding; the item stays open | Action |
 | --- | --- |
@@ -112,14 +115,16 @@ checks. Keep this thread's Explorers and counters.
 
 ## Questions, results and missing evidence
 
-Send a question, idea, proposed change or planning preparation to an Explorer
-selected through dispatch, with the complete request and needed context.
+Send a question, idea, proposed change or planning preparation that needs
+investigation to an Explorer selected through dispatch, with the complete
+request and needed context.
 The same project or file alone does not make independent questions one
 investigation. Find the Explorer through retained assignments and handles, not
 topic IDs or a registry. From its findings and proposals the main thread
 answers the user and writes authorized Plans. Stop implementation that a
-proposed change invalidates before exploring it. Known progress and stop or
-resume need no Explorer.
+proposed change invalidates before exploring it. Known progress, stop or
+resume and a question you can answer from what you already hold need no
+Explorer; do your Step's own reading yourself.
 
 | Child result | Meaning |
 | --- | --- |
@@ -129,7 +134,9 @@ resume need no Explorer.
 | blocked | An actual prerequisite or required decision is missing. |
 
 Before passing a relevant native final to another assignment, save it
-complete and unchanged with a permitted literal-safe write. A brief Plan
+complete and unchanged with a permitted literal-safe write, as a new file in
+the system temporary directory outside the project; a file in the project
+would show up as an unattributed change in the next review. A brief Plan
 summary does not replace it.
 
 The main thread closes a review's evidence gap itself:

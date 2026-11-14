@@ -31,7 +31,9 @@ flowchart TD
   W --> S[["Run ONE original Step; see diagram 2"]]
   S --> D{"All Steps and required reviews complete?"}
   D -->|No| S
-  D -->|Yes| C["Helper: all original Steps and full Acceptance"]
+  D -->|Yes| ONE{"One Step whose passing review checked the full Acceptance?"}
+  ONE -->|Yes| E
+  ONE -->|No| C["Helper: all original Steps and full Acceptance"]
   C -->|Success| CR["Fresh closure Reviewer from unchanged returned arguments"]
   C -->|Failure| B
   CR --> V{"Result?"}
