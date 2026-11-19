@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-19 - Code review findings
+
+The shared code criteria count work across calls. Reviewers go through the questions in order and report the defects they find.
+
 ## 2026-11-18 - Repeated closure and dispatch sentences removed
 
 - Each rule is stated once. The final check asks whether the work does what the Skill requires instead of listing the rules again. Not tested with models yet.

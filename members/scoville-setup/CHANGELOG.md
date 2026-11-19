@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-19 - Show and set commands
+
+The show and set commands now sit with their operations. Legacy migration follows in its own section.
+
 ## 2026-11-16 - Owner decisions on three open points
 
 - A one-time choice stays in the request. Setup no longer points to a model choice kept in a Plan Step, because Workflow has none.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-19 - Review questions
+
+The shared code criteria count work across calls. A reviewer checks each question in order and reports the defects it shows.
+
 ## 2026-11-19 - Compatibility before release
 
 - Shared code rules: a break in compatibility is usually wanted while a product has not been released; "during development" also described released software.

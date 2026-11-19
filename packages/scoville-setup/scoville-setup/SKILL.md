@@ -47,6 +47,45 @@ not their source, unless diagnosing a failure.
 
 Helpers: `scripts/setup.py`.
 
+## Prepare and run the selected command
+
+Use [Python discovery](references/python-discovery.md) if no interpreter is
+verified. Use [Shell commands](references/shell-commands.md) when serializing
+or passing input through the shell.
+
+```text
+python "<setup-skill-directory>/scripts/setup.py" show --project-root "<project-root>"
+python "<setup-skill-directory>/scripts/setup.py" set --project-root "<project-root>"
+python "<setup-skill-directory>/scripts/setup.py" cleanup --project-root "<project-root>"
+```
+
+For an Ask save, read [Ask](#ask) before setting values. For legacy Workflow
+settings, follow [Workflow pairs and migration](#workflow-pairs-and-migration)
+before saving. Set and cleanup read UTF-8 JSON from stdin. Arrange capture of the original
+machine result and exit status before saving.
+
+- Generate the JSON patch with a serializer so quoting preserves the values.
+- Use `ask`, `workflow` or both for set, and only `workflow` for cleanup.
+- Include only the requested changes, with the values the user gave. If
+  capturing with the bundled checker, follow the stdin route in
+  [Output delivery](references/output-delivery.md) so the same execution
+  receives the serialized patch and yields the retained result.
+- Set offers low, medium, high and xhigh. Existing special levels survive
+  unrelated saves and migration.
+
+The helper validates changed sections before saving. An invalid value does not
+authorize a partial save. The user can edit `.scoville/config.json` manually
+for supported special reasoning levels; agent-driven changes use the helpers
+above.
+
+## Ask
+
+Before an Ask save, read the saved settings and precedence in Scoville Ask
+for Codex's `references/configuration.md`; the helper applies that precedence
+with the patch as the later layer. [Defaults](assets/ask.default.json)
+provide the shipped values. An explicitly supplied `advisers` list replaces
+the current list and keeps its own inline precedence.
+
 ## Workflow pairs and migration
 
 Schema 2 has fixed `main`, `review` and `explore` pairs, each with `model` and
@@ -64,8 +103,7 @@ changes nor verifies it.
 | Schema 1 routes | On explicit cleanup authorization, obtain an explicit `main` pair, which cannot be inferred from execute routes. Keep the single effective pair for `review` and `explore` when each is unambiguous. Obtain missing choices when routes differ. `explore` inherits from effective execute routes field by field. |
 | Invalid settings or unsupported fields | Report the diagnostic and resolve the affected inputs before saving. |
 
-Let cleanup retain supported special levels already stored or inherited.
-Explicit patches remain subject to Setup's choice limits. Migrate between
+Migrate between
 runs or at the safe boundary below. The cleanup command only rewrites
 `.scoville/config.json` and leaves Plans and `.codex` settings alone.
 
@@ -85,44 +123,6 @@ can cover several, and the steps below grant none:
    separately under project checks. Untracked configuration needs no commit.
 
 An installed new version proves neither cleanup, host-model change nor reload.
-
-## Ask
-
-Before an Ask save, read the saved settings and precedence in Scoville Ask
-for Codex's `references/configuration.md`; the helper applies that precedence
-with the patch as the later layer. [Defaults](assets/ask.default.json)
-provide the shipped values. An explicitly supplied `advisers` list replaces
-the current list and keeps its own inline precedence.
-
-## Prepare and run the selected command
-
-Use [Python discovery](references/python-discovery.md) if no interpreter is
-verified. Use [Shell commands](references/shell-commands.md) when serializing
-or passing input through the shell.
-
-```text
-python "<setup-skill-directory>/scripts/setup.py" show --project-root "<project-root>"
-python "<setup-skill-directory>/scripts/setup.py" set --project-root "<project-root>"
-python "<setup-skill-directory>/scripts/setup.py" cleanup --project-root "<project-root>"
-```
-
-Set and cleanup read UTF-8 JSON from stdin. Arrange capture of the original
-machine result and exit status before saving.
-
-- Generate it with a serializer, not by hand; a quoting slip changes the saved
-  value.
-- Use `ask`, `workflow` or both for set, and only `workflow` for cleanup.
-- Include only the requested changes, with the values the user gave. If
-  capturing with the bundled checker, follow the stdin route in
-  [Output delivery](references/output-delivery.md) so the same execution
-  receives the serialized patch and yields the retained result.
-- Set offers low, medium, high and xhigh. Existing special levels survive
-  unrelated saves and migration.
-
-The helper validates changed sections before saving. An invalid value does not
-authorize a partial save. The user can edit `.scoville/config.json` manually
-for supported special reasoning levels; agent-driven changes use the helpers
-above.
 
 ## Verify the result
 
