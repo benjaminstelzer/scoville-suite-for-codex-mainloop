@@ -17,6 +17,14 @@ question unchanged. For an adviser question or follow-up you compose, apply
 
 ## Choose the consultation
 
+{{ include: family.contract }}
+
+For a one-time settings lookup or override, use
+[configuration](references/configuration.md) to resolve the settings read-only
+and report them. It starts no adviser. For a request to save settings, use
+the configuration reference's route for this package. Continue below when
+the request calls for independent advice or review.
+
 Infer `review` or `consultation` from the actual question; an explicit mode
 wins. “Could this patch lose data?” is a review even without “for review”. If
 you cannot tell which outcome the user wants, ask before dispatch. Do not ask about a mode, advisers or permission the request already establishes.
@@ -62,30 +70,27 @@ Prepare a self-contained question:
 - From a fresh consultation exclude your verdict and intermediate reasoning,
   previous adviser answers, unrelated history and secrets.
 
+When review evidence can change during collection, bind the assignment to the
+applicable revision or identifiable source state. If the evidence drifts,
+attribute each finding to the state it actually covers and report any review
+still missing for the requested state.
+
 Read [native operation](references/native.md) or
 [Claude operation](references/claude.md) for each selected route.
 
-```mermaid
-flowchart TD
-  settings["Resolve selected advisers"] --> valid{"Settings valid?"}
-  valid -->|no| diagnostic["Report diagnostic; stop affected dispatch"]
-  valid -->|yes| route{"Selected route?"}
-  route -->|native| native["Build fresh assignment and spawn directly"]
-  route -->|Claude CLI| claude["Prepare unchanged request and launch"]
-  native --> collect["Collect matching answers under route rules"]
-  claude --> collect
-  collect --> state{"Collection state?"}
-  state -->|active or clarification needed| wait["Wait or clarify with the retained adviser"]
-  wait --> collect
-  state -->|collection blocked or permitted interruption| partial["Report completed answers, failures and pending handles"]
-  state -->|complete| report["Report evidence, differences and limits"]
-```
-
-Dispatch each selected adviser independently, with fresh context and its
-resolved settings, within host capacity and process limits. The route's
-reference governs handle retention, collection and necessary follow-ups. Keep
-partial answers and failures visible. Report a failed adviser instead of
-replacing it: the user chose these advisers.
+1. Report invalid settings and hold the affected dispatch. Independently
+   dispatch each selected adviser with fresh context and the resolved settings
+   within host capacity and process limits. A native adviser may write a
+   temporary file only for an oversized answer under [native delivery](references/native-delivery.md).
+   Native spawning adds no write barrier. Claude has its own tool restrictions
+   and opt-in web access.
+2. Collect by exact adviser and current assignment. Keep waiting for running
+   agents or processes. An answer that only asks for clarification remains
+   open. Use the retained native handle for necessary clarification. A further
+   Claude call follows the Claude reference's authorization rules.
+3. Accept a complete answer to the current question. Report partial answers,
+   failures and pending handles with their reasons when collection cannot
+   complete. A failed adviser stays in the report without substitution.
 
 | Mode | Do |
 | --- | --- |
@@ -118,12 +123,5 @@ consultation.
 A completed review stays available: do not ask about keeping it open and do
 not close it when the user changes topic. Claude print mode exits after its
 answer; a retained ID is saved history, not a running agent.
-
-{{ include: family.contract }}
-
-A native adviser creates temporary files only to deliver an oversized answer,
-under [native delivery](references/native-delivery.md). Native spawning adds
-no technical write barrier or separate sandbox. The Claude route has its own
-tool restrictions and opt-in web access.
 
 {{ include: rules.references }}

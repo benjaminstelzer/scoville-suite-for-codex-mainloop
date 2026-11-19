@@ -6,11 +6,13 @@ question through stdin and uses the explicit workspace, model, effort and
 budget.
 
 Claude must already be available and authenticated. Opus 5.5 requires Claude
-Code 2.1.280 or newer and Fable 5.2 requires 2.1.321 or newer. Check
-`claude --version` and report an older installation. Run `claude update` only
+Code 2.1.280 or newer and Fable 5.2 requires 2.1.321 or newer. If a call fails
+on the model or an option, check `claude --version` and report an older
+installation. Run `claude update` only
 when the user authorized installing or updating Claude Code in this session;
 an Ask consultation alone does not authorize that global update. After an
-authorized update, verify the version before retrying.
+authorized update, verify the version. A failed execution follows the retry
+rule below.
 
 ## Contents
 
@@ -19,8 +21,8 @@ authorized update, verify the version before retrying.
 
 ## Prepare and run
 
-Keep the UTF-8 question and generated request files in the workspace temporary
-area outside the reviewed tree.
+Keep the UTF-8 question and generated request files as new files in the system
+temporary directory, outside the project.
 
 The helper preserves the literal question. Generate one request per selected
 Claude adviser and pass it unchanged to execution:
@@ -29,9 +31,18 @@ Claude adviser and pass it unchanged to execution:
 python "<ask-skill-directory>/scripts/ask.py" --project-root "<absolute-project-root>" --adviser claude --question-file "<temporary>/question.txt" --mode review --scope "<exact scope>" --reference "<consultation reference>" --output-file "<temporary>/claude-request.json"
 ```
 
-Use the requested adviser ID, and `--mode consultation` for advice. The helper
-returns the saved file path and resolved settings; it does not start Claude.
-Before the first execution, set up complete capture under
+Use `--mode consultation` for advice. This command selects the named preset.
+When the selected adviser's resolved settings include inline values or custom
+IDs, use the structured `prepare` operation in [configuration](configuration.md).
+Serialize its input with the exact question, workspace, mode, scope and
+reference. Put the resolved adviser object in `overrides.advisers` as its only
+entry, and the resolved Claude controls in `overrides.claude`. Save the returned
+`entries[0].request` as the execution input without rewriting its values.
+
+Before execution, compare the prepared adviser, workspace and Claude controls
+with the resolved selection. Preparation does not start Claude. Resolve a
+mismatch within the original request before dispatch.
+Before each paid execution, set up complete capture under
 [output delivery](output-delivery.md): the call is paid and cannot be repeated
 for its output. Then execute the generated file unchanged:
 
@@ -39,20 +50,23 @@ for its output. Then execute the generated file unchanged:
 python "<ask-skill-directory>/scripts/ask.py" --input-file "<temporary>/claude-request.json"
 ```
 
-Retain that request file with the answer and exact session ID. For an explicitly
-requested follow-up, prepare a new question using the retained request:
+Retain that request file with the answer and exact session ID. To answer a
+necessary clarification, which the Ask request already authorizes, or for an
+explicitly requested follow-up, prepare a new question using the retained
+request. A clarification keeps the `--reference` and `--scope` values; a
+follow-up gets a new reference and explicit scope:
 
 ```text
 python "<ask-skill-directory>/scripts/ask.py" --resume-request "<temporary>/claude-request.json" --session-id "<exact retained session ID>" --question-file "<temporary>/followup.txt" --mode review --scope "<follow-up scope>" --reference "<new consultation reference>" --output-file "<temporary>/claude-followup.json"
 ```
 
-Execute the new file with `--input-file`. A follow-up keeps the saved adviser,
+Capture and execute the new file with `--input-file` as above. A follow-up keeps the saved adviser,
 workspace and settings even when defaults changed. Use a separate file per
 adviser and round. If the result has `continuation_available:false`, report
 that a fresh consultation is needed; do not start one.
 
-For a fresh request or follow-up, append only explicitly requested overrides to
-the preparation command: `--model <id>`, `--effort max`, `--web-tools true`
+For a fresh request or follow-up using the CLI recipe, append only explicitly
+requested overrides: `--model <id>`, `--effort max`, `--web-tools true`
 (or `false`), `--timeout-seconds 3600` or `--max-budget-usd 10`. For example,
 `--effort max --web-tools true` changes those two settings and retains the rest.
 Overrides affect this request only; they do not change project configuration.
@@ -94,7 +108,7 @@ then applies.
 
 | Result | Meaning and action |
 | --- | --- |
-| Answer | The adviser's result. Retain the JSON answer, permission denials, requested and reported settings and the exact session ID, whichever of them the result contains, also when no answer arrived. |
+| Answer | Retain the JSON answer, permission denials, requested and reported settings and exact session ID, also when no answer arrived. A clarification without a substantive answer leaves the adviser open; answer it with the retained request as above. |
 | Permission denials | Evidence gaps, even when an answer is present. |
 | No session ID | Continuation is unavailable; no resumable session was created. |
 | Process error, timeout, malformed JSON or empty answer | A failed consultation. Do not piece an answer together from logs; it would not be the adviser's. |
@@ -104,13 +118,14 @@ Before parsing, the adapter tries to retain raw stdout, stderr and the
 original exit in a private user-owned temporary directory. On response
 failure, `raw_file`, `exit_code` and any parsed `session_id` identify that
 record; inspect it in code and do not dump it. Timeout captures are partial.
-Requested settings are not runtime proof: reported model and effort remain
-null until their actual producer schema is established.
+Requested settings are not runtime proof, and the helper reports no actual
+model or effort: `reported_model` and `reported_effort` are always null.
 
 Completion and retention follow the Skill's "Follow-up after completion" rules.
 
 If authentication is missing or OAuth cannot refresh, report the error. Ask
 the user to run `claude auth login` in a separate terminal, complete the
 browser sign-in and verify with `claude auth status`. Leave unrelated running
-Claude processes untouched; do not read or copy credential files. Resume the
-requested check after authentication succeeds.
+Claude processes untouched; do not read or copy credential files. If this was
+a prerequisite before dispatch, continue the authorized first call after
+authentication succeeds. A failed execution follows the retry rule above.

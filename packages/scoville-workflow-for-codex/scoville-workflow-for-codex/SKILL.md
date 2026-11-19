@@ -18,7 +18,8 @@ time. It delegates only these roles:
 Explorer and Reviewer write temporary files only to deliver an oversized
 result and create no other agents. While a review runs, change neither the
 files it reviews nor its inputs: the Reviewer must judge one fixed state.
-Invoking Workflow authorizes commits of accepted Steps, unless the user or a
+Invoking Workflow authorizes the commits of accepted Steps, of this run's Plan
+records and of small added work done between Steps, unless the user or a
 project rule restricts them.
 Host compaction continues this same thread and is no resumption: find out what
 is done and do not repeat it.
@@ -56,22 +57,22 @@ Steps do not.
 
 ```mermaid
 flowchart TD
-  ready["Check activation, Git state and fixed main pair"] --> select["Select ONE original Step; save its start"]
-  select --> original["Helper validates start and returns original task"]
+  select["Select ONE authorized original Step and save its start"] --> original["Helper validates start and returns original task"]
   original --> code["Main: implement; finish required checks and owned processes"]
   code --> complete{"Step complete; checks met; effects clear?"}
   complete -->|no or unclear| blocked["Resolve prerequisite; keep Step open"]
-  complete -->|yes| changes{"File, config or behavior changes; or open Step review?"}
+  complete -->|yes| changes{"File, configuration or behavior changes beyond Plan record maintenance, or open Step review?"}
   changes -->|no| unchanged["Record completion without a review pass or empty commit"]
   changes -->|yes| review["Helper: SAME Step and required evidence"]
   review -->|failure| blocked
   review -->|success| spawn["Spawn fresh Reviewer with unchanged returned arguments"]
   spawn --> result{"Review result?"}
-  result -->|changes_requested| approach{"Supported next correction or changed evidence?"}
-  approach -->|yes| original
-  approach -->|no| stalled["Keep Step open; report unresolved finding and needed prerequisite"]
-  result -->|blocked| blocked
-  result -->|pass| commit["Record progress; commit accepted versionable work"]
+  result -->|changes_requested| finding["Route the finding under Operations, then run the authorized correction and fresh review"]
+  finding -->|same Step correction| code
+  finding -->|other action or scope| routed["Follow the applicable Operations route"]
+  result -->|blocked| missing["Resolve required evidence under Operations or keep the Step open"]
+  missing -->|evidence recovered| review
+  result -->|pass| commit["Mark Step done; commit accepted versionable work"]
   commit -->|failed or forbidden| blocked
   commit -->|success or no versionable changes| accepted["Continue at Work Item control"]
   unchanged --> accepted
@@ -81,39 +82,31 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  accepted["Step completed through Step and review"] --> more{"All Steps and required Step reviews complete?"}
-  more -->|no; next Step authorized| next["Return to Step and review for next original Step"]
-  more -->|no; scope ends| stop["Save allowed owned progress; stop with item open"]
+  accepted["Step completed through Step and review"] --> scope{"Is the next Step, review or closure action authorized?"}
+  scope -->|no| stop["Save allowed owned progress and stop at the authorized endpoint"]
+  scope -->|yes| more{"All Steps and required Step reviews complete?"}
+  more -->|no| next["Return to Step and review for next original Step"]
   more -->|yes| single{"ONE Step whose passing review checked the FULL Acceptance?"}
   single -->|yes| accept["Accept Work Item; commit coherent records; continue authorized scope"]
   single -->|no| closure["Helper: ALL original Steps and FULL Acceptance"]
   closure -->|failure| blocked["Resolve prerequisite; keep Work Item open"]
   closure -->|success| spawn["Spawn fresh Reviewer with unchanged returned arguments"]
   spawn --> result{"Closure result?"}
-  result -->|changes_requested| approach{"Supported next correction or changed evidence?"}
-  approach -->|yes| affected["Select ONE affected Step; preserve open findings; return to Step and review"]
-  approach -->|no| stalled["Keep item open; report unresolved finding and needed prerequisite"]
-  result -->|blocked| blocked
+  result -->|changes_requested| finding["Use Operations' full Acceptance finding route within authorized scope"]
+  result -->|blocked| missing["Resolve required evidence under Operations or keep the item open"]
+  missing -->|evidence recovered and review authorized| closure
   result -->|pass| accept
 ```
 
-When the Work Item has exactly one Step and its passing Step review checked
-the full Acceptance, that review is the closure review: a second Reviewer
-would judge the same diff against the same criteria. A Work Item with several
-Steps keeps its closure review.
-
-Operations covers questions, stop and resume, and an unchanged Acceptance
-criterion no Step implemented, all within the authorized scope.
-
 ## Shared references
 
-Read one when its condition holds. A complete copy already in context counts
-as read, including one embedded in your assignment. Read it again only when
-that copy is incomplete or a reload is requested.
+Read one when its condition holds. A complete, unchanged copy in context
+counts as read, including one embedded in your assignment. Fetch incomplete
+or changed passages, and reload when requested.
 
 - [Writing](references/writing.md): a plan, decision, instruction, review, handoff or a report the user asked for as the result; a disputed conclusion.
 - [Machine data](references/machine-data.md): a structured report, log file or saved state you must evaluate, such as JUnit XML or coverage data; a test runner's console summary is not one.
 - [Shell commands](references/shell-commands.md): composed text or scripts passed through a shell; quoting, PowerShell encoding, exact bytes or several exit statuses matter.
-- [Output delivery](references/output-delivery.md): before a command whose output may exceed the display limit; text that must fit a known limit; delivery as a file.
-- [Python discovery](references/python-discovery.md): a Python command or bundled helper, no interpreter verified this session.
+- [Output delivery](references/output-delivery.md): before a command whose output may exceed the display limit or is needed as evidence and cannot be reproduced; text that must fit a known limit; delivery as a file.
+- [Python discovery](references/python-discovery.md): a bundled helper or other Python you run, no interpreter verified this session.
 - [Instruction design](references/instruction-design.md): a reusable instruction, Skill rule or prompt template.

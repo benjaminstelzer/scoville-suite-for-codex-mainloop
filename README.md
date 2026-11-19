@@ -73,7 +73,7 @@ flowchart TD
   C -->|Failure| B
   CR --> V{"Result?"}
   V -->|Defect| nextCorrection{"Supported correction or changed evidence?"}
-  nextCorrection -->|Yes| F["Select one affected Step; preserve open findings"]
+  nextCorrection -->|Yes| F["Select the affected Step or append a Step for a missing binding criterion"]
   nextCorrection -->|No| O["Keep item open; report needed prerequisite"]
   F --> S
   V -->|Missing required proof| P["Recover available proof or finish missing authorized check"]
@@ -85,6 +85,9 @@ The new-run Git gate never cleans or commits earlier work. Authorized resumption
 reconciles the same started work without prematurely committing it. Missing or
 foreign evidence remains an explicit boundary. Stops preserve unfinished work;
 compaction continues this same chat from actual Plan, Git, effects and results.
+An omitted binding criterion found by a one-Step full review gets its own Step.
+The original Step needs its own pass and commit before that Step starts. The
+omission remains open until the added Step and full Work Item review pass.
 
 #### 2. Step implementation and review
 
@@ -217,6 +220,11 @@ fix acquires its own framework.
   or build check, not a test.
 - It ends by reading its diff against these rules and reports the test that
   proves the request.
+- Where the host can start a separate agent, a change to code behavior is
+  then read once by an agent that has not seen the author's reasoning. The
+  author declines findings that only ask for more protection. Under a
+  workflow that already reviews each change independently, that review takes
+  its place.
 - A review goes through the same points in someone else's change and names
   the place, the problem and, where one exists, the function, path or
   interface to use instead.
@@ -245,6 +253,7 @@ and [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-co
 ### What it costs
 
 - Reading relevant code and checking behavior takes tokens and time. The extra work is aimed at avoiding fixes that merely look finished.
+- The independent reading of a change to code behavior adds one agent run. In my measurements a review took two to four minutes.
 
 [How to use Scoville Code](members/scoville-code/README.md#how-to-use).
 

@@ -48,6 +48,6 @@ def load_config(path: Path, project_root: Path | str | None = None) -> dict:
         defaults = validate_config(tomllib.load(stream))
     override = config_section("workflow", project_root)
     if needs_cleanup(override):
-        raise ValueError("workflow uses the old configuration; run Scoville Setup cleanup before coding. "
+        raise ValueError("workflow uses the old configuration; ask the user to authorize Scoville Setup cleanup with a main pair before coding. "
                          "Reading Workflow settings never migrates them")
     return validate_config(merge(defaults, override))

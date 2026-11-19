@@ -23,19 +23,21 @@ python "<workflow>/scripts/resolve_model_pair.py" --show-config --project-root "
 python "<workflow>/scripts/resolve_model_pair.py" --role main --project-root "<workspace>"
 ```
 
-The first command resolves schema-2 settings without writing. The
-second compares this session's actual model and effort with the main pair. It
+Use Setup for ordinary settings questions. The first command reads the
+resolved schema-2 settings for diagnosis of a Workflow run. The second
+compares this session's actual model and effort with the main pair. It
 reads them from the session's own record: CODEX_THREAD_ID, session_meta,
 task_started and turn_context. Configuration, self-report and user
 confirmation alone are not that proof. Keep its session_path for later
-required checks through `--session-path`. Missing or mismatching proof stops
-coding. Operations names the check's triggers and what it cannot see; do not
-run it per Step. The host pair is changed in Codex, not by Setup; Setup only stores the configured pair.
+required checks through `--session-path`. The host pair is changed in Codex, not by Setup; Setup only stores the configured pair.
 
-Use the fixed main, review and explore pairs; routes select no models. The
-main-task helper compares an existing `[execute: ...]` annotation, even a
-partial one, with main. On a match, continue. On a mismatch or unknown
-fulfilment, obtain the user's choice before coding. Old Workflow settings need
+Use the fixed main, review and explore pairs; neither routes nor Steps select
+models. The main-task helper compares an existing `[execute: ...]` annotation,
+even a partial one, with main. On a match, continue. On a mismatch or unknown
+fulfilment the configured pair applies and the annotation does not: before
+coding, tell the user, replace the annotation through Plan on their word and
+run the helper again. Saved pairs change between runs, through Setup, never
+for one Step or within a run. Old Workflow settings need
 an explicit Setup cleanup; reading never migrates them.
 
 ## Original main task
@@ -149,10 +151,9 @@ operation:
 - Where the assignment file or spawn may already have taken effect, establish
   its actual state before another attempt.
 
-Never dispatch twice, shorten or invent a result, or substitute a sidebar
-chat. You may correct `--max-output-bytes` explicitly; a binding user or host
-cap needs that party's decision.
+Never shorten or invent a result, or substitute a sidebar chat. You may
+correct `--max-output-bytes` explicitly; a binding user or host cap needs that
+party's decision.
 
-Match complete native results to retained handles and assignments. Partial
-messages and metadata are not results. Read a result delivered as a file
-completely, under the shared output-delivery rules.
+Read a result delivered as a file completely, under the shared
+output-delivery rules.

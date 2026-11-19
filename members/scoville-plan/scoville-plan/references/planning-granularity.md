@@ -35,5 +35,5 @@ sentence quotas.
 If compaction nevertheless occurs, continue the same original assignment with
 its remaining work. It changes neither assignee nor original Step boundaries.
 Scoville Workflow assigns exactly one original Step at a time.
-For a legacy item without Steps, the main thread adds an authorized implementation
-Step before execution; a whole-item selection is only context or closure review.
+For a legacy item without Steps, use the bounded continuation in
+[Progress](progress.md#legacy-continuation) before execution.

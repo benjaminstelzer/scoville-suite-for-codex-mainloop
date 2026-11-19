@@ -17,6 +17,7 @@ host model. Invisible host changes cannot be guaranteed detected.
 Old route tables and context settings require explicit Setup cleanup. It asks
 for main and any ambiguous role pair, preserves Ask and unrelated values, and
 saves only a complete valid migration. Reads never migrate or create settings.
-There are no per-Step model routes or context thresholds. Existing execute
-annotations are retained and compared with main; conflicts require a decision.
+There are no per-Step models, model routes or context thresholds, and saved
+pairs change between runs. Existing execute annotations are compared with
+main; one that differs does not apply and is replaced through Plan.
 See the [dispatch rules](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-workflow-for-codex/scoville-workflow-for-codex/references/operations-dispatch.md).

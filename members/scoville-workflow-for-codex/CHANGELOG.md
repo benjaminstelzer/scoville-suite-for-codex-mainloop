@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-11-18 - Repeated closure and dispatch sentences removed
+
+- Each rule is stated once. The final check asks whether the work does what the Skill requires instead of listing the rules again. Not tested with models yet.
+
+## 2026-11-16 - Reviewers answer two questions first
+
+- Shared review rules: a reviewer answers the questions on reloaded values and on state across a change first, by file and line. A missing line is a finding; a comment or an argument is not such a line.
+- The Step review is the one independent review of a change; the main thread starts no reviewer of its own on top of it.
+
+## 2026-11-16 - Holder of assigned state
+
+- Shared code rules: the rule on assigned state names its holder, an element, list or record whose content the new path changes, also when the item the state points to stays untouched.
+
+## 2026-11-16 - Assigned state is set again; a named bound for few items
+
+- Shared code rules: where the old path assigned a selection, a value, the focus or a flag, the new path sets the same value after each of its steps. The author no longer has to judge whether that state can change.
+- Shared code rules: a query, request, read or parse per item stays only where code, the contract or a project rule that the author names bounds the real callers to a few items.
+
+## 2026-11-16 - Owner decisions on three open points
+
+- Workflow has no model choice per Step. The configured main pair applies to every Step; a Step annotation that differs does not apply and is replaced through Plan.
+- Saved pairs change between runs, through Setup. The helper's message on a differing annotation no longer offers to save a new pair within a run.
+- Shared code rules: the question about a value that is loaded again also covers loads inside the helpers the path calls.
+
+## 2026-11-15 - Rules that contradicted each other
+
+- Invoking Workflow authorizes the commits of accepted Steps, of the run's Plan records and of small added work done between Steps.
+- A Step stays in progress until its review has passed; only then is it marked done and committed.
+- Shared rules: a reply uses the language of the request, while a record or file you edit keeps the language it is written in. Files saved with `--publish-full` are delivered output, so cleanup leaves them in place. A rule that holds only until something happens states that end in the rule.
+
+## 2026-11-14 - Resolve implementation choices within the Step
+
+- Shared code-quality rules use the request, project decisions and conventions before asking about an unresolved material choice. Keep independent work moving within the authorized Step; reviewer permissions remain unchanged.
+
 ## 2026-11-14 - Goodhart corrections
 
 - A Work Item with one Step needs no separate closure review when its passing Step review checked the full Acceptance.

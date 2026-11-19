@@ -94,11 +94,11 @@ def main() -> int:
               + f'\ntext_size_checker: {checker}\npython: {sys.executable}'
               + f'\nshell_command_rules: {shell_rules}; read when a command depends on shell quoting, PowerShell encoding or several exit statuses.'
               + f'\nmachine_data_rules: {machine_data}; read when a result is machine data: a structured report, log file or saved state you must evaluate, not a test runner\'s console summary.'
-              + f'\noutput_delivery_rules: {delivery_rules}; read when output may exceed the display limit or the answer must be delivered as a file.'
+              + f'\noutput_delivery_rules: {delivery_rules}; read when output may exceed the display limit, the final has a known size limit or the answer must be delivered as a file.'
               + f'\ninstruction_design_rules: {instruction_design}; read when the question concerns a reusable instruction or prompt.'
               + f'\nconsultation_reference: {args.reference}\nscope: {args.scope}'
               + '\n\nInspect only the supplied scope in this workspace. Resolve relative evidence paths there.'
-              + '\nTo capture a command, check a size or deliver an oversized result, run the python and the text_size_checker named above, even where they lie outside the workspace. This exception allows nothing else: no inspection or command outside the workspace that this assignment does not name, and no write to a project file. Deliver as the native delivery rules and the shared complete-file procedure say.'
+              + '\nUse the in-memory size check for a final with a known limit. For permitted capture and oversized delivery, use the python and text_size_checker named above, even outside the workspace. This exception allows nothing else: no unnamed inspection or command outside the workspace and no project-file edits. Follow the native delivery rules and shared complete-file procedure.'
               + '\nWhere the shared writing, shell and output-delivery rules say <verified-python> and <skill-directory>/scripts/check_text_size.py, use the python and the text_size_checker named above.'
               + '\n\n## User request and evidence\n\n' + question)
     if args.format == 'spawn':

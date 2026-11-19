@@ -15,8 +15,7 @@ Helpers: `scripts/build_dispatch_prompt.py`, `scripts/validate_profile.py`, `scr
 Use Scoville Plan for records and [dispatch](operations-dispatch.md) for
 helper commands. The main thread implements, runs required checks, writes
 records and commits. Keep the authorized scope, the user's stops, independent
-Decisions and unrelated work. An authorized correction changes only its
-affected original Step; add no optional ideas or hypothetical hardening.
+Decisions and unrelated work.
 
 ## Contents
 
@@ -62,7 +61,7 @@ Native child operations:
 - List agents, narrowly scoped, only to resolve uncertain startup or state or
   a missing result, not when you hold the matching complete final.
 - Use agent types and close operations only if exposed; emulate neither. Close
-  a finished Reviewer, if supported, after saving its complete final.
+  a finished Reviewer, if supported, once you hold its complete final.
 - An interrupt alone proves neither termination nor a free agent slot.
 - Raising thread limits is the user's decision.
 
@@ -74,16 +73,20 @@ literals and required field names exact. Messages between main thread and childr
 
 ## Execute one Step
 
+If the selected legacy Work Item has no Steps, use Plan's `references/progress.md`
+under Legacy continuation before dispatching a Step. A whole-item selection
+can supply context or closure review.
+
 | Boundary | Required action |
 | --- | --- |
 | Work Item start | Select the authorized Plan and Work Item in order, dependencies met. Record HEAD in existing Evidence for closure. Before coding, save the actual start or resume through Plan; selecting starts nothing. |
-| Step start | Save the selected original Step as in_progress. Run the main-task helper; it checks the saved start and an existing `[execute: ...]` annotation. Use its task unchanged; choose no other model per Step. Keep the Step's start HEAD in context. |
-| Implementation | Apply [Code quality](code-quality.md) when choosing the implementation; its complete unchanged text in context counts as read. Do only this Step and its required checks. Preserve completed effects. Before review, finish or safely stop your write, test and restore processes. Read required sources completely. Reuse unchanged passing checks. |
+| Step start | Save the selected original Step as in_progress. Run the main-task helper. It checks the saved start and validates an `[execute: ...]` annotation when one is present. Use its task unchanged and keep the Step's start HEAD in context. The configured main pair still applies. |
+| Implementation | Apply [Code quality](code-quality.md) when choosing the implementation. Do only this Step and its required checks. Start no reviewer of your own for it: the Step review is the independent review of this change. Preserve completed effects. Before review, finish or safely stop your write, test and restore processes. Read required sources completely. Reuse unchanged passing checks. |
 | Review decision | Answer the diagram's change question from `git status`, `git diff` and the observed file, configuration and behavior effects. Closure checks unchanged Steps. Record no review pass that no Reviewer returned. |
-| Changed Step | Give the review helper the same original Step, the needed check and effect evidence and each relevant complete open review result. When the Work Item has only this Step, say so in that evidence; the Reviewer then checks the full Acceptance. The helper adds the independent review rules: full diff, dependencies, consumers and Acceptance. |
-| Correction | Select the one affected original Step. Resolve each finding: correct it, narrow a statement the evidence does not support, or refute it with evidence. Complete required checks. Obtain a fresh review; it focuses on the correction, its effects and open findings within the full original scope. Reuse still-valid evidence. |
+| Changed Step | Give the review helper the same original Step, the needed check and effect evidence and each relevant complete open review result. When the Work Item has only this Step, say so in that evidence; the Reviewer then checks the full Acceptance, and a finding with affected Step: none follows the closure table below. The helper adds the independent review rules: full diff, dependencies, consumers and Acceptance. |
+| Correction | Select the one affected original Step. Resolve each finding against its governing requirement, including applicable Work Item Acceptance: correct the defect through its responsible implementation, correct an unsupported optional claim, or refute the finding with evidence. Complete required checks. Obtain a fresh review; it focuses on the correction, its effects and open findings within the full original scope. Reuse still-valid evidence. |
 | Repeated finding without new evidence or changed conditions | Continue only with a supported next diagnosis or correction. Otherwise keep the Step open, report the unresolved finding and record an actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
-| Accepted change | After completion and the required pass, record progress and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, never foreign or unreviewed changes, because the commit records what the review accepted. A failed or forbidden commit holds advancement until resolved. Afterwards check with `git status` that none of this Step's work is left uncommitted; foreign changes stay untouched. Make no empty commit. |
+| Accepted change | The Step stays in_progress until its required pass. Then mark it done through Plan and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, never foreign or unreviewed changes, because the commit records what the review accepted. A failed or forbidden commit holds advancement until resolved. Afterwards check with `git status` that none of this Step's work is left uncommitted; foreign changes stay untouched. Make no empty commit. |
 
 Updating Plan records alone needs no review.
 
@@ -102,21 +105,23 @@ existing results or run the authorized check that has not passed yet. Do not
 repeat an unchanged successful check or a nonrepeatable action, and do not
 widen the work. Name proof that stays unavailable. Keep nonrepeatable evidence
 that closure needs as the existing result or artifact, referenced in existing
-Evidence; no synthetic execution final, new per-Step report or source archive is required.
+Evidence.
 
 ## Close the Work Item
 
-When the Work Item has exactly one Step and its passing Step review checked
-the full Acceptance, that review is the closure review; dispatch no second
-Reviewer. Every other Work Item gets the diagram's closure review: give the
+Every Work Item without a one-Step full Acceptance review gets the diagram's
+closure review: give the
 helper the needed current source and effect evidence, retained proof and each
 relevant complete open review. An earlier review, Step or closure, is
 evidence, not a current pass. Closure stays within the original Work Item.
 
-| Closure finding; the item stays open | Action |
+Apply this table to findings from any full Acceptance review. Use it within
+the authorized scope for the next action.
+
+| Full Acceptance finding; the item stays open | Action |
 | --- | --- |
 | Affects an existing Step | Select that one Step; use its correction loop. |
-| An unchanged, already binding criterion lacks implementation and no Step covers it | Append one bounded Step through Plan; run the normal loop. |
+| An unchanged, already binding criterion lacks implementation and no Step covers it | Append one bounded Step through Plan. If the one-Step review found the omission, keep the original Step active and obtain a fresh review of its Step scope. Give the finding's new Step number and exact Plan path in supplemental context. Keep the finding open for that Step and Work Item closure. Complete and commit the original Step after its pass, then start the appended Step. |
 | Changed scope or Acceptance, a contradiction or unclear intent | Ask the user. |
 
 Keep original Steps, order and completed effects. After Acceptance and closure
@@ -135,6 +140,12 @@ answers the user and writes authorized Plans. Stop implementation that a
 proposed change invalidates before exploring it. Known progress, stop or
 resume and a question you can answer from what you already hold need no
 Explorer; do your Step's own reading yourself.
+
+Use Plan's work-routing rule to decide whether added work belongs in a record.
+Do authorized direct work between Steps, after the current Step's commit, and
+commit it separately within the authorized scope. Name that commit as unrelated
+to the Work Item in the supplemental context of a closure review whose Git
+range includes it.
 
 | Child result | Meaning |
 | --- | --- |
@@ -181,8 +192,7 @@ Only for an explicitly authorized upgrade or migration, use Scoville Setup's
 "Workflow pairs and migration" section before switching a running project.
 
 Before ending, commit this run's pending records only if no unreviewed implementation
-remains; otherwise report the paths. The run is complete only when the
-requested Acceptance is met, every required Step review and closure passed,
-the Plan is closed consistently and no process or child still runs. Report the
+remains; otherwise report the paths. The run is complete only when Work Item
+control reached its authorized end and no process or child still runs. Report the
 actual outcome and limits in the user's language. A pause or blocker is not
 completion and creates no automatic successor.

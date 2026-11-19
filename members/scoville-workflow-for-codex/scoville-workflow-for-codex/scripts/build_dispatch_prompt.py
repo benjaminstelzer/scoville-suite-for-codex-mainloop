@@ -149,7 +149,7 @@ blocker: <only for blocked: exact missing prerequisite or decision>
 limits: <material limits not already stated in answer, or none>
 This is exploration, not review acceptance.""")
     return ['Use these result fields:', fields,
-            'Return the complete result once, as your native final message, then stay inactive. Do not send it a second time.']
+            'Return one native final message with the complete result, or the reference to its complete file under Output Delivery when the result is too large. Then stay inactive. Do not send it a second time.']
 
 
 def build_explorer_prompt(workspace: Path, context: dict, role_input: dict, language: str, *, reuse: bool = False) -> str:
@@ -242,13 +242,13 @@ def role_prompt(role: str, workspace: Path, context: dict, role_input: dict, lan
     else:
         lines.append((skill / 'references/code-quality.md').read_text(encoding='utf-8'))
         lines.extend([
-            'Independently inspect the complete in-scope diff, its dependencies and the affected consumers, including existing assertions about the changed behavior, for defects and regressions. A focus or conclusion supplied with this assignment does not limit the review. Recheck every supplied open finding, including its correction or the evidence added for it.',
+            'Independently inspect the complete in-scope diff, its dependencies and the affected consumers, including existing assertions about the changed behavior, for defects and regressions. A focus or conclusion supplied with this assignment does not limit the review. Recheck every supplied open finding within the current review scope. Read a separately named Step at the supplied Plan path only to verify its assignment of an open finding. That finding remains open for its Step and closure.',
             'In a review that follows a correction, look deepest at the correction, its effects and the open findings. Reuse still-valid evidence without mechanically repeating unchanged checks; the review stays independent and keeps its original scope.',
-            ('Step review: inspect this original Step, its actual diff, the effects that matter and the Acceptance criteria it touches. Use Git status, git diff HEAD, the sources you need and the supplied evidence of checks and effects. Risk changes how deep you look, not what you look at: do not extend the review to other Steps, the whole Plan or unrelated changes. Plan records the main thread maintains are not implementation changes. A change from someone else, or one you cannot attribute to this Step, prevents pass; name it as the gap. Read unchanged files only where a dependency, an affected consumer or the Code quality search for existing logic requires it. When the supplied evidence says the Work Item has only this Step, check the full Work Item Acceptance, including criteria no change implements, because this review then also closes the Work Item.'
+            ('Step review: inspect this original Step, its actual diff, the effects that matter and the Acceptance criteria it touches. Use Git status, git diff HEAD, the sources you need and the supplied evidence of checks and effects. Risk changes how deep you look, not what you look at: do not extend the review to other Steps, the whole Plan or unrelated changes. Plan records the main thread maintains are not implementation changes. A change from someone else, or one you cannot attribute to this Step, prevents pass; name it as the gap. Read unchanged files only where a dependency, an affected consumer or the Code quality search for existing logic requires it. When the supplied evidence says the Work Item has only this Step, check the full Work Item Acceptance, including criteria no change implements, because this review then also closes the Work Item; for missing implementation that no Step covers, write affected Step: none.'
              if '/' in context['work_item']['unit'] else
              'Closure review: check EVERY original Step and the FULL Work Item Acceptance against the current sources and the evidence you need. Where it matters that earlier source was preserved, use the Git range from the start commit of the Work Item. Do not turn this into an audit of unrelated code. For missing implementation that no Step covers, write affected Step: none.'),
             'Git shows file changes; it does not prove behavior, effects outside files or ignored outputs. For each supplied check, decide whether it exercises the required behavior on the code path actually used and would fail if that behavior broke. A passing check of an incidental implementation detail does not prove the behavior. For generated outputs, a current successful generation with the expected outputs observed is enough, unless the Step, the Acceptance, a project contract or a concrete defect requires reading the content. Return blocked when required evidence is missing, and changes_requested for an actual defect under the Code quality rules above; when both occur, return changes_requested and name the missing evidence under limits. A missing protection against a hypothetical failure, without the basis those rules require, is not a defect. Do not rerun tests, and do not count earlier coverage as a current pass.',
-            'You receive no further assignment after this one. Once you have sent the complete native final, the main thread may close this thread where the host offers that operation.',
+            'You receive no further assignment after this one.',
         ])
     lines.extend(result_contract(role))
     lines.extend(task)
@@ -284,7 +284,7 @@ def resolve_creation_pair(args: argparse.Namespace, context: dict | None = None)
             for key, value in fields.items():
                 actual = expected['thinking' if key == 'reasoning' else key]
                 if value != actual:
-                    raise ValueError(f'explicit Step {key}={value} differs from fixed main {key}={actual}; obtain the user decision before coding; do not switch models per Step')
+                    raise ValueError(f'explicit Step {key}={value} differs from fixed main {key}={actual}; Workflow uses the configured main pair for every Step, so this annotation does not apply. Before coding, tell the user, replace this annotation through Plan on their word and run this helper again. A different main pair is saved through Setup between runs')
         return
     if args.agent_id and args.role != 'explorer':
         raise ValueError('every Reviewer is fresh; --agent-id is only for Explorer')

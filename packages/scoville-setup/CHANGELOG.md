@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-16 - Owner decisions on three open points
+
+- A one-time choice stays in the request. Setup no longer points to a model choice kept in a Plan Step, because Workflow has none.
+
+## 2026-11-15 - Rules that contradicted each other
+
+- The precedence of saved Ask settings is stated once, in Scoville Ask's configuration reference; Setup's helper applies it with the new patch as the later layer.
+- Shared rules: a reply uses the language of the request, while a record or file you edit keeps the language it is written in. Files saved with `--publish-full` are delivered output, so cleanup leaves them in place. A rule that holds only until something happens states that end in the rule.
+
 ## 2026-11-14 - Goodhart corrections
 
 - One explicit request can authorize several steps of an upgrade.

@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-11-18 - One finding format for advisers
+
+- Each rule is stated once. The final check asks whether the work does what the Skill requires instead of listing the rules again. Not tested with models yet.
+
+## 2026-11-16 - Reviewers answer two questions first
+
+- Shared review rules: a reviewer answers the questions on reloaded values and on state across a change first, by file and line. A missing line is a finding; a comment or an argument is not such a line.
+
+## 2026-11-16 - Holder of assigned state
+
+- Shared code rules: the rule on assigned state names its holder, an element, list or record whose content the new path changes, also when the item the state points to stays untouched.
+
+## 2026-11-16 - Assigned state is set again; a named bound for few items
+
+- Shared code rules: where the old path assigned a selection, a value, the focus or a flag, the new path sets the same value after each of its steps. The author no longer has to judge whether that state can change.
+- Shared code rules: a query, request, read or parse per item stays only where code, the contract or a project rule that the author names bounds the real callers to a few items.
+
+## 2026-11-16 - Reloads inside helpers
+
+- Shared code rules: the question about a value that is loaded again also covers loads inside the helpers the path calls.
+
+## 2026-11-15 - Rules that contradicted each other
+
+- Question and request files are new files in the system temporary directory, outside the project.
+- A necessary clarification from the adviser is answered with the retained request and keeps its reference and scope; a requested follow-up gets a new reference and an explicit scope.
+- A preset in a later settings layer also overrides the inline fields of an adviser from an earlier layer, unless the later layer supplies its own `advisers` list.
+- A code review uses the Code quality rules supplied with the assignment, including the rule on protection in proportion.
+- Shared rules: a reply uses the language of the request, while a record or file you edit keeps the language it is written in. Files saved with `--publish-full` are delivered output, so cleanup leaves them in place. A rule that holds only until something happens states that end in the rule.
+
+## 2026-11-14 - Resolve code-review choices from the project
+
+- Shared code-quality rules distinguish choices the request and project already settle from material choices that need the user. Advisers still review read-only and report findings without choosing or implementing.
+
 ## 2026-11-14 - Goodhart corrections
 
 - The adviser applies the Code quality rules to a code review only.

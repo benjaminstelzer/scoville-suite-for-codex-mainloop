@@ -68,6 +68,9 @@ directories.
   the named presets.
 - Name advisers as strings such as `["astra"]`, or as objects with `id`
   and per-call overrides. A matching ID inherits its configured preset.
+- A preset in a later layer (project over defaults, request over project)
+  also overrides the inline fields of an adviser object from an earlier
+  layer, unless the later layer supplies its own `advisers` list.
 - A custom ID needs `route` (`native` or `claude-cli`), exact `model` and
   `effort`; `name` is optional.
 - One adviser and several use the same structure.
@@ -114,6 +117,7 @@ limits remain. Request overrides do not save project settings.
 
 The Claude-only `prepare` request contains:
 
+- `operation=prepare` to generate the execution request without running it.
 - `mode=review|consultation` to select the kind of advice.
 - `question` for the actual request.
 - `scope` for its boundary.

@@ -28,7 +28,7 @@ flowchart TD
   C -->|Failure| B
   CR --> V{"Result?"}
   V -->|Defect| nextCorrection{"Supported correction or changed evidence?"}
-  nextCorrection -->|Yes| F["Select one affected Step; preserve open findings"]
+  nextCorrection -->|Yes| F["Select the affected Step or append a Step for a missing binding criterion"]
   nextCorrection -->|No| O["Keep item open; report needed prerequisite"]
   F --> S
   V -->|Missing required proof| P["Recover available proof or finish missing authorized check"]
@@ -40,6 +40,9 @@ The new-run Git gate never cleans or commits earlier work. Authorized resumption
 reconciles the same started work without prematurely committing it. Missing or
 foreign evidence remains an explicit boundary. Stops preserve unfinished work;
 compaction continues this same chat from actual Plan, Git, effects and results.
+An omitted binding criterion found by a one-Step full review gets its own Step.
+The original Step needs its own pass and commit before that Step starts. The
+omission remains open until the added Step and full Work Item review pass.
 
 ### 2. Step implementation and review
 

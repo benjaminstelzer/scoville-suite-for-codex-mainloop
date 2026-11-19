@@ -2,9 +2,8 @@
 
 ## Spawn and collect
 
-Put the question, raw evidence and explicit limits in a UTF-8 file outside the
-reviewed working tree, in the workspace temporary area or system temporary
-directory. Frame it as SKILL.md's "Ask and collect" requires. Build one
+Put the question, raw evidence and explicit limits in a new UTF-8 file in the
+system temporary directory, outside the project. Frame it as SKILL.md's "Ask and collect" requires. Build one
 assignment per selected adviser:
 
 ```text
@@ -37,26 +36,26 @@ count of idle agents. With unknown capacity you may attempt the spawn; do not cl
 | Rejected spawn | Retain the failure. |
 | Ambiguous result | Use `collaboration.list_agents` with the narrowest known canonical `path_prefix` that can resolve the retained task name and handle. Broaden only for that uncertainty; if unresolved, report the adviser unresolved with partial results. |
 
-After a refused, rejected or ambiguous spawn, or a failed collection, a
-further attempt needs the user's go-ahead. Without it, do not respawn,
-substitute an unmatched agent, change settings or create replacement advisers
-or Codex chats: each would occupy more host capacity and deliver advisers the
-user did not select. A finished adviser proves no free capacity. Leave it as
+After a refused, rejected or ambiguous spawn, or a failed collection, a retry
+of the dispatch, substitution or changed assignment needs the user's go-ahead. An unrelated
+first dispatch already authorized for another selected adviser can proceed
+unless capacity was refused or the host state leaves capacity unresolved.
+A finished adviser proves no free capacity. Leave it as
 it is; do not wake it for cleanup or assume a `close_agent` tool exists.
+Continue collection at the retained handle under Collect and follow up.
 
 ## Collect and follow up
 
 1. Use `collaboration.wait_agent` for bounded mailbox waits. Read the actual
    messages and finals; a wait summary or returned handle is not an answer.
 2. Accept only the exact adviser's native final after its completion. Its host
-   sender must match the retained handle, its answer the latest question,
-   adviser identity, reference and scope. Resolve a repeated label from the
-   retained assignment; clarify a different reference or scope. An earlier
-   same-handle final cannot answer a later follow-up.
+   sender must match the retained handle, and its answer the latest question
+   and its reference. A clarification keeps the reference, so match its final
+   to the latest question through the retained assignment; ask the adviser
+   about a final whose reference differs. An earlier same-handle final cannot
+   answer a later follow-up.
 3. Read complete-file answers entirely before acceptance or use; metadata is
    not enough. Retain complete answers once; do not list those advisers again.
-   A question, a substantive `send_message`, a failure or an incomplete final
-   stays partial or unresolved, never a completed review.
 
 | Collection state | Action |
 | --- | --- |

@@ -216,7 +216,7 @@ def cleanup(project_root: Path, patch: dict) -> dict:
     if missing:
         raise ValueError(f"cleanup needs explicit pairs for workflow.{', workflow.'.join(missing)}; "
                          "main is never inferred from execute and different route pairs have no unique choice. "
-                         "Run show, select the required complete pairs and rerun cleanup with serialized JSON on stdin; no settings were saved")
+                         "Ask the user for these complete pairs (show lists the old routes), then rerun cleanup with serialized JSON on stdin; no settings were saved")
     proposed = dict(current, workflow=dict(schema_version=2, **selected))
     return save_validated(project_root, current, proposed, ('workflow',))
 
