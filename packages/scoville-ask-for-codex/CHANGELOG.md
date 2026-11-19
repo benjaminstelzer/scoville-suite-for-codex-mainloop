@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-19 - Compatibility before release
+
+- Shared code rules: a break in compatibility is usually wanted while a product has not been released; "during development" also described released software.
+
 ## 2026-11-18 - One finding format for advisers
 
 - Each rule is stated once. The final check asks whether the work does what the Skill requires instead of listing the rules again. Not tested with models yet.
