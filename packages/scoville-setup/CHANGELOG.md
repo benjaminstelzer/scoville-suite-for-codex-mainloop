@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-21 - The size checker works in a Windows sandbox
+
+The size checker gives a complete file its final name by rename on Windows. Codex's Windows sandbox refuses hard links in the project and in a temporary folder a helper creates, so saving a complete output as a file failed there. On Windows rename refuses an existing name, as the hard link does elsewhere. Checked inside that sandbox: the file is saved, and a second file under the same name is refused.
+
 ## 2026-11-21 - Defaults follow gpt-6.2
 
 Setup shows the new shipped defaults of Workflow and Ask: `gpt-6.2-sol` for the Workflow pairs and the `sol` preset, `gpt-6.2-astra` for the `astra` preset. When it converts old Workflow settings, a route without its own model gets `gpt-6.2-sol` instead of `gpt-6.1-sol`; models written in the old settings are kept.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-21 - Reviewer assignments can be written in a Windows sandbox
+
+The file with a Reviewer's assignment gets its final name by rename on Windows. In Codex's Windows sandbox the helper could not write that file into the project, because hard links are refused there, and a Reviewer could not read the one in the main session's own temporary folder; the main thread then copied the file by hand. Checked inside that sandbox: the helper writes the file into the project and refuses to replace one. I have not repeated a whole Workflow run with the change.
+
+The size checker gives a complete file its final name by rename on Windows. Codex's Windows sandbox refuses hard links in the project and in a temporary folder a helper creates, so saving a complete output as a file failed there. On Windows rename refuses an existing name, as the hard link does elsewhere. Checked inside that sandbox: the file is saved, and a second file under the same name is refused.
+
 ## 2026-11-21 - Default pairs use gpt-6.2-sol
 
 The bundled main, review and explore pairs name `gpt-6.2-sol` instead of `gpt-6.1-sol`. In a test run in Codex, Workflow started its Reviewers on the older model because the project had saved only its main pair. Pairs saved in a project keep their values. The helper tests pass with the new defaults; I have not run them in Codex yet.

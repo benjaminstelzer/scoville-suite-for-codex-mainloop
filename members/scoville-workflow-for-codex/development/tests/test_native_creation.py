@@ -281,8 +281,8 @@ class NativeCreationTests(unittest.TestCase):
                 native.publish_assignment(target, 'Overwrite.')
             self.assertEqual(target.read_bytes(), content.encode('utf-8'))
             failed = root / 'failed.txt'
-            with patch.object(native.os, 'link', side_effect=OSError('unsupported filesystem')):
-                with self.assertRaisesRegex(ValueError, 'atomic hard links'):
+            with patch.object(native, 'name_new_file', side_effect=OSError('unsupported filesystem')):
+                with self.assertRaisesRegex(ValueError, 'cannot publish --assignment-file'):
                     native.publish_assignment(failed, content)
             self.assertFalse(failed.exists())
             self.assertEqual(list(root.glob('.scoville-assignment-*.tmp')), [])

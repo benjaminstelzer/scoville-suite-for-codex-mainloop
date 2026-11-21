@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-21 - Large questions reach the adviser in a Windows sandbox
+
+A question too large for the adviser's message is handed over as a file by the size checker. In Codex's Windows sandbox that failed, because hard links are refused in the temporary folder the helper creates, and the session shortened the question instead. The checker now gives the file its final name by rename on Windows, where rename refuses an existing name as the hard link does elsewhere. Checked inside that sandbox with the checker itself; I have not repeated an Ask review with a large question.
+
 ## 2026-11-21 - Presets use the 6.2 models
 
 The shipped `sol` preset names `gpt-6.2-sol` instead of `gpt-6.1-sol`, and the `astra` preset `gpt-6.2-astra` instead of `gpt-6-astra`, the ID my Codex session reported. Adviser choices saved in a project keep their values. The helper tests pass with the new defaults; I have not run them in Codex yet.

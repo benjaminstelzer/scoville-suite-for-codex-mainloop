@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-11-21 - Helpers work in a Windows sandbox; reports name edited tests and the missing accessibility level
+
+- All Skills: The size checker gives a complete file its final name by rename on Windows. Codex's Windows sandbox refuses hard links in the project and in a temporary folder a helper creates, so saving a complete output as a file failed there. On Windows rename refuses an existing name, as the hard link does elsewhere. Checked inside that sandbox: the file is saved, and a second file under the same name is refused.
+- Code and UI: Naming an edit to an existing check or test, with its reason, is now a sentence of its own. It stood at the end of the sentence that says when such a test may change, and in two runs in Codex one model made an existing test stricter without naming the edit. In two later runs on the same tasks the model edited no existing test, so the new sentence is not shown to work.
+- UI: The statement that no accessibility level is recorded and the work was held to the base now stands in the report section. Where it stood before, one model left it out of a review and of an implementation report. After the move it appeared in the review and was still missing from the implementation report, one run each.
+
+
+- Code: In Codex the independent reviewer is started with `fork_turns` set to `none`. Without that note two of four runs handed the reviewer the author's conversation; with it three of three started it fresh.
+- Workflow: The file with a Reviewer's assignment gets its final name by rename on Windows. In Codex's Windows sandbox the helper could not write that file into the project, because hard links are refused there, and a Reviewer could not read the one in the main session's own temporary folder; the main thread then copied the file by hand. Checked inside that sandbox: the helper writes the file into the project and refuses to replace one. I have not repeated a whole Workflow run with the change.
+- Ask: A question too large for the adviser's message is handed over as a file by the size checker. In Codex's Windows sandbox that failed, because hard links are refused in the temporary folder the helper creates, and the session shortened the question instead. The checker now gives the file its final name by rename on Windows, where rename refuses an existing name as the hard link does elsewhere. Checked inside that sandbox with the checker itself; I have not repeated an Ask review with a large question.
+
+I ran the installed Skills in Codex through its CLI with `gpt-6.2-sol`: five small tasks, an Ask review with the `astra` preset and one Workflow run that finished a Work Item. Every session chose and read the Skills for its task, no file changed its line endings, the handoff had the required form and the Plan stayed valid. The Workflow run used six fresh Reviewers; its closure review found a real defect in an earlier Step, which was corrected, reviewed again and closed.
+
+
 ## 2026-11-21 - gpt-6.2 in defaults and examples
 
 - Plan: the `[execute: ...]` example in the authoring reference names `gpt-6.2-sol`.

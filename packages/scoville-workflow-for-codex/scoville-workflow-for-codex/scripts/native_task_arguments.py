@@ -88,6 +88,15 @@ def assignment_path(explicit: Path | None, project_root: Path) -> Path:
     return target
 
 
+def name_new_file(temporary, target):
+    """Give a complete file its final name; fail when that name exists."""
+    # A Windows sandbox refuses hard links. rename refuses an existing target there, as link does elsewhere.
+    if os.name == 'nt':
+        os.rename(temporary, target)
+    else:
+        os.link(temporary, target)
+
+
 def publish_assignment(target: Path, text: str) -> None:
     """Publish complete UTF-8 bytes atomically without replacing another file."""
     data = text.encode('utf-8', errors='strict')
@@ -98,14 +107,14 @@ def publish_assignment(target: Path, text: str) -> None:
             temporary = Path(stream.name)
             stream.write(data)
             stream.flush()
-        # Both files use the same filesystem. link is atomic and fails if target exists.
-        os.link(temporary, target)
+        # Both files use the same filesystem: naming is atomic and fails if target exists.
+        name_new_file(temporary, target)
     except FileExistsError as error:
         raise ValueError('--assignment-file already exists; use a new unique path without overwriting an assignment') from error
     except OSError as error:
         raise ValueError(f'cannot publish --assignment-file {target}: {error}; supply '
-                         '--assignment-file "<new-absolute-file>" in a readable writable temporary directory '
-                         'supporting atomic hard links; do not bypass the consumer sandbox') from error
+                         '--assignment-file "<new-absolute-file>" in a readable writable temporary directory; '
+                         'do not bypass the consumer sandbox') from error
     finally:
         if temporary is not None:
             temporary.unlink(missing_ok=True)

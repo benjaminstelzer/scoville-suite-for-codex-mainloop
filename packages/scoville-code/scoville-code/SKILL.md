@@ -111,8 +111,8 @@ the output of `git show <commit>:<path>` saved in a temporary folder; do not
 stash, reset, check out or restore files in the working tree for that. A
 project check or test that passes before your change still passes after it.
 Change or remove one only where the request changes or removes the guarantee
-it tests, or to keep testing that guarantee another way, and name the edit
-and its reason in the report.
+it tests, or to keep testing that guarantee another way. Name every edit to
+an existing check or test, and its reason, in the report.
 
 ### What the code has to be
 
@@ -316,7 +316,7 @@ A change to code behavior then gets one independent review, because a
 second reader finds what its author reasoned past. Under a workflow that
 has each change reviewed independently by these rules, as Scoville Workflow does with its Step review, that
 review is it: start none. Otherwise, where the host lets you start a
-separate agent, start one that has not seen your reasoning and have it
+separate agent, start one that has not seen your reasoning (in Codex with `fork_turns` set to `none`; without it the agent inherits this conversation) and have it
 review the change with this Skill: tell it what the change is meant to do,
 where the code is and how to see the diff against the starting code, and
 that it reviews read-only, changes nothing and starts no agent. Wait for its findings before you
