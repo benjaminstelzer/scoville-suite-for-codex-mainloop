@@ -314,6 +314,18 @@ class NativeCreationTests(unittest.TestCase):
                     native.assignment_path(None, root)
             with self.assertRaisesRegex(ValueError, 'existing absolute directory'):
                 native.assignment_path(Path('relative.txt'), root)
+            # A private sandbox temp is unreadable for the child: the project's ignored temp folder is used.
+            from pathlib import PureWindowsPath
+            sandbox = PureWindowsPath('D:/', 'data', 'Packages', 'sandbox.{1}', 'AC', 'Temp')
+            self.assertTrue(native.private_sandbox_temp(sandbox))
+            self.assertFalse(native.private_sandbox_temp(PureWindowsPath('D:/', 'data', 'Temp')))
+            self.assertFalse(native.private_sandbox_temp(Path(native.tempfile.gettempdir())))
+            with patch.object(native, 'private_sandbox_temp', return_value=True):
+                chosen = native.assignment_path(None, root)
+            self.assertEqual(chosen.parent, root.resolve() / '.scoville' / 'temp')
+            self.assertEqual((chosen.parent / '.gitignore').read_bytes(), b'*\n')
+            native.publish_assignment(chosen, content)
+            self.assertEqual(chosen.read_bytes(), content.encode('utf-8'))
 
 
 

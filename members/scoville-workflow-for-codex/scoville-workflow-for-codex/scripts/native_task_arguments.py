@@ -70,11 +70,33 @@ def validate_creation_options(args) -> None:
                          '; supply the project name, role number, resolved model and reasoning effort')
 
 
+def private_sandbox_temp(folder) -> bool:
+    """A Windows app container keeps its temporary folder to itself: a child agent cannot read it."""
+    parts = [part.lower() for part in folder.parts]
+    return 'packages' in parts and parts[-2:] == ['ac', 'temp']
+
+
+def project_temp(project_root: Path) -> Path:
+    """The project's own ignored temporary folder, which every agent in the workspace can read."""
+    folder = project_root.resolve() / '.scoville' / 'temp'
+    folder.mkdir(parents=True, exist_ok=True)
+    try:
+        marker = os.open(folder / '.gitignore', os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0))
+    except FileExistsError:
+        pass
+    else:
+        with os.fdopen(marker, 'wb') as stream:
+            stream.write(b'*\n')
+    return folder
+
+
 def assignment_path(explicit: Path | None, project_root: Path) -> Path:
     """Choose an external platform temp path; explicit paths keep their contract."""
     if explicit is None:
         folder = Path(tempfile.gettempdir()).resolve()
-        if folder.is_relative_to(project_root.resolve()):
+        if private_sandbox_temp(folder):
+            folder = project_temp(project_root)
+        elif folder.is_relative_to(project_root.resolve()):
             raise ValueError('system temporary directory is inside --project-root; supply '
                              '--assignment-file "<new-absolute-file>" in a readable temporary directory outside the project')
         target = folder / ('scoville-assignment-' + uuid4().hex + '.txt')

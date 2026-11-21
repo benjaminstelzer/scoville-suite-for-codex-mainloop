@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-21 - Reviewers can read their assignment in a Windows sandbox
+
+In Codex's Windows sandbox an agent the main thread starts cannot read the main session's temporary folder, so the first Reviewer of a run returned `blocked` and the main thread copied the assignment by hand. Where the temporary folder is such a private one, the helper now writes the assignment into the project's ignored `.scoville/temp`. A run that finished a whole Plan in that sandbox then started ten Reviewers, each with its unchanged assignment, and none was blocked. Outside such a sandbox nothing changes. The assignment files stay in `.scoville/temp` after the run.
+
 ## 2026-11-21 - Reviewer assignments can be written in a Windows sandbox
 
 The file with a Reviewer's assignment gets its final name by rename on Windows. In Codex's Windows sandbox the helper could not write that file into the project, because hard links are refused there, and a Reviewer could not read the one in the main session's own temporary folder; the main thread then copied the file by hand. Checked inside that sandbox: the helper writes the file into the project and refuses to replace one. I have not repeated a whole Workflow run with the change.

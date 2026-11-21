@@ -135,7 +135,9 @@ Number agents per role across Work Items and compaction; reuse keeps the
 number.
 
 An assignment up to 8 KiB UTF-8 goes directly into the native message. A
-larger one uses a new system temporary file outside the project;
+larger one uses a new system temporary file outside the project, or a new
+file in the project's `.scoville/temp` where that directory belongs to a
+Windows sandbox and no child can read it;
 `--assignment-file` chooses a new absolute readable path instead. Keep the
 file until the assignment ends. The child reads it completely before work, by
 its chosen method. `--format prompt` returns text only.
