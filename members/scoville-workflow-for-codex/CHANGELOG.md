@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-21 - Default pairs use gpt-6.2-sol
+
+The bundled main, review and explore pairs name `gpt-6.2-sol` instead of `gpt-6.1-sol`. In a test run in Codex, Workflow started its Reviewers on the older model because the project had saved only its main pair. Pairs saved in a project keep their values. The helper tests pass with the new defaults; I have not run them in Codex yet.
+
 ## 2026-11-20 - Lean Plan
 
 The operations no longer point to Plan's rules for Work Items without Steps or mention the retired `Next action` field, and they name Plan's section "When work needs a Plan record" for added work. Not tested with models yet.

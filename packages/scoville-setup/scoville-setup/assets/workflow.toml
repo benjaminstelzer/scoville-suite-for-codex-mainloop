@@ -2,13 +2,13 @@
 schema_version = 2
 
 [main]
-model = "gpt-6.1-sol"
+model = "gpt-6.2-sol"
 reasoning = "high"
 
 [review]
-model = "gpt-6.1-sol"
+model = "gpt-6.2-sol"
 reasoning = "xhigh"
 
 [explore]
-model = "gpt-6.1-sol"
+model = "gpt-6.2-sol"
 reasoning = "high"

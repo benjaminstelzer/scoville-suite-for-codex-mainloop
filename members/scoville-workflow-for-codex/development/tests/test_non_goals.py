@@ -54,7 +54,7 @@ class NonGoalsTests(unittest.TestCase):
                         self.assertIn('GOAL_SENTINEL', prompt)
                         self.assertNotIn('## Decisions', prompt)
                 assignment = Path(directory) / 'assignment.txt'
-                result = self.call(root, role='reviewer', extra=['--format', 'create', '--model', 'gpt-6.1-sol', '--thinking', 'xhigh',
+                result = self.call(root, role='reviewer', extra=['--format', 'create', '--model', 'gpt-6.2-sol', '--thinking', 'xhigh',
                                                '--project-name', 'Fixture', '--agent-number', '1',
                                                '--assignment-file', str(assignment)])
                 self.assertEqual(result.returncode, 0, result.stderr)
@@ -68,7 +68,7 @@ class NonGoalsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = self.prepare(directory, exclusions + 'x')
             assignment = Path(directory) / 'assignment.txt'
-            extra = ['--format', 'create', '--model', 'gpt-6.1-sol', '--thinking', 'xhigh',
+            extra = ['--format', 'create', '--model', 'gpt-6.2-sol', '--thinking', 'xhigh',
                      '--project-name', 'Fixture', '--agent-number', '1', '--assignment-file', str(assignment)]
             failed = self.call(root, role='reviewer', extra=extra)
             self.assertNotEqual(failed.returncode, 0)
@@ -95,7 +95,7 @@ class NonGoalsTests(unittest.TestCase):
             facts.write_text('Question: identify the owner. Read-only.', encoding='utf-8')
             assignment = Path(directory) / 'assignment.txt'
             failed = self.call(root, role='explorer', extra=['--supplemental-context', str(facts),
-                '--format', 'create', '--model', 'gpt-6.1-sol', '--thinking', 'high',
+                '--format', 'create', '--model', 'gpt-6.2-sol', '--thinking', 'high',
                 '--project-name', 'Fixture', '--agent-number', '1', '--assignment-file', str(assignment)])
             self.assertNotEqual(failed.returncode, 0)
             self.assertIn(b'NON_GOALS_TOO_LARGE', failed.stderr)

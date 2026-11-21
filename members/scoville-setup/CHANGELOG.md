@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-21 - Defaults follow gpt-6.2
+
+Setup shows the new shipped defaults of Workflow and Ask: `gpt-6.2-sol` for the Workflow pairs and the `sol` preset, `gpt-6.2-astra` for the `astra` preset. When it converts old Workflow settings, a route without its own model gets `gpt-6.2-sol` instead of `gpt-6.1-sol`; models written in the old settings are kept.
+
 ## 2026-11-20 - Python is required
 
 The runtime helper rule now has the same wording as in every Skill of the suite: helpers need Python 3.11+, and without it, or after a helper error, the affected operation stops and reports the cause. Behavior does not change here; the general edition dropped its manual no-Python routes, so one wording now serves both editions.

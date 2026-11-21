@@ -74,14 +74,14 @@ class SetupTests(unittest.TestCase):
             self.path.chmod(stat.S_IRUSR | stat.S_IWUSR)
 
     def test_cleanup_checks_explicit_choices_but_preserves_inherited_special_pairs(self):
-        routes = {key: {'model': 'gpt-6.1-sol', 'reasoning': 'max'}
+        routes = {key: {'model': 'gpt-6.2-sol', 'reasoning': 'max'}
                   for key in ('ultra_low', 'low', 'medium', 'high', 'ultra_high')}
         self.save({'workflow': {'schema_version': 1, 'review': routes, 'explore': routes}, 'other': 7})
         before = self.path.read_bytes()
-        status, failed = self.run_setup('cleanup', {'workflow': {'main': {'model': 'gpt-6.1-sol', 'reasoning': 'max'}}})
+        status, failed = self.run_setup('cleanup', {'workflow': {'main': {'model': 'gpt-6.2-sol', 'reasoning': 'max'}}})
         self.assertEqual(status, 1)
         self.assertEqual(self.path.read_bytes(), before)
-        status, saved = self.run_setup('cleanup', {'workflow': {'main': {'model': 'gpt-6.1-sol', 'reasoning': 'high'}}})
+        status, saved = self.run_setup('cleanup', {'workflow': {'main': {'model': 'gpt-6.2-sol', 'reasoning': 'high'}}})
         self.assertEqual(status, 0, saved)
         actual = json.loads(self.path.read_text())
         self.assertEqual(actual['workflow']['review']['reasoning'], 'max')
@@ -89,7 +89,7 @@ class SetupTests(unittest.TestCase):
         self.assertEqual(actual['other'], 7)
 
     def test_cleanup_schema_two_removes_known_legacy_fields_without_reinterpreting_pairs(self):
-        pairs = {key: {'model': 'gpt-6.1-sol', 'reasoning': level}
+        pairs = {key: {'model': 'gpt-6.2-sol', 'reasoning': level}
                  for key, level in (('main', 'high'), ('review', 'max'), ('explore', 'low'))}
         self.save({'workflow': {'schema_version': 2, **pairs, 'context_threshold_percent': 50}, 'ask': {}, 'other': True})
         status, saved = self.run_setup('cleanup', {})
@@ -224,7 +224,7 @@ class SetupTests(unittest.TestCase):
             self.assertNotEqual(status, 0)
             self.assertFalse(failed['ok'])
             self.assertEqual(self.path.read_bytes(), before)
-        choices = {key: {'model': 'gpt-6.1-sol', 'reasoning': 'high'} for key in ('main', 'review', 'explore')}
+        choices = {key: {'model': 'gpt-6.2-sol', 'reasoning': 'high'} for key in ('main', 'review', 'explore')}
         status, saved = self.run_setup('cleanup', {'workflow': choices})
         self.assertEqual(status, 0, saved)
         self.assertNotIn('context', json.loads(self.path.read_text())['workflow'])
@@ -295,7 +295,7 @@ class SetupTests(unittest.TestCase):
         status, saved = self.run_setup('set', {'workflow': {'explore': {'reasoning': 'medium'}}})
         self.assertEqual(0, status, saved)
         self.assertEqual({'reasoning': 'medium'}, json.loads(self.path.read_text())['workflow']['explore'])
-        self.assertEqual('gpt-6.1-sol', saved['effective']['workflow']['explore']['model'])
+        self.assertEqual('gpt-6.2-sol', saved['effective']['workflow']['explore']['model'])
         resolved = subprocess.run([sys.executable, '-B', str(self.workflow / 'resolve_model_pair.py'), '--project-root', str(self.project), '--role', 'explorer'], capture_output=True, text=True, encoding='utf-8')
         self.assertEqual(0, resolved.returncode, resolved.stderr)
         self.assertEqual('medium', json.loads(resolved.stdout)['thinking'])

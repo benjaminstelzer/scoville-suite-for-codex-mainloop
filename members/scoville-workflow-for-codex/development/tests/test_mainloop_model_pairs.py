@@ -50,7 +50,7 @@ class FixedPairTests(unittest.TestCase):
             {'type': 'session_meta', 'payload': {'id': identity, 'source': source}},
             {'type': 'event_msg', 'payload': {'type': 'task_started', 'turn_id': 'turn-2'}},
             {'type': 'turn_context', 'payload': context if context is not None else
-             {'turn_id': 'turn-2', 'model': 'gpt-6.1-sol', 'effort': 'high'}},
+             {'turn_id': 'turn-2', 'model': 'gpt-6.2-sol', 'effort': 'high'}},
         ]
         if terminal:
             values.append({'type': 'event_msg', 'payload': {'type': terminal, 'turn_id': 'turn-2'}})
@@ -74,7 +74,7 @@ class FixedPairTests(unittest.TestCase):
                 self.assertEqual(0, result.returncode, result.stderr)
                 value = json.loads(result.stdout)
                 self.assertTrue(value['valid'])
-                self.assertEqual(('gpt-6.1-sol', effort), (value['model'], value['thinking']))
+                self.assertEqual(('gpt-6.2-sol', effort), (value['model'], value['thinking']))
                 self.assertNotIn('route', value)
 
     def test_active_own_native_pair_matches(self):
@@ -86,12 +86,12 @@ class FixedPairTests(unittest.TestCase):
         self.assertEqual(('main-1', 'turn-2'), (value['thread_id'], value['turn_id']))
 
     def test_mismatch_rejects_then_correct_host_evidence_passes(self):
-        self.write_session(context={'turn_id': 'turn-2', 'model': 'gpt-6.1-sol', 'effort': 'xhigh'})
+        self.write_session(context={'turn_id': 'turn-2', 'model': 'gpt-6.2-sol', 'effort': 'xhigh'})
         result = self.invoke('--role', 'main')
         self.assertEqual(1, result.returncode)
         diagnostic = json.loads(result.stdout)['diagnostic']
-        self.assertIn('gpt-6.1-sol/high', diagnostic)
-        self.assertIn('gpt-6.1-sol/xhigh', diagnostic)
+        self.assertIn('gpt-6.2-sol/high', diagnostic)
+        self.assertIn('gpt-6.2-sol/xhigh', diagnostic)
         self.write_session()
         self.assertEqual(0, self.invoke('--role', 'main').returncode)
 
@@ -99,8 +99,8 @@ class FixedPairTests(unittest.TestCase):
         for override in [
             {'identity': 'other-1'},
             {'source': {'subagent': {'thread_spawn': {'parent_thread_id': 'parent-1'}}}},
-            {'context': {'turn_id': 'old-turn', 'model': 'gpt-6.1-sol', 'effort': 'high'}},
-            {'context': {'turn_id': 'turn-2', 'model': 'gpt-6.1-sol'}},
+            {'context': {'turn_id': 'old-turn', 'model': 'gpt-6.2-sol', 'effort': 'high'}},
+            {'context': {'turn_id': 'turn-2', 'model': 'gpt-6.2-sol'}},
             {'terminal': 'task_complete'}, {'terminal': 'task_failed'}, {'terminal': 'task_aborted'},
         ]:
             with self.subTest(override=override):

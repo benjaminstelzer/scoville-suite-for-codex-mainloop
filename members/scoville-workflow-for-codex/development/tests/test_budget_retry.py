@@ -26,7 +26,7 @@ class BudgetRetryTests(unittest.TestCase):
             project = 'Fixture "quoted" ü \' $() \\"tail'
             commands = [
                 ('build_dispatch_prompt.py', ['--communication-language', 'German', '--project-root', str(root), '--unit', 'W-001/step-1',
-                 '--role', 'reviewer', '--format', 'create', '--project-name', project, '--agent-number', '1', '--model', 'gpt-6.1-sol',
+                 '--role', 'reviewer', '--format', 'create', '--project-name', project, '--agent-number', '1', '--model', 'gpt-6.2-sol',
                  '--thinking', 'xhigh',
                  '--assignment-file', str(assignment), '--max-output-bytes=512'])]
             for name, args in commands:
@@ -51,7 +51,7 @@ class BudgetRetryTests(unittest.TestCase):
                         self.assertEqual(set(payload), {'task_name', 'message', 'fork_turns', 'model', 'reasoning_effort'})
                         self.assertIn(str(assignment), payload['message'])
                         self.assertIn(project, assignment.read_text(encoding='utf-8'))
-                        self.assertEqual(payload['model'], 'gpt-6.1-sol')
+                        self.assertEqual(payload['model'], 'gpt-6.2-sol')
 
     def test_shell_preserves_quotes_backslashes_empty_arguments_and_exit_code(self):
         values = ['"quoted"', 'slash\\"quote', 'two\\\\"quote', 'space tail\\', '', "a'b", '$()']

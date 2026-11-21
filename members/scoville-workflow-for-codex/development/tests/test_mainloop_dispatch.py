@@ -122,8 +122,8 @@ Evidence: []
         self.assertFalse(path.exists())
 
     def test_matching_partial_and_complete_execution_annotations_allow_main(self):
-        for value in ['[execute: model=gpt-6.1-sol] ', '[execute: reasoning=high] ',
-                      '[execute: model=gpt-6.1-sol; reasoning=high] ']:
+        for value in ['[execute: model=gpt-6.2-sol] ', '[execute: reasoning=high] ',
+                      '[execute: model=gpt-6.2-sol; reasoning=high] ']:
             with self.subTest(value=value):
                 self.write_plan(value)
                 result = self.run_dispatch('main', '--unit', 'W-001/step-1')
@@ -140,7 +140,7 @@ Evidence: []
         result, path = self.create('reviewer', '--unit', 'W-001/step-1')
         self.assertEqual(0, result.returncode, result.stderr)
         arguments = json.loads(result.stdout)
-        self.assertEqual(('gpt-6.1-sol', 'xhigh', 'none'),
+        self.assertEqual(('gpt-6.2-sol', 'xhigh', 'none'),
                          (arguments['model'], arguments['reasoning_effort'], arguments['fork_turns']))
         assignment = path.read_text(encoding='utf-8')
         self.assertIn('Change only alpha.txt and check the requested result.', assignment)
@@ -250,7 +250,7 @@ Evidence: []
     def test_explorer_reuse_has_only_new_question_and_retains_its_pair(self):
         result = self.run_dispatch('explorer', '--format', 'create', '--project-name', 'Fixture',
                                    '--agent-number', '1', '--agent-id', 'existing-explorer',
-                                   '--model', 'gpt-6.1-sol', '--thinking', 'high',
+                                   '--model', 'gpt-6.2-sol', '--thinking', 'high',
                                    '--supplemental-context', '-', request='Find the owner of alpha.txt without changes.')
         self.assertEqual(0, result.returncode, result.stderr)
         arguments = json.loads(result.stdout)
@@ -264,7 +264,7 @@ Evidence: []
             json.dumps({'workflow': {'explore': {'reasoning': 'xhigh'}}}), encoding='utf-8')
         result = self.run_dispatch('explorer', '--format', 'create', '--project-name', 'Fixture',
                                    '--agent-number', '1', '--agent-id', 'existing-explorer',
-                                   '--model', 'gpt-6.1-sol', '--thinking', 'high',
+                                   '--model', 'gpt-6.2-sol', '--thinking', 'high',
                                    '--supplemental-context', '-', request='Find the owner.')
         self.assertNotEqual(0, result.returncode)
         self.assertIn('xhigh', result.stderr)

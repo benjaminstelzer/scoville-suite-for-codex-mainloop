@@ -36,7 +36,7 @@ class NativeCreationTests(unittest.TestCase):
         def spawn_agent(*, task_name, message, fork_turns, model, reasoning_effort):
             self.assertRegex(task_name, r'^scoville_(reviewer|explorer)_[1-9][0-9]*$')
             self.assertEqual('none', fork_turns)
-            self.assertEqual('gpt-6.1-sol', model)
+            self.assertEqual('gpt-6.2-sol', model)
             self.assertEqual('xhigh' if task_name.startswith('scoville_reviewer_') else 'high', reasoning_effort)
             self.assertIsInstance(message, str)
             self.assertNotIn('send_message_to_thread', message)
@@ -190,7 +190,7 @@ class NativeCreationTests(unittest.TestCase):
             root = Path(directory)
             result = self.run_builder('build_dispatch_prompt.py', '--project-root', root, '--role', 'explorer',
                 '--format', 'create', '--project-name', 'Fixture', '--agent-number', '1', '--agent-id', '/root/explorer',
-                '--model', 'gpt-6.1-sol', '--thinking', 'high', '--supplemental-context', '-',
+                '--model', 'gpt-6.2-sol', '--thinking', 'high', '--supplemental-context', '-',
                 auto_file=False)
             # This call has no stdin and must reject its empty request, without
             # creating a file or accidentally reinitializing the role.
@@ -199,7 +199,7 @@ class NativeCreationTests(unittest.TestCase):
             question.write_text('Find only the requested owner.', encoding='utf-8')
             result = self.run_builder('build_dispatch_prompt.py', '--project-root', root, '--role', 'explorer',
                 '--format', 'create', '--project-name', 'Fixture', '--agent-number', '1', '--agent-id', '/root/explorer',
-                '--model', 'gpt-6.1-sol', '--thinking', 'high', '--supplemental-context', question, auto_file=False)
+                '--model', 'gpt-6.2-sol', '--thinking', 'high', '--supplemental-context', question, auto_file=False)
             self.assertEqual(0, result.returncode, result.stderr)
             value = json.loads(result.stdout)
             self.assertEqual({'target', 'message'}, set(value))

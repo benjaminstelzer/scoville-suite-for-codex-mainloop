@@ -26,8 +26,8 @@ class SimplifiedHelpersTests(unittest.TestCase):
         self.config = self.root / '.scoville/config.json'
         self.config.parent.mkdir()
         self.config.write_text(json.dumps({'workflow': {
-            'schema_version': 2, 'main': {'model': 'gpt-6.1-sol', 'reasoning': 'high'},
-            'review': {'model': 'gpt-6.1-sol', 'reasoning': 'xhigh'},
+            'schema_version': 2, 'main': {'model': 'gpt-6.2-sol', 'reasoning': 'high'},
+            'review': {'model': 'gpt-6.2-sol', 'reasoning': 'xhigh'},
             'explore': {'model': 'gpt-6-luna', 'reasoning': 'medium'}}}), encoding='utf-8')
 
     def cli(self, name, *args, error=None):
@@ -53,11 +53,11 @@ class SimplifiedHelpersTests(unittest.TestCase):
         actual = self.dispatch('--supplemental-context', self.scope, role='explorer')
         self.assertEqual(('gpt-6-luna', 'medium'), (actual['model'], actual['reasoning_effort']))
         reviewed = self.dispatch('--supplemental-context', self.result)
-        self.assertEqual(('gpt-6.1-sol', 'xhigh'), (reviewed['model'], reviewed['reasoning_effort']))
+        self.assertEqual(('gpt-6.2-sol', 'xhigh'), (reviewed['model'], reviewed['reasoning_effort']))
         self.dispatch('--route', 'medium', error='unrecognized arguments')
         self.dispatch('--model', 'gpt-6-astra', '--thinking', 'high', error='fixed')
-        self.dispatch('--agent-id', '/root/reviewer1', '--model', 'gpt-6.1-sol', '--thinking', 'xhigh', error='fresh')
-        self.dispatch('--agent-id', '/root/explorer1', '--model', 'gpt-6.1-sol', '--thinking', 'high',
+        self.dispatch('--agent-id', '/root/reviewer1', '--model', 'gpt-6.2-sol', '--thinking', 'xhigh', error='fresh')
+        self.dispatch('--agent-id', '/root/explorer1', '--model', 'gpt-6.2-sol', '--thinking', 'high',
                       '--supplemental-context', self.scope, role='explorer', error='fixed')
 
     def test_assignment_delivery_tools_reach_actual_complete_file_consumer(self):

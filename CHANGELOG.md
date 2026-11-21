@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-21 - gpt-6.2 in defaults and examples
+
+- Plan: the `[execute: ...]` example in the authoring reference names `gpt-6.2-sol`.
+
+
+- Workflow: the bundled main, review and explore pairs name `gpt-6.2-sol` instead of `gpt-6.1-sol`.
+- Ask: the shipped `sol` preset names `gpt-6.2-sol` and the `astra` preset `gpt-6.2-astra`.
+- Setup: when it converts old Workflow settings, a route without its own model gets `gpt-6.2-sol`.
+
+In a test run in Codex, Workflow started its Reviewers on `gpt-6.1-sol` because the project had saved only its main pair, and my session reported `gpt-6.2-astra` where the Ask preset still said `gpt-6-astra`. Pairs and adviser choices saved in a project keep their values. The helper tests pass with the new defaults; I have not run them in Codex yet.
+
+
 ## 2026-11-21 - Fewer unrequested demands in reviews; existing files and checks stay intact
 
 I measured UI on real review and implementation cases from two of my projects, in workspaces without project rules or documentation, and ran small targeted tests of Handoff and of the changes below.

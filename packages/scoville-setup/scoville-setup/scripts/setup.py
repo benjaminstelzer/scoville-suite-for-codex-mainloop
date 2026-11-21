@@ -61,7 +61,7 @@ def legacy_effective(value: dict) -> dict:
                    (type(value['schema_version']) is not int or value['schema_version'] != 1)):
         raise ValueError(f"workflow has unsupported legacy fields {sorted(unknown)} or schema_version; "
                          "resolve those fields explicitly before cleanup; no values were discarded")
-    defaults = {route: {"model": "gpt-6.1-sol", "reasoning": effort}
+    defaults = {route: {"model": "gpt-6.2-sol", "reasoning": effort}
                 for route, effort in LEGACY_ROUTES.items()}
     result = {key: merge(defaults, value.get(key, {})) for key in ("execute", "review")}
     result['explore'] = merge(result['execute'], value.get('explore', {}))

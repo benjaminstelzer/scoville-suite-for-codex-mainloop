@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-21 - Presets use the 6.2 models
+
+The shipped `sol` preset names `gpt-6.2-sol` instead of `gpt-6.1-sol`, and the `astra` preset `gpt-6.2-astra` instead of `gpt-6-astra`, the ID my Codex session reported. Adviser choices saved in a project keep their values. The helper tests pass with the new defaults; I have not run them in Codex yet.
+
 ## 2026-11-20 - Python is required
 
 The runtime helper rule now has the same wording as in every Skill of the suite: helpers need Python 3.11+, and without it, or after a helper error, the affected operation stops and reports the cause. Behavior does not change here; the general edition dropped its manual no-Python routes, so one wording now serves both editions.

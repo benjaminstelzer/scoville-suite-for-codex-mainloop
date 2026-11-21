@@ -8,9 +8,9 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[4]
-PAIRS = {'main': {'model': 'gpt-6.1-sol', 'reasoning': 'high'},
-         'review': {'model': 'gpt-6.1-sol', 'reasoning': 'xhigh'},
-         'explore': {'model': 'gpt-6.1-sol', 'reasoning': 'high'}}
+PAIRS = {'main': {'model': 'gpt-6.2-sol', 'reasoning': 'high'},
+         'review': {'model': 'gpt-6.2-sol', 'reasoning': 'xhigh'},
+         'explore': {'model': 'gpt-6.2-sol', 'reasoning': 'high'}}
 ROUTES = ('ultra_low', 'low', 'medium', 'high', 'ultra_high')
 
 
@@ -156,7 +156,7 @@ class MainloopCleanupTests(unittest.TestCase):
     def test_invalid_choices_cannot_partially_migrate(self):
         self.save({'workflow': {'schema_version': 1}, 'other': 'preserve'})
         before = self.path.read_bytes()
-        choices = dict(PAIRS, main={'model': 'gpt-6.1-sol'})
+        choices = dict(PAIRS, main={'model': 'gpt-6.2-sol'})
         status, result = self.run_setup('cleanup', {'workflow': choices})
         self.assertEqual(1, status)
         self.assertIn('workflow.main', result['diagnostic'])

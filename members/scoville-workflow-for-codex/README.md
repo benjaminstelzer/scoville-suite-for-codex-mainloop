@@ -192,9 +192,9 @@ Schema 2 has three fixed model and reasoning pairs:
 
 | Setting | Default model | Reasoning |
 | --- | --- | --- |
-| workflow.main | gpt-6.1-sol | high |
-| workflow.review | gpt-6.1-sol | xhigh |
-| workflow.explore | gpt-6.1-sol | high |
+| workflow.main | gpt-6.2-sol | high |
+| workflow.review | gpt-6.2-sol | xhigh |
+| workflow.explore | gpt-6.2-sol | high |
 
 Use Setup to show or save project overrides in `.scoville/config.json`.
 The main pair must match its own active native session before coding. Recheck
