@@ -1,9 +1,7 @@
 """Keep the compact new-file route within the existing attribution boundary."""
 from pathlib import Path
-import shutil
 import tempfile
 import unittest
-from unittest import mock
 
 from test_contract import PACKAGE, SELECTOR, copy_started_profile, prompt_builder
 
@@ -43,35 +41,16 @@ class CompactNewFileTests(unittest.TestCase):
                 self.assertNotIn(rules, reuse)
                 self.assertEqual(1, fresh.count(rules))
                 self.assertEqual(1, review.count(rules))
-            quality = (PACKAGE / 'references/code-quality.md').read_text(encoding='utf-8')
-            self.assertEqual(1, review.count(quality))
-            self.assertNotIn(quality, main + reuse + fresh)
+            named = 'Review with Scoville Code, and with Scoville UI where the change touches an interface'
+            self.assertEqual(1, review.count(named))
+            self.assertNotIn(named, main + reuse + fresh)
+            self.assertNotIn('What the code has to be', review)
             for text in (main, fresh, reuse, review):
                 self.assertIn(inputs['supplemental_context'], text)
                 if text != main:
                     self.assertIn('Communication language: German.', text)
             with self.assertRaises(ValueError):
                 prompt_builder.build_prompt('reviewer', root, context, inputs, 'German', reuse=True)
-
-    def test_missing_quality_blocks_review_but_not_main_or_explorer(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory) / 'project'
-            copy_started_profile(root)
-            context = prompt_builder.select_unit(SELECTOR, root, 'W-001/step-1')
-            inputs = {'supplemental_context': 'checks: observed; limits: none'}
-            copy = Path(directory) / 'package'
-            shutil.copytree(PACKAGE, copy)
-            policy = copy / 'references/code-quality.md'
-            original = policy.read_bytes()
-            policy.unlink()
-            with mock.patch.object(prompt_builder, '__file__', str(copy / 'scripts/build_dispatch_prompt.py')):
-                with self.assertRaisesRegex(ValueError, 'bundled dependency missing.*code-quality.md'):
-                    prompt_builder.build_prompt('reviewer', root, context, inputs, 'German')
-                prompt_builder.build_prompt('explorer', root, {}, inputs, 'German', reuse=True)
-                prompt_builder.build_prompt('main', root, context, {}, 'German')
-                policy.write_bytes(original)
-                corrected = prompt_builder.build_prompt('reviewer', root, context, inputs, 'German')
-                self.assertEqual(1, corrected.count(original.decode('utf-8')))
 
 
 if __name__ == '__main__':

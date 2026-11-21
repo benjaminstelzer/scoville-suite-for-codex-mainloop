@@ -146,7 +146,8 @@ Evidence: []
         self.assertIn('Change only alpha.txt and check the requested result.', assignment)
         self.assertNotIn('NEXT_STEP_MUST_NOT_APPEAR', assignment)
         self.assertIn('checks: targeted check passed', assignment)
-        self.assertIn('# Code quality', assignment)
+        self.assertIn('Review with Scoville Code', assignment)
+        self.assertNotIn('# Code quality', assignment)
         design = self.helper.parents[1] / 'references/instruction-design.md'
         self.assertIn(f'instruction_design_rules: {design}', assignment)
         self.assertTrue(design.is_file())
@@ -229,7 +230,7 @@ Evidence: []
 
     def test_missing_fresh_dependencies_block_then_restored_call_succeeds(self):
         package = self.helper.parents[1]
-        for relative in ('references/code-quality.md', 'references/output-delivery.md',
+        for relative in ('references/output-delivery.md',
                          'references/instruction-design.md', 'scripts/check_text_size.py'):
             with self.subTest(relative=relative):
                 dependency = package / relative

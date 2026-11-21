@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-20 - Python is required
+
+The runtime helper rule now has the same wording as in every Skill of the suite: helpers need Python 3.11+, and without it, or after a helper error, the affected operation stops and reports the cause. Behavior does not change here; the general edition dropped its manual no-Python routes, so one wording now serves both editions.
+
+## 2026-11-20 - Reviews use the installed Skills
+
+For a code review the adviser is told to review with Scoville Code, and with Scoville UI for interface changes, where these are installed beside Ask. Where they are not, it reviews without a Skill. Ask no longer sends the code rules along as text and no longer packages a copy of them. Not tried under Codex yet.
+
+## 2026-11-19 - One wording per rule
+
+The rule for reference and scope of a clarification or follow-up stands once, in the entry point. The shared code rules no longer end with questions that repeated them; a reviewer checks every rule in order.
+
 ## 2026-11-19 - Review questions
 
 The shared code criteria count work across calls. A reviewer checks each question in order and reports the defects it shows.

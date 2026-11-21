@@ -17,9 +17,11 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
 - Show missing answers and failed starts alongside completed results.
 
 Native assignments carry role and delivery rights plus exact paths to the
-shared writing rules and, for reviews, Code quality. Advisers read those
-before work; detailed data, command and delivery rules load when needed.
-Claude follow-ups still include the complete rule context.
+shared writing rules. Advisers read those before work; detailed data, command
+and delivery rules load when needed. Claude follow-ups still include the
+complete rule context. For a code review, both routes name Scoville Code and
+Scoville UI where these are installed beside Ask; otherwise the adviser
+reviews without a Skill.
 
 ## What it enforces
 

@@ -328,7 +328,7 @@ the user sweat.
   Settled design still needs correct states, semantics and input behavior.
 - Choose source, geometry, visual and interaction evidence for the actual
   claims. Group related changes and refresh only evidence they invalidate.
-- Route WordPress admin advice through surface and runtime classification.
+- Route WordPress admin advice by which page it concerns and what renders it.
   Classic plugin pages are written and audited against one source checklist:
   page frame, Settings API, labels, Notices, buttons, where styles load and
   what they select, widths, status beyond color and translatable strings. For
@@ -423,9 +423,11 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
 - Show missing answers and failed starts alongside completed results.
 
 Native assignments carry role and delivery rights plus exact paths to the
-shared writing rules and, for reviews, Code quality. Advisers read those
-before work; detailed data, command and delivery rules load when needed.
-Claude follow-ups still include the complete rule context.
+shared writing rules. Advisers read those before work; detailed data, command
+and delivery rules load when needed. Claude follow-ups still include the
+complete rule context. For a code review, both routes name Scoville Code and
+Scoville UI where these are installed beside Ask; otherwise the adviser
+reviews without a Skill.
 
 ### What it enforces
 

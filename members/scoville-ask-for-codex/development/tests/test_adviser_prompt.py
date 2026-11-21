@@ -252,30 +252,28 @@ class AdviserPromptTests(unittest.TestCase):
         for name in ('adviser.md', 'native-delivery.md'):
             rules = (PACKAGE / 'references' / name).read_text(encoding='utf-8')
             self.assertEqual(result.stdout.count(rules), 1)
-        for name in ('writing.md', 'code-quality.md'):
-            self.assertIn(str(PACKAGE / 'references' / name), result.stdout)
-            self.assertNotIn((PACKAGE / 'references' / name).read_text(encoding='utf-8'), result.stdout)
+        writing = PACKAGE / 'references/writing.md'
+        self.assertIn(str(writing), result.stdout)
+        self.assertNotIn(writing.read_text(encoding='utf-8'), result.stdout)
 
-    def test_review_requires_quality_policy_but_consultation_does_not_load_it(self):
+    def test_review_names_installed_skills_and_no_skill_otherwise(self):
         with tempfile.TemporaryDirectory() as directory:
             copy = Path(directory) / PACKAGE.name
             shutil.copytree(PACKAGE, copy)
-            policy = copy / 'references/code-quality.md'
-            original = policy.read_bytes()
             script = copy / 'scripts/build_adviser_prompt.py'
-            policy.unlink()
-            failed = self.run_prompt(script=script)
-            self.assertNotEqual(0, failed.returncode)
-            self.assertEqual('', failed.stdout)
-            self.assertIn(str(policy.resolve()), failed.stderr)
+            alone = self.run_prompt(script=script)
+            self.assertEqual(0, alone.returncode, alone.stderr)
+            self.assertNotIn('For a code review, review with', alone.stdout)
+            code = Path(directory) / 'scoville-code/SKILL.md'
+            code.parent.mkdir()
+            code.write_text('# Scoville Code', encoding='utf-8')
+            review = self.run_prompt(script=script)
+            self.assertEqual(0, review.returncode, review.stderr)
+            self.assertIn(f'For a code review, review with Scoville Code ({code.parent.resolve()})', review.stdout)
+            self.assertNotIn('Scoville UI', review.stdout)
             consultation = self.run_prompt(script=script, mode='consultation')
             self.assertEqual(0, consultation.returncode, consultation.stderr)
-            self.assertNotIn(original.decode('utf-8'), consultation.stdout)
-            policy.write_bytes(original)
-            corrected = self.run_prompt(script=script)
-            self.assertEqual(0, corrected.returncode, corrected.stderr)
-            self.assertIn(str(policy.resolve()), corrected.stdout)
-            self.assertNotIn(original.decode('utf-8'), corrected.stdout)
+            self.assertNotIn('For a code review, review with', consultation.stdout)
 
     def test_missing_writing_contract_fails_then_restored_package_is_consumable(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -309,8 +307,7 @@ class AdviserPromptTests(unittest.TestCase):
                 self.assertTrue(message.endswith(question))
                 for name in ('adviser.md', 'native-delivery.md'):
                     self.assertIn((copy / 'references' / name).read_text(encoding='utf-8'), message)
-                for name in ('writing.md', 'code-quality.md'):
-                    self.assertIn(str(copy / 'references' / name), message)
+                self.assertIn(str(copy / 'references/writing.md'), message)
             consume(**payload)
 
     def test_resolved_selected_advisers_feed_prompt_builder_without_repair(self):

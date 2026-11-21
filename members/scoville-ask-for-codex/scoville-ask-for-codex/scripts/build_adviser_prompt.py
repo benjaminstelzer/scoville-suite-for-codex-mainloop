@@ -8,6 +8,8 @@ from pathlib import Path
 import re
 import sys
 
+from ask_claude import review_skills
+
 
 ROOT = Path(__file__).resolve().parents[1]
 EFFORTS = ('none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra')
@@ -58,14 +60,12 @@ def main() -> int:
         parser.error('--question-file must contain the request and necessary evidence')
     rules = []
     rule_names = ['adviser.md', 'writing.md']
-    if args.mode == 'review':
-        rule_names.append('code-quality.md')
     rule_names.append('native-delivery.md')
     for name in rule_names:
         path = ROOT / 'references' / name
         try:
             content = path.read_text(encoding='utf-8')
-            if name not in ('writing.md', 'code-quality.md'):
+            if name != 'writing.md':
                 rules.append(content)
         except (OSError, UnicodeError) as error:
             parser.error(f'Cannot read required packaged UTF-8 reference "{path}". '
@@ -87,8 +87,7 @@ def main() -> int:
         parser.error(f'packaged instruction-design rules missing at {instruction_design}; use the intact built Ask package')
     prompt = ('\n\n'.join(rules)
               + f'\n\nRead the shared writing rules; your work and answer follow them: {ROOT / "references/writing.md"}.'
-              + (f'\nFor a code review, read the Code quality rules before inspection: {ROOT / "references/code-quality.md"}.'
-                 if args.mode == 'review' else '')
+              + (review_skills(ROOT) if args.mode == 'review' else '')
               + f'\n\nmode: {args.mode}\nadviser_id: {args.adviser_id}'
               + f'\nworkspace_root: {args.workspace_root}'
               + f'\ntext_size_checker: {checker}\npython: {sys.executable}'

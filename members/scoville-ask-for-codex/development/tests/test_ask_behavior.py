@@ -57,8 +57,7 @@ class AskBehaviorTests(unittest.TestCase):
         request = ask.prepare(prepare_request([ADVISERS[1]], question=question))['entries'][0]['request']
         writing = (PACKAGE / 'references/writing.md').read_text(encoding='utf-8')
         self.assertEqual(1, request['prompt'].count(writing))
-        quality = (PACKAGE / 'references/code-quality.md').read_text(encoding='utf-8')
-        self.assertEqual(1, request['prompt'].count(quality))
+        self.assertNotIn('What the code has to be', request['prompt'])
         self.assertTrue(request['prompt'].endswith(question))
         machine_data = PACKAGE / 'references/machine-data.md'
         self.assertIn(f'machine_data_rules: {machine_data};', request['prompt'])
@@ -81,7 +80,6 @@ class AskBehaviorTests(unittest.TestCase):
                     ask.prepare(prepare_request([ADVISERS[1]]))
                 (root / 'references/writing.md').write_bytes((PACKAGE / 'references/writing.md').read_bytes())
                 (root / 'references/machine-data.md').write_bytes((PACKAGE / 'references/machine-data.md').read_bytes())
-                (root / 'references/code-quality.md').write_bytes((PACKAGE / 'references/code-quality.md').read_bytes())
                 (root / 'references/shell-commands.md').write_bytes((PACKAGE / 'references/shell-commands.md').read_bytes())
                 (root / 'references/instruction-design.md').write_bytes((PACKAGE / 'references/instruction-design.md').read_bytes())
                 self.assertEqual('claude', ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']['operation'])
@@ -90,7 +88,7 @@ class AskBehaviorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'references').mkdir()
-            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/code-quality.md',
+            for name in ('config.default.json', 'references/adviser.md', 'references/writing.md',
                          'references/instruction-design.md', 'references/machine-data.md'):
                 (root / name).write_bytes((PACKAGE / name).read_bytes())
             shell = root / 'references/shell-commands.md'
@@ -102,22 +100,24 @@ class AskBehaviorTests(unittest.TestCase):
                 self.assertIn(f'shell_command_rules: {shell.resolve()};', prompt)
                 self.assertNotIn(shell.read_text(encoding='utf-8'), prompt)
 
-    def test_claude_review_requires_quality_policy_but_consultation_does_not_load_it(self):
+    def test_claude_review_names_installed_skills_and_no_skill_otherwise(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / 'references').mkdir()
+            root = Path(directory) / 'scoville-ask-for-codex'
+            (root / 'references').mkdir(parents=True)
             for name in ('config.default.json', 'references/adviser.md', 'references/writing.md', 'references/shell-commands.md',
                          'references/instruction-design.md', 'references/machine-data.md'):
                 (root / name).write_bytes((PACKAGE / name).read_bytes())
             with mock.patch.object(ask, 'ROOT', root):
-                with self.assertRaisesRegex(ValueError, 'code-review rules.*code-quality.md'):
-                    ask.prepare(prepare_request([ADVISERS[1]]))
+                alone = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']
+                self.assertNotIn('For a code review, review with', alone['prompt'])
+                for skill in ('scoville-code', 'scoville-ui'):
+                    (Path(directory) / skill).mkdir()
+                    (Path(directory) / skill / 'SKILL.md').write_text('# Skill', encoding='utf-8')
+                review = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']
+                self.assertIn(f"Scoville Code ({Path(directory) / 'scoville-code'})", review['prompt'])
+                self.assertIn(f"Scoville UI for interface changes ({Path(directory) / 'scoville-ui'})", review['prompt'])
                 consultation = ask.prepare(prepare_request([ADVISERS[1]], mode='consultation'))['entries'][0]['request']
-                quality = (PACKAGE / 'references/code-quality.md').read_text(encoding='utf-8')
-                self.assertNotIn(quality, consultation['prompt'])
-                (root / 'references/code-quality.md').write_text(quality, encoding='utf-8')
-                corrected = ask.prepare(prepare_request([ADVISERS[1]]))['entries'][0]['request']
-                self.assertEqual(1, corrected['prompt'].count(quality))
+                self.assertNotIn('For a code review, review with', consultation['prompt'])
 
     def test_missing_machine_rule_is_named_and_corrected_prepare_succeeds(self):
         import shutil

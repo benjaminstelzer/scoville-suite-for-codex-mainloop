@@ -117,7 +117,8 @@ values are unknown.
 Retain the answer, evidence, settings and the exact native handle or Claude
 session ID. Resume only for an explicitly requested follow-up, on the original
 route with that exact ID; the most recent session may belong to another
-consultation.
+consultation. A clarification keeps reference and scope. A new follow-up
+question gets a new reference and explicit scope.
 
 | Route | Follow-up settings |
 | --- | --- |

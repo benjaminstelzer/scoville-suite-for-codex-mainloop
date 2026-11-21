@@ -108,16 +108,15 @@ The helper takes the rest from the Plan:
 - Plan identity, Goal, Non-goals, Work Item fields, Instructions, the selected
   original Step and linked Decision sources.
 - Fresh child: each accepted Decision in full, or its valid unchanged
-  binding-section projection under Plan's Decision format. The main thread
+  binding-section projection under the binding mark in Plan's decisions.md. The main thread
   selects IDs, never sections or paraphrases.
-- Step: without other Step bodies, accumulated Evidence and the Work Item's
-  Next action.
+- Step: without other Step bodies and accumulated Evidence.
 - Closure: the full original Work Item and Acceptance.
 - A fixed sentence that keeps Goal and Decisions from granting role rights.
 
 | Child | Message |
 | --- | --- |
-| Fresh | Complete role, writing, shell and result rules, once; a Reviewer also the code-review policy. Embedded rules count as read. |
+| Fresh | Complete role, writing, shell and result rules, once; a Reviewer is told which Skills to review with. Embedded rules count as read. |
 | Reused Explorer | New task, current binding context, complete needed inputs and communication language; Decision identities instead of retained bodies. It reads new, changed or uncertain Decisions completely; omitted nonbinding background is no reason to reread. Its unchanged rules and Skills stay loaded; it loads newly relevant sources and specialized references. |
 
 Codex supplies project instructions; add no AGENTS.md loader.
@@ -141,10 +140,8 @@ larger one uses a new system temporary file outside the project;
 file until the assignment ends. The child reads it completely before work, by
 its chosen method. `--format prompt` returns text only.
 
-Prepare complete UTF-8 files with literal-safe writes before dependent calls.
-A missing input,
-inaccessible assignment file, capacity refusal or helper failure stops that
-operation:
+A missing input, inaccessible assignment file, capacity refusal or helper
+failure stops that operation:
 
 - Correct the named cause before running it again.
 - After a capacity refusal, spawn again only when a slot is actually free.

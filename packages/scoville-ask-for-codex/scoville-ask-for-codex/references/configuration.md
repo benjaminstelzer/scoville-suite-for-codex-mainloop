@@ -3,12 +3,11 @@
 ## Runtime helpers
 
 Use the bundled helpers for their operations. Read their invocation instructions,
-not their source, unless diagnosing a failure.
-
-| Condition | Required route |
-| --- | --- |
-| Python and every named helper are available | Use the bundled helper. |
-| Missing Python, script, dependency or helper error | Stop the affected operation; do not substitute manual execution. |
+not their source, unless diagnosing a failure. They require Python 3.11+.
+When Python discovery finds no suitable interpreter, a script or dependency is
+missing, or a helper reports an error its operation's instructions do not
+resolve, stop the affected operation and report the cause, with the
+helper's diagnostic where there is one. Never do a helper's work by hand.
 
 Helpers: `scripts/ask.py`, `scripts/build_adviser_prompt.py`.
 

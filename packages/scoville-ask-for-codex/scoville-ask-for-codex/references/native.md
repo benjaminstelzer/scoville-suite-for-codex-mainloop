@@ -74,8 +74,6 @@ to an active one.
 - If the target agent's state is unclear, check once with
   `collaboration.list_agents`, `path_prefix` set to its retained canonical
   task path. A completion race remains possible; add no polling loop.
-- A clarification keeps reference and scope. A new follow-up question gets a
-  new reference and explicit scope.
 - Retain the intended message before sending. After an uncertain result, find
   out whether it arrived before resending.
 - Keep each adviser independent.

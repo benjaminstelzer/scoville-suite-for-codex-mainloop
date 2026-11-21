@@ -63,22 +63,18 @@ literals and required field names exact. Messages between main thread and childr
 
 ## Execute one Step
 
-If the selected legacy Work Item has no Steps, use Plan's `references/progress.md`
-under Legacy continuation before dispatching a Step. A whole-item selection
-can supply context or closure review.
+A whole-item selection can supply context or closure review.
 
 | Boundary | Required action |
 | --- | --- |
 | Work Item start | Select the authorized Plan and Work Item in order, dependencies met. Record HEAD in existing Evidence for closure. Before coding, save the actual start or resume through Plan; selecting starts nothing. |
 | Step start | Save the selected original Step as in_progress. Run the main-task helper. It checks the saved start and validates an `[execute: ...]` annotation when one is present. Use its task unchanged and keep the Step's start HEAD in context. The configured main pair still applies. |
-| Implementation | Apply [Code quality](code-quality.md) when choosing the implementation. Do only this Step and its required checks. Start no reviewer of your own for it: the Step review is the independent review of this change. Preserve completed effects. Before review, finish or safely stop your write, test and restore processes. Read required sources completely. Reuse unchanged passing checks. |
+| Implementation | Do only this Step and its required checks. Start no reviewer of your own for it: the Step review is the independent review of this change. Preserve completed effects. Before review, finish or safely stop your write, test and restore processes. Read required sources completely. |
 | Review decision | Answer the diagram's change question from `git status`, `git diff` and the observed file, configuration and behavior effects. Closure checks unchanged Steps. Record no review pass that no Reviewer returned. |
 | Changed Step | Give the review helper the same original Step, the needed check and effect evidence and each relevant complete open review result. When the Work Item has only this Step, say so in that evidence; the Reviewer then checks the full Acceptance, and a finding with affected Step: none follows the closure table below. The helper adds the independent review rules: full diff, dependencies, consumers and Acceptance. |
 | Correction | Select the one affected original Step. Resolve each finding against its governing requirement, including applicable Work Item Acceptance: correct the defect through its responsible implementation, correct an unsupported optional claim, or refute the finding with evidence. Complete required checks. Obtain a fresh review; it focuses on the correction, its effects and open findings within the full original scope. Reuse still-valid evidence. |
 | Repeated finding without new evidence or changed conditions | Continue only with a supported next diagnosis or correction. Otherwise keep the Step open, report the unresolved finding and record an actual external prerequisite in Work Item blockers. Ask the user only for a missing decision. |
-| Accepted change | The Step stays in_progress until its required pass. Then mark it done through Plan and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, never foreign or unreviewed changes, because the commit records what the review accepted. A failed or forbidden commit holds advancement until resolved. Afterwards check with `git status` that none of this Step's work is left uncommitted; foreign changes stay untouched. Make no empty commit. |
-
-Updating Plan records alone needs no review.
+| Accepted change | The Step stays in_progress until its required pass. Then mark it done through Plan and commit reviewed versionable changes with Plan progress before advancing. Stage only this Step's reviewed work and its Plan progress, never foreign or unreviewed changes, because the commit records what the review accepted. Afterwards check with `git status` that none of this Step's work is left uncommitted; foreign changes stay untouched. |
 
 A Step review compares against Git HEAD; closure against the Work Item's start
 commit. If HEAD moved unexpectedly, find the commits and effects that moved it
@@ -131,7 +127,7 @@ proposed change invalidates before exploring it. Known progress, stop or
 resume and a question you can answer from what you already hold need no
 Explorer; do your Step's own reading yourself.
 
-Use Plan's work-routing rule to decide whether added work belongs in a record.
+Use Plan's "When work needs a Plan record" to decide whether added work belongs in a record.
 Do authorized direct work between Steps, after the current Step's commit, and
 commit it separately within the authorized scope. Name that commit as unrelated
 to the Work Item in the supplemental context of a closure review whose Git

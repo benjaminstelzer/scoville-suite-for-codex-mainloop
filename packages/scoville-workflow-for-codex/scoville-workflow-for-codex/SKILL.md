@@ -27,8 +27,8 @@ is done and do not repeat it.
 Read [Operations](references/operations.md), the procedure for every run,
 when a run starts or resumes. [Dispatch](references/operations-dispatch.md)
 has the helper commands for original tasks and child arguments. Use Scoville
-Plan for records. Apply [Code quality](references/code-quality.md) to every
-implementation choice. Agents select the Skills and references they need;
+Plan for records and implement with Scoville Code, and with Scoville UI
+for interfaces. Agents select the further Skills and references they need;
 explicit user invocations stay binding.
 
 All Skills in this suite are installed and enabled together. Use the
@@ -47,11 +47,6 @@ grant permission. Editing the Workflow Skill or executing a Plan by other
 means is no invocation. Keep the authorized scope and the user's stops,
 decisions and model choices. Workflow runs in this thread only: create no
 goal, scheduled continuation or successor thread.
-
-A new run requires the clean-Git gate in operations before it starts. An
-authorized resumption of the same started work reconciles its actual changes
-and processes. Both also require the main-pair check; ordinary successive
-Steps do not.
 
 ## Step and review
 

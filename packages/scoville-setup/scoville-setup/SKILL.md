@@ -20,8 +20,9 @@ Setup only reads and writes this configuration. Starting advisers or Workflow,
 installing or updating Skills and publishing packages each need their own
 request. A one-time choice stays in the request; Workflow has no model
 choice per Step.
-Change saved settings between runs, following the safe upgrade route below
-when a running project needs migration.
+Change saved settings between runs, following the safe
+[upgrade route](#upgrade-a-running-project) when a running project needs
+migration.
 
 ## Choose the operation
 
@@ -34,49 +35,6 @@ when a running project needs migration.
 For a one-time Ask override, use the read-only resolve route in Scoville Ask
 for Codex's `references/configuration.md` and report the resolved values.
 This route saves nothing and starts no adviser.
-
-## Runtime helpers
-
-Use the bundled helpers for their operations. Read their invocation instructions,
-not their source, unless diagnosing a failure.
-
-| Condition | Required route |
-| --- | --- |
-| Python and every named helper are available | Use the bundled helper. |
-| Missing Python, script, dependency or helper error | Stop the affected operation; do not substitute manual execution. |
-
-Helpers: `scripts/setup.py`.
-
-## Prepare and run the selected command
-
-Use [Python discovery](references/python-discovery.md) if no interpreter is
-verified. Use [Shell commands](references/shell-commands.md) when serializing
-or passing input through the shell.
-
-```text
-python "<setup-skill-directory>/scripts/setup.py" show --project-root "<project-root>"
-python "<setup-skill-directory>/scripts/setup.py" set --project-root "<project-root>"
-python "<setup-skill-directory>/scripts/setup.py" cleanup --project-root "<project-root>"
-```
-
-For an Ask save, read [Ask](#ask) before setting values. For legacy Workflow
-settings, follow [Workflow pairs and migration](#workflow-pairs-and-migration)
-before saving. Set and cleanup read UTF-8 JSON from stdin. Arrange capture of the original
-machine result and exit status before saving.
-
-- Generate the JSON patch with a serializer so quoting preserves the values.
-- Use `ask`, `workflow` or both for set, and only `workflow` for cleanup.
-- Include only the requested changes, with the values the user gave. If
-  capturing with the bundled checker, follow the stdin route in
-  [Output delivery](references/output-delivery.md) so the same execution
-  receives the serialized patch and yields the retained result.
-- Set offers low, medium, high and xhigh. Existing special levels survive
-  unrelated saves and migration.
-
-The helper validates changed sections before saving. An invalid value does not
-authorize a partial save. The user can edit `.scoville/config.json` manually
-for supported special reasoning levels; agent-driven changes use the helpers
-above.
 
 ## Ask
 
@@ -99,13 +57,14 @@ changes nor verifies it.
 | Observed Workflow settings | Action before saving |
 | --- | --- |
 | Current schema, no cleanup required | Use `set` for requested changes. The helper supplies the schema marker. |
-| Schema 2 with known legacy fields | On explicit cleanup authorization, keep existing pairs unless the user changes them. Use the helper's validated effective defaults where applicable. |
-| Schema 1 routes | On explicit cleanup authorization, obtain an explicit `main` pair, which cannot be inferred from execute routes. Keep the single effective pair for `review` and `explore` when each is unambiguous. Obtain missing choices when routes differ. `explore` inherits from effective execute routes field by field. |
+| Schema 2 with known legacy fields | With cleanup, keep existing pairs unless the user changes them. Use the helper's validated effective defaults where applicable. |
+| Schema 1 routes | With cleanup, obtain an explicit `main` pair, which cannot be inferred from execute routes. Keep the single effective pair for `review` and `explore` when each is unambiguous. Obtain missing choices when routes differ. `explore` inherits from effective execute routes field by field. |
 | Invalid settings or unsupported fields | Report the diagnostic and resolve the affected inputs before saving. |
 
-Migrate between
-runs or at the safe boundary below. The cleanup command only rewrites
+The cleanup command only rewrites
 `.scoville/config.json` and leaves Plans and `.codex` settings alone.
+
+### Upgrade a running project
 
 To upgrade a running project, the upgrade, the cleanup, the migration commits
 and the continuation each need the user's explicit authorization; one request
@@ -123,6 +82,42 @@ can cover several, and the steps below grant none:
    separately under project checks. Untracked configuration needs no commit.
 
 An installed new version proves neither cleanup, host-model change nor reload.
+
+## Runtime helpers
+
+Use the bundled helpers for their operations. Read their invocation instructions,
+not their source, unless diagnosing a failure. They require Python 3.11+.
+When Python discovery finds no suitable interpreter, a script or dependency is
+missing, or a helper reports an error its operation's instructions do not
+resolve, stop the affected operation and report the cause, with the
+helper's diagnostic where there is one. Never do a helper's work by hand.
+
+Helpers: `scripts/setup.py`.
+
+## Prepare and run the selected command
+
+```text
+python "<setup-skill-directory>/scripts/setup.py" show --project-root "<project-root>"
+python "<setup-skill-directory>/scripts/setup.py" set --project-root "<project-root>"
+python "<setup-skill-directory>/scripts/setup.py" cleanup --project-root "<project-root>"
+```
+
+Set and cleanup read UTF-8 JSON from stdin. Arrange capture of the original
+machine result and exit status before saving.
+
+- Generate the JSON patch with a serializer so quoting preserves the values.
+- Use `ask`, `workflow` or both for set, and only `workflow` for cleanup.
+- Include only the requested changes, with the values the user gave. If
+  capturing with the bundled checker, follow the stdin route in
+  [Output delivery](references/output-delivery.md) so the same execution
+  receives the serialized patch and yields the retained result.
+- Set offers low, medium, high and xhigh. Existing special levels survive
+  unrelated saves and migration.
+
+The helper validates changed sections before saving. An invalid value does not
+authorize a partial save. The user can edit `.scoville/config.json` manually
+for supported special reasoning levels; agent-driven changes use the helpers
+above.
 
 ## Verify the result
 

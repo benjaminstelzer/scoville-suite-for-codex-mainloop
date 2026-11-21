@@ -55,8 +55,7 @@ def prepare(request):
     writing = read_utf8(ROOT / 'references/writing.md', 'packaged writing rules')
     machine_data = ROOT / 'references' / 'machine-data.md'
     require(machine_data.is_file(), f'packaged machine-data rules missing at {machine_data}; use the intact built Ask package')
-    code_review = (read_utf8(ROOT / 'references/code-quality.md', 'packaged code-review rules')
-                   if mode == 'review' else '')
+    review_skills = ask_claude.review_skills(ROOT) if mode == 'review' else ''
     shell_rules = ROOT / 'references' / 'shell-commands.md'
     require(shell_rules.is_file(), f'packaged shell rules missing at {shell_rules}; use the intact built Ask package')
     instruction_design = ROOT / 'references' / 'instruction-design.md'
@@ -69,9 +68,9 @@ def prepare(request):
             raise ValueError(f"adviser {adviser['id']!r}.route='native' cannot use prepare; use build_adviser_prompt.py and collaboration.spawn_agent for this native adviser or select a claude-cli adviser")
         else:
             prompt = (role + '\n\n' + writing
-                      + ('\n\n' + code_review if code_review else '')
                       + f'\n\nmode: {mode}\nadviser_id: {adviser["id"]}'
                       + f'\nworkspace_root: {cwd}\nconsultation_reference: {ref}\nscope: {scope}'
+                      + review_skills
                       + f'\nshell_command_rules: {shell_rules}; these rules grant no tools or permissions.'
                       + f'\noutput_delivery_rules: {ROOT / "references/output-delivery.md"}; read when judging evidence that was captured or delivered as a file.'
                       + f'\nmachine_data_rules: {machine_data}; read when a result is machine data: a structured report, log file or saved state you must evaluate, not a test runner\'s console summary.'

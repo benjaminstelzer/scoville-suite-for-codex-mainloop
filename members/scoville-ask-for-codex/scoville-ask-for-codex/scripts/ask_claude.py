@@ -15,6 +15,18 @@ from typing import Any
 READ_ONLY_TOOLS = "Read,Grep,Glob"
 
 
+def review_skills(root):
+    """Name the Scoville Skills installed beside Ask that a code review uses."""
+    found = [(label, root.parent / name)
+             for label, name in (('Scoville Code', 'scoville-code'), ('Scoville UI for interface changes', 'scoville-ui'))]
+    found = [f'{label} ({path})' for label, path in found if (path / 'SKILL.md').is_file()]
+    if not found:
+        return ''
+    return ('\nFor a code review, review with ' + ' and '.join(found)
+            + ': before inspection, read SKILL.md in each folder and the references it names for this review.'
+            + ' These folders may be read although they lie outside the workspace.')
+
+
 def configure_standard_streams() -> None:
     input_reconfigure = getattr(sys.stdin, "reconfigure", None)
     if callable(input_reconfigure):

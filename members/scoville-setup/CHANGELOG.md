@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-20 - Python is required
+
+The runtime helper rule now has the same wording as in every Skill of the suite: helpers need Python 3.11+, and without it, or after a helper error, the affected operation stops and reports the cause. Behavior does not change here; the general edition dropped its manual no-Python routes, so one wording now serves both editions.
+
+## 2026-11-20 - Clearer structure
+
+The sections that set the values come before the section that saves them. Upgrading a running project has its own heading.
+
+## 2026-11-19 - One wording per rule
+
+Sentences that repeated the generated reference list or another row are removed.
+
 ## 2026-11-19 - Show and set commands
 
 The show and set commands now sit with their operations. Legacy migration follows in its own section.

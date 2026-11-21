@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-11-20 - Lean Plan
+
+The operations no longer point to Plan's rules for Work Items without Steps or mention the retired `Next action` field, and they name Plan's section "When work needs a Plan record" for added work. Not tested with models yet.
+
+## 2026-11-20 - Python is required
+
+The runtime helper rule now has the same wording as in every Skill of the suite: helpers need Python 3.11+, and without it, or after a helper error, the affected operation stops and reports the cause. Behavior does not change here; the general edition dropped its manual no-Python routes, so one wording now serves both editions.
+
+## 2026-11-19 - One wording per rule
+
+- A fresh Reviewer is told to review with Scoville Code, and with Scoville UI for interfaces, and loads them itself. The helper no longer embeds the code rules in the assignment and no longer carries review rules of its own, so the Reviewer checks against exactly what the author had to follow. Workflow no longer packages a copy of the code rules. Not tried under Codex yet.
+- Sentences that repeated the diagram, operations or the shared references are removed.
+
 ## 2026-11-19 - Code review findings
 
 The shared code criteria count work across calls. Reviewers go through the questions in order and report the defects they find.

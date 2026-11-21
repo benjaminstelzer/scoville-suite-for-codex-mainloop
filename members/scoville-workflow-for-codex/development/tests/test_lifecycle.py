@@ -8,7 +8,7 @@ import sys
 import tempfile
 import unittest
 
-from test_contract import PACKAGE, SUITE_ROOT, _builder, copy_started_profile
+from test_contract import PACKAGE, SUITE_ROOT, copy_started_profile
 
 
 class LifecycleTests(unittest.TestCase):
@@ -80,16 +80,6 @@ class LifecycleTests(unittest.TestCase):
             index.write_text(index.read_text(encoding='utf-8').replace('active_plan: PLAN-0001','active_plan: null'),encoding='utf-8')
             self.assertTrue(json.loads(run(validator,'--root',root,'--format','json'))['valid'])
             run(PACKAGE/'scripts/select_context.py','--root',root,'--format','json',good=False)
-
-    def test_no_python_fallback_is_only_in_general_package(self):
-        for profile, expected in [('general',True),('codex',False)]:
-            config=_builder.load(SUITE_ROOT,profile)
-            member=next(m for m in config['members'] if m['name']=='scoville-plan')
-            payload=_builder.payload(SUITE_ROOT,member,config)
-            for name in ['fallbacks/validate_profile-fallback.md','fallbacks/select_context-fallback.md']:
-                self.assertEqual(any(path.endswith('/'+name) for path in payload),expected)
-            if not expected:
-                self.assertNotIn(b'fallbacks/validate_profile-fallback.md',payload['scoville-plan/SKILL.md'])
 
 
 if __name__=='__main__':

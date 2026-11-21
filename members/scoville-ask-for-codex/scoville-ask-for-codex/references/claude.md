@@ -53,8 +53,8 @@ python "<ask-skill-directory>/scripts/ask.py" --input-file "<temporary>/claude-r
 Retain that request file with the answer and exact session ID. To answer a
 necessary clarification, which the Ask request already authorizes, or for an
 explicitly requested follow-up, prepare a new question using the retained
-request. A clarification keeps the `--reference` and `--scope` values; a
-follow-up gets a new reference and explicit scope:
+request. Set `--reference` and `--scope` as
+[Follow-up after completion](../SKILL.md#follow-up-after-completion) requires:
 
 ```text
 python "<ask-skill-directory>/scripts/ask.py" --resume-request "<temporary>/claude-request.json" --session-id "<exact retained session ID>" --question-file "<temporary>/followup.txt" --mode review --scope "<follow-up scope>" --reference "<new consultation reference>" --output-file "<temporary>/claude-followup.json"
@@ -91,8 +91,7 @@ Launch and wait:
   `timeout_seconds` plus time for process-family cleanup. Killing Python
   first keeps the adapter from cleaning up and returning the result.
 - Launch through the host's asynchronous shell facility and collect the
-  running process in bounded waits. A returned shell session is still
-  running; keep collecting it.
+  running process in bounded waits.
 
 At `timeout_seconds` the adapter terminates its process family and returns
 `ok:false` with `code:claude_timeout`. It does not retry and reports cleanup
