@@ -2,13 +2,13 @@
 
 ## 2026-11-23 - A test independent of the machine's temporary folder
 
-One test assertion required that the machine's temporary folder is not a private sandbox folder, so the test failed inside Codex's Windows sandbox. I removed it; the detection stays tested with fixed paths, and the shipped helpers behave as before.
+One test assertion required that the machine's temporary folder is not a private sandbox folder, so the test fails where it runs inside such a folder, as in Codex's Windows sandbox. I removed it; the detection stays tested with fixed paths, and the shipped helpers behave as before.
 
 The size checker names the process ID when a capture was interrupted and its cleanup is unconfirmed, as it did after a timeout. The delivery reference now says what that ID is for: resolve the state of that process before a rerun.
 
 ## 2026-11-21 - Reviewers can read their assignment in a Windows sandbox
 
-In Codex's Windows sandbox an agent the main thread starts cannot read the main session's temporary folder, so the first Reviewer of a run returned `blocked` and the main thread copied the assignment by hand. Where the temporary folder is such a private one, the helper now writes the assignment into the project's ignored `.scoville/temp`. A run that finished a whole Plan in that sandbox then started ten Reviewers, each with its unchanged assignment, and none was blocked. Outside such a sandbox nothing changes. The assignment files stay in `.scoville/temp` after the run.
+In Codex's Windows sandbox an agent the main thread starts cannot read the main session's temporary folder, so the first Reviewer of a run returned `blocked` and the main thread copied the assignment by hand. Where the temporary folder is such a private one, the helper now writes the assignment into the project's ignored `.scoville/temp`. A run that finished a whole Plan in that sandbox then started ten Reviewers, each with its unchanged assignment, and none was blocked. For every other temporary folder nothing changes; the helper recognizes the private one by its path. The assignment files stay in `.scoville/temp` after the run.
 
 ## 2026-11-21 - Reviewer assignments can be written in a Windows sandbox
 

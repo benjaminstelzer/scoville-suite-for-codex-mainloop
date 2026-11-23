@@ -2,7 +2,7 @@
 
 ## 2026-11-23 - The adviser reads only the review Skill that applies
 
-For a code review the adviser reads the Skill that applies. It was told to read every Skill folder named, so a backend review also read Scoville UI.
+For a code review the adviser reads the Skill that applies. It was told to read every Skill folder named, and that instruction names Scoville UI for every code review.
 
 The entry of 2026-11-21 was headed "Large questions reach the adviser in a Windows sandbox". Shown was only that the file is created there; the adviser in that sandbox still cannot read it. I corrected the heading.
 
