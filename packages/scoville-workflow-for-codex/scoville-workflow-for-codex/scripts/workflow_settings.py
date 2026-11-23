@@ -43,9 +43,13 @@ def validate_config(config: dict) -> dict:
     return config
 
 
-def load_config(path: Path, project_root: Path | str | None = None) -> dict:
+def load_defaults(path: Path) -> dict:
     with path.open("rb") as stream:
-        defaults = validate_config(tomllib.load(stream))
+        return validate_config(tomllib.load(stream))
+
+
+def load_config(path: Path, project_root: Path | str | None = None) -> dict:
+    defaults = load_defaults(path)
     override = config_section("workflow", project_root)
     if needs_cleanup(override):
         raise ValueError("workflow uses the old configuration; ask the user to authorize Scoville Setup cleanup with a main pair before coding. "

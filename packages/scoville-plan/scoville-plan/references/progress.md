@@ -47,7 +47,7 @@ interruption and correction, and before handoff or compaction. A Step begins
 in_progress when its work starts, not on selection; inspecting or reviewing
 starts none. Scoville Workflow starts exactly one Step at a time. It is
 done when its action and required checks are complete, in a Workflow run
-only after its Step review passed; cancelled needs explicit direction and is
+only after any Step review that Workflow requires for it has passed; cancelled needs explicit direction and is
 never done. In an open item, a confirmed correction may return a done Step to
 in_progress, with its completed effects and the reason in Evidence. A status
 change rewrites no action, order, route or execution choice; pause and

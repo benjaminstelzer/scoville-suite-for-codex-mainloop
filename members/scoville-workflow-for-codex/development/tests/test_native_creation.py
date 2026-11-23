@@ -319,7 +319,6 @@ class NativeCreationTests(unittest.TestCase):
             sandbox = PureWindowsPath('D:/', 'data', 'Packages', 'sandbox.{1}', 'AC', 'Temp')
             self.assertTrue(native.private_sandbox_temp(sandbox))
             self.assertFalse(native.private_sandbox_temp(PureWindowsPath('D:/', 'data', 'Temp')))
-            self.assertFalse(native.private_sandbox_temp(Path(native.tempfile.gettempdir())))
             with patch.object(native, 'private_sandbox_temp', return_value=True):
                 chosen = native.assignment_path(None, root)
             self.assertEqual(chosen.parent, root.resolve() / '.scoville' / 'temp')

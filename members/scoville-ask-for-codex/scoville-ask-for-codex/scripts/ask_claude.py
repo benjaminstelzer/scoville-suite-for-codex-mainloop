@@ -23,7 +23,7 @@ def review_skills(root):
     if not found:
         return ''
     return ('\nFor a code review, review with ' + ' and '.join(found)
-            + ': before inspection, read SKILL.md in each folder and the references it names for this review.'
+            + ': before inspection, read SKILL.md of each Skill that applies and the references it names for this review.'
             + ' These folders may be read although they lie outside the workspace.')
 
 

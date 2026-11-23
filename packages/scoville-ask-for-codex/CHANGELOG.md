@@ -1,6 +1,14 @@
 # Changelog
 
-## 2026-11-21 - Large questions reach the adviser in a Windows sandbox
+## 2026-11-23 - The adviser reads only the review Skill that applies
+
+For a code review the adviser reads the Skill that applies. It was told to read every Skill folder named, so a backend review also read Scoville UI.
+
+The entry of 2026-11-21 was headed "Large questions reach the adviser in a Windows sandbox". Shown was only that the file is created there; the adviser in that sandbox still cannot read it. I corrected the heading.
+
+The size checker names the process ID when a capture was interrupted and its cleanup is unconfirmed, as it did after a timeout. The delivery reference now says what that ID is for: resolve the state of that process before a rerun.
+
+## 2026-11-21 - The file for a large question is created in a Windows sandbox
 
 A question too large for the adviser's message is handed over as a file by the size checker. In Codex's Windows sandbox that failed, because hard links are refused in the temporary folder the helper creates, and the session shortened the question instead. The checker now gives the file its final name by rename on Windows, where rename refuses an existing name as the hard link does elsewhere. Checked inside that sandbox with the checker itself; I have not repeated an Ask review with a large question.
 

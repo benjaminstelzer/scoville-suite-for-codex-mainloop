@@ -12,7 +12,7 @@ import tempfile
 
 from ask_settings import diagnostic_value, merge_config_layer, resolve_settings
 from scoville_config import merge, read_config
-from workflow_settings import load_config, needs_cleanup, validate_config, validate_pair
+from workflow_settings import load_config, load_defaults, needs_cleanup, validate_config, validate_pair
 
 ROOT = Path(__file__).resolve().parents[1]
 # Schema-1 defaults at this fork's baseline, used only to interpret migration.
@@ -89,7 +89,8 @@ def effective(project_root: Path) -> dict:
             unknown = legacy_fields - LEGACY_KEYS
             if unknown:
                 raise ValueError(f'workflow has unsupported fields {sorted(unknown)}; resolve them explicitly before cleanup')
-            pairs = validate_config({key: value for key, value in workflow.items() if key not in legacy_fields})
+            override = {key: value for key, value in workflow.items() if key not in legacy_fields}
+            pairs = validate_config(merge(load_defaults(ROOT / 'assets/workflow.toml'), override))
             values['workflow'] = dict(pairs, cleanup_required=True, legacy_fields=sorted(legacy_fields))
         elif needs_cleanup(workflow):
             values['workflow'] = dict(schema_version=1, cleanup_required=True, **legacy_effective(workflow))

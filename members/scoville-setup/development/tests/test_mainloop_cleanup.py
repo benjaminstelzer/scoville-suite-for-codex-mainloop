@@ -28,6 +28,13 @@ class MainloopCleanupTests(unittest.TestCase):
         status, result = self.run_setup('cleanup')
         self.assertEqual(status, 0, result)
         self.assertNotIn('pin_threads', json.loads(self.path.read_text())['workflow'])
+        # A partial override shows the shipped pairs for what it leaves out, as Workflow resolves it after cleanup.
+        main = {'model': 'gpt-6.2-astra', 'reasoning': 'medium'}
+        self.save({'workflow': dict(schema_version=2, main=main, pin_threads=True)})
+        status, result = self.run_setup('show')
+        self.assertEqual(status, 0, result)
+        workflow = result['effective']['workflow']
+        self.assertEqual((workflow['main'], workflow['review']), (main, PAIRS['review']))
         self.save({'workflow': []})
         status, result = self.run_setup('show')
         self.assertEqual(status, 1)
