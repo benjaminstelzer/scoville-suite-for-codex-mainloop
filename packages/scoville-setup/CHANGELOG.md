@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-23 - A shorter README
+
+I rewrote the README. It now says what the Skill does, how to call it, what it needs and where it stops, and leaves out how the suite is built. The Skill itself is unchanged.
+
 ## 2026-11-23 - `show` reads a partial override that still has an old field
 
 `show` failed when the project's Workflow settings named only some of the three pairs and still held a field of the old format, although `cleanup` handles that file. It now fills the missing pairs from the shipped defaults, as Workflow does after cleanup.

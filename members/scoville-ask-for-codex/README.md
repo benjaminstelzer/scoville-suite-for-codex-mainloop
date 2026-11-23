@@ -10,89 +10,67 @@ Unanimous agreement is pleasant, but finding the missed problem is more useful.
 
 ## How it works
 
-- Select configured advisers using native Codex agents or the Claude CLI.
-- Give each the same question, scope and relevant evidence independently.
-- Collect separate reviews or combine answers to a general question. Necessary
-  clarifications use the same adviser; follow-ups after completion need a request.
-- Show missing answers and failed starts alongside completed results.
-
-Native assignments carry role and delivery rights plus exact paths to the
-shared writing rules. Advisers read those before work; detailed data, command
-and delivery rules load when needed. Claude follow-ups still include the
-complete rule context. For a code review, both routes name Scoville Code and
-Scoville UI where these are installed beside Ask; otherwise the adviser
-reviews without a Skill.
-
-## What it enforces
-
-- **Independent advice.** Advisers assess the work. Changes remain with the
-  calling task. Native read-only behavior is instructed, not sandbox-enforced.
-- **Traceable answers.** Results stay attached to their adviser and question.
-- **Explicit failures.** Unavailable models, invalid settings and failed calls
-  are reported. Ask does not quietly choose a different adviser.
-
-Claude uses Read, Grep and Glob. Web access requires an explicit
-`claude.web_tools` setting or request override. Advisers do not run tests;
-native agents may create temporary files only for necessary oversized answers.
+- It asks the advisers you configured: native Codex agents, or Claude through
+  the Claude CLI.
+- Each adviser gets the same question, scope and evidence, independently and
+  with fresh context.
+- Reviews come back separately and stay attached to their adviser. For a
+  general question Ask can combine the answers.
+- Missing answers and failed starts are shown next to the results. Ask doesn't
+  quietly pick a different adviser.
+- Advisers assess. They change nothing and run no tests. For native agents
+  that is an instruction - Codex doesn't enforce it. Claude gets Read, Grep
+  and Glob, and web access only if you ask for it or set `claude.web_tools`.
+- For a code review, advisers use Scoville Code and Scoville UI where these
+  are installed beside Ask.
 
 ## What it costs
 
-- Each adviser adds model usage, waiting and agent capacity. Use extra opinions for decisions worth checking. You still have to weigh disagreements.
+Each adviser adds model usage, waiting and one agent. Use extra opinions for
+decisions worth checking. You still have to weigh the disagreements.
 
-## How it was developed
+## How to use
 
-Early consultations made collecting answers and asking follow-up questions
-more complicated than the question warranted. Ask developed around independent
-advice and a clear continuation path for each conversation. Missing answers
-remain visible because a partial panel is not a consensus.
+```text
+Use scoville-ask-for-codex to review this patch with SOL.
+```
 
-Consultation tests and analysis of real project reviews guide changes. Useful
-findings, lost context and unnecessary coordination feed into the next revision,
-which is tested and used again.
+```text
+Ask Fable and Claude independently how they would approach this problem, then return and compare their answers here.
+```
 
-## Compatibility
-
-Requires Codex desktop online, Python 3.11+ and filesystem access. Native
-advisers need collaboration agent tools. Claude consultations need a signed-in
-Claude Code CLI, version 2.1.280 or newer for Opus 5.5 and 2.1.321 or newer for Fable 5.2.
-Use at least `gpt-6.1-sol` at medium reasoning effort for the main session.
+Ask handles the consultation and necessary clarifications without asking you
+to approve each exchange. Request a follow-up when you need one - native
+agents keep their context, and Claude resumes its saved session.
 
 ## Install
 
-Install and enable every Skill in the suite. Each applies to its own task scope.
+Needs Codex desktop, online, with native agents and Python 3.11+.
 
-### Install this Skill
+Use `gpt-6.2-sol` at medium reasoning effort or higher. Below that, steps get
+skipped more often.
 
-Use [the suite's own packages](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/packages).
-Keep all members from the same suite. If any member is missing or incompatible,
-report the incomplete installation rather than claiming the suite is ready.
+It comes with the suite. Install every Skill from
+[the suite's packages](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/tree/main/packages) - partial
+installations aren't supported.
 
-The host needs permission to write to its Skills directory. The
-[Codex Skills guide](https://learn.chatgpt.com/docs/build-skills) lists where to install it.
+### Claude consultations
 
-
-
-### Set up Claude consultations
-
-1. Install [Claude Code](https://code.claude.com/docs/en/setup) if needed. Open a terminal or PowerShell window.
-2. Run `claude --version`. Opus 5.5 needs **2.1.280 or newer**, the `fable` preset (Fable 5.2) **2.1.321 or newer**. For an older version, run `claude update`, then check again. Keep running Claude sessions open.
+1. Install [Claude Code](https://code.claude.com/docs/en/setup) if needed and open a terminal.
+2. Run `claude --version`. Opus 5.5 needs **2.1.280 or newer**, the `fable` preset (Fable 5.2) **2.1.321 or newer**. For an older version, run `claude update`.
 3. Run `claude auth login` and complete sign-in in your browser.
 4. Run `claude auth status` to check that you are signed in.
+
+If Ask later reports an expired session, repeat steps 3 and 4.
 
 ## Configuration
 
 The defaults are in `config.default.json` next to the installed `SKILL.md`.
-Project choices go under `ask` in `.scoville/config.json` at the project
-root. Anything missing falls back to the shipped defaults.
-Reading settings creates no file. If you name something explicitly in a
-request, it overrides these values for that call only, without saving them.
-The shipped `sol` preset uses `gpt-6.2-sol / high`; saved project overrides
-retain their selected values. The host still decides model availability.
+Project choices go under `ask` in `.scoville/config.json` at the project root,
+and anything missing falls back to the defaults. Scoville Setup shows and saves
+them. What you name in a request applies to that call only.
 
-Use Scoville Setup to inspect or save adviser choices.
-
-For example, this `.scoville/config.json` selects SOL and Fable by default and
-changes only SOL's effort:
+This example selects SOL and Fable by default and changes only SOL's effort:
 
 ```json
 {
@@ -103,61 +81,35 @@ changes only SOL's effort:
 }
 ```
 
-Project settings override the bundled defaults one field at a time, except
-the adviser list, which replaces the default list completely. Native follow-ups
-keep the same agent and settings. Changing model or effort requires a fresh
-adviser. For a custom adviser, add an ID, route, exact model and effort to
-`advisers`. The installed configuration reference covers helper
-inputs and migration.
+Project settings override the defaults one field at a time. The adviser list
+is the exception: it replaces the default list completely. The `sol` preset
+uses `gpt-6.2-sol` at `high`. For an adviser of your own, add an ID, route,
+exact model and effort under `advisers`. The `claude` block caps each Claude
+call: 10 USD, one hour, no web tools.
 
 ## Limitations
 
-### Agent capacity
-
-Codex retains native agent threads from earlier assignments, so longer
-Workflow runs and Ask consultations can reach the host's agent limit.
-To give these runs more room, raise the limit to 256 in
-`~/.codex/config.toml` under `[agents]`. Add the section if it is missing:
+Codex keeps the agent threads of earlier assignments, so longer Workflow runs
+and Ask consultations can hit its agent limit. I recommend raising it to 256
+in `~/.codex/config.toml`. Add the section if it's missing:
 
 ```toml
 [agents]
 max_concurrent_threads_per_session = 256
 ```
 
-This is the suite's recommendation for longer runs. The
-[Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
-describes the setting. If a start or necessary message still fails, the
-affected operation stops and reports the problem with its progress preserved
-for continuation.
+The [Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+describes the setting. If a start still fails, the affected operation stops,
+reports it and keeps its progress for the next run.
 
-### Claude sessions
+## Background
 
-If Ask reports an expired OAuth session, run `claude auth login` again and
-check the result with `claude auth status`. If an outdated CLI rejects a
-supported model, run `claude update` and check `claude --version` before retrying.
+Early consultations made collecting answers and asking follow-up questions
+more complicated than the question warranted.
 
-## How to use
-
-Ask naturally, for example:
-
-```text
-Use scoville-ask-for-codex to review this patch with SOL.
-```
-
-```text
-Ask Fable and Claude independently how they would approach this problem, then return and compare their answers here.
-```
-
-Ask handles the consultation and necessary follow-ups without asking you to
-approve each exchange. Request a follow-up when you need one. Native agents
-keep their context, and Claude can resume its saved session.
-
-To consult Claude, ask: **“Ask Claude to review this change.”**
-
-## Sources
-
-- [Codex Skills](https://learn.chatgpt.com/docs/build-skills).
-- [Claude Code CLI reference](https://code.claude.com/docs/en/cli-reference).
+The [full instructions](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-ask-for-codex/scoville-ask-for-codex/SKILL.md) are what the agent reads.
+Sources: [Codex Skills](https://learn.chatgpt.com/docs/build-skills) and the
+[Claude Code CLI reference](https://code.claude.com/docs/en/cli-reference).
 
 ## Developer links
 

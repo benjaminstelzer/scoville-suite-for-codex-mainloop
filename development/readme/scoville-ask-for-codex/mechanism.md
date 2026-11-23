@@ -1,14 +1,15 @@
 ## How it works
 
-- Select configured advisers using native Codex agents or the Claude CLI.
-- Give each the same question, scope and relevant evidence independently.
-- Collect separate reviews or combine answers to a general question. Necessary
-  clarifications use the same adviser; follow-ups after completion need a request.
-- Show missing answers and failed starts alongside completed results.
-
-Native assignments carry role and delivery rights plus exact paths to the
-shared writing rules. Advisers read those before work; detailed data, command
-and delivery rules load when needed. Claude follow-ups still include the
-complete rule context. For a code review, both routes name Scoville Code and
-Scoville UI where these are installed beside Ask; otherwise the adviser
-reviews without a Skill.
+- It asks the advisers you configured: native Codex agents, or Claude through
+  the Claude CLI.
+- Each adviser gets the same question, scope and evidence, independently and
+  with fresh context.
+- Reviews come back separately and stay attached to their adviser. For a
+  general question Ask can combine the answers.
+- Missing answers and failed starts are shown next to the results. Ask doesn't
+  quietly pick a different adviser.
+- Advisers assess. They change nothing and run no tests. For native agents
+  that is an instruction - Codex doesn't enforce it. Claude gets Read, Grep
+  and Glob, and web access only if you ask for it or set `claude.web_tools`.
+- For a code review, advisers use Scoville Code and Scoville UI where these
+  are installed beside Ask.

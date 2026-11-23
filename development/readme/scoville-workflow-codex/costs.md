@@ -1,10 +1,4 @@
 ## What it costs
 
-Independent review and necessary corrections add tokens and time. Mainloop
-removes the implementation child and its coordination. Every review initializes
-a fresh agent; Explorer can retain context.
-
-With identical fixture inputs, generated fresh Explorer text fell from 2,560 to
-1,634 words and Step Reviewer text from 3,101 to 2,123 words. Explorer reuse stayed
-at 268 words. These are generated-text measurements, not measurements of billed
-tokens, actual rule loads or execution time.
+Reviews and the corrections they find add tokens and time. Every review starts
+a fresh agent. An Explorer can keep its context for follow-up questions.

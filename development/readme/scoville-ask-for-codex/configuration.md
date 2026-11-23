@@ -1,17 +1,11 @@
 ## Configuration
 
 The defaults are in `config.default.json` next to the installed `SKILL.md`.
-Project choices go under `ask` in `.scoville/config.json` at the project
-root. Anything missing falls back to the shipped defaults.
-Reading settings creates no file. If you name something explicitly in a
-request, it overrides these values for that call only, without saving them.
-The shipped `sol` preset uses `gpt-6.2-sol / high`; saved project overrides
-retain their selected values. The host still decides model availability.
+Project choices go under `ask` in `.scoville/config.json` at the project root,
+and anything missing falls back to the defaults. Scoville Setup shows and saves
+them. What you name in a request applies to that call only.
 
-Use Scoville Setup to inspect or save adviser choices.
-
-For example, this `.scoville/config.json` selects SOL and Fable by default and
-changes only SOL's effort:
+This example selects SOL and Fable by default and changes only SOL's effort:
 
 ```json
 {
@@ -22,9 +16,8 @@ changes only SOL's effort:
 }
 ```
 
-Project settings override the bundled defaults one field at a time, except
-the adviser list, which replaces the default list completely. Native follow-ups
-keep the same agent and settings. Changing model or effort requires a fresh
-adviser. For a custom adviser, add an ID, route, exact model and effort to
-`advisers`. The installed configuration reference covers helper
-inputs and migration.
+Project settings override the defaults one field at a time. The adviser list
+is the exception: it replaces the default list completely. The `sol` preset
+uses `gpt-6.2-sol` at `high`. For an adviser of your own, add an ID, route,
+exact model and effort under `advisers`. The `claude` block caps each Claude
+call: 10 USD, one hour, no web tools.

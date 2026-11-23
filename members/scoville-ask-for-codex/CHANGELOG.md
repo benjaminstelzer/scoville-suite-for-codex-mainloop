@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-23 - A shorter README
+
+I rewrote the README. It now says what the Skill does, how to call it, what it needs and where it stops, and leaves out how the suite is built. The Skill itself is unchanged. The requirements name `gpt-6.2-sol` instead of `gpt-6.1-sol`.
+
 ## 2026-11-23 - The adviser reads only the review Skill that applies
 
 For a code review the adviser reads the Skill that applies. It was told to read every Skill folder named, and that instruction names Scoville UI for every code review.

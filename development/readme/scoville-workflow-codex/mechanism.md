@@ -1,112 +1,31 @@
 ## How it works
 
-The current chat owns the Plan, code, required checks and commits. It takes one
-original Step at a time through the existing helper; it does not paraphrase the
-assignment. Each review is fresh. Explorer reuse requires the same investigation,
-an idle agent and unchanged pair/rules; an independent request starts fresh.
-Agents choose relevant Skills without gaining additional role rights.
-
-### 1. Main loop
-
 ```mermaid
 flowchart TD
-  A["Activate or resume in the same chat"] --> M{"Own active pair matches main?"}
-  M -->|No or unknown| B["Resolve prerequisite; coding stopped"]
-  M -->|Yes| N{"New run?"}
-  N -->|Yes| G{"Git available and workspace clean?"}
-  G -->|No| B
-  G -->|Yes| W["Select authorized Work Item; retain start commit"]
-  N -->|Resume| R["Reconcile own changes, processes, proof and open reviews"]
-  R --> W
-  W --> S[["Run ONE original Step; see diagram 2"]]
-  S --> D{"All Steps and required reviews complete?"}
-  D -->|No| S
-  D -->|Yes| ONE{"One Step whose passing review checked the full Acceptance?"}
-  ONE -->|Yes| E
-  ONE -->|No| C["Helper: all original Steps and full Acceptance"]
-  C -->|Success| CR["Fresh closure Reviewer from unchanged returned arguments"]
-  C -->|Failure| B
-  CR --> V{"Result?"}
-  V -->|Defect| nextCorrection{"Supported correction or changed evidence?"}
-  nextCorrection -->|Yes| F["Select the affected Step or append a Step for a missing binding criterion"]
-  nextCorrection -->|No| O["Keep item open; report needed prerequisite"]
-  F --> S
-  V -->|Missing required proof| P["Recover available proof or finish missing authorized check"]
-  P --> C
-  V -->|Pass| E["Close and validate records; commit; continue authorized scope"]
+  start["You call $scoville-workflow-for-codex"] --> ready{"Configured model active and, for a new run, Git workspace clean?"}
+  ready -->|No| stop["Don't start coding and say what is missing"]
+  ready -->|Yes| step["Main chat implements the next Step and runs its checks"]
+  step --> review["If the Step changed something: fresh Reviewer reads the change"]
+  review -->|Defect| step
+  review -->|Pass| commit["Commit the Step and the Plan"]
+  commit --> more{"More Steps?"}
+  more -->|Yes| step
+  more -->|No| closure["Fresh Reviewer checks the Work Item against its Acceptance"]
+  closure -->|Defect| step
+  closure -->|Pass| done["Close the Work Item and continue"]
 ```
 
-The new-run Git gate never cleans or commits earlier work. Authorized resumption
-reconciles the same started work without prematurely committing it. Missing or
-foreign evidence remains an explicit boundary. Stops preserve unfinished work;
-compaction continues this same chat from actual Plan, Git, effects and results.
-An omitted binding criterion found by a one-Step full review gets its own Step.
-The original Step needs its own pass and commit before that Step starts. The
-omission remains open until the added Step and full Work Item review pass.
-
-### 2. Step implementation and review
-
-```mermaid
-flowchart TD
-  S["Save and validate start; helper returns exact Step"] --> I["Main implements; finishes required checks"]
-  I --> Q["Establish write, test and restore quiescence"]
-  Q --> N{"Files, config or behavior changed, or Step review open?"}
-  N -->|No| U["Record completion; no Step review or empty commit"]
-  N -->|Yes| R["Helper: original Step, HEAD diff and relevant evidence"]
-  R -->|Success| RS["Fresh Reviewer from unchanged returned arguments"]
-  R -->|Failure| B["Stop dispatch; resolve helper failure"]
-  RS --> V{"Result?"}
-  V -->|Defect| nextCorrection{"Supported correction or changed evidence?"}
-  nextCorrection -->|Yes| I
-  nextCorrection -->|No| O["Keep Step open; report needed prerequisite"]
-  V -->|Missing proof| P["Main recovers proof or finishes missing authorized check"]
-  P --> Q
-  V -->|Pass| C["Commit accepted versionable changes and Plan before next Step"]
-```
-
-Keep source and binding inputs unchanged during review. Closure uses the Work
-Item start commit, not only the last Step diff. Unexpected HEAD movement must
-be reconciled before an empty diff counts as unchanged. Git does not replace
-proof of non-file effects. Preserve necessary nonrepeatable evidence through
-existing results or artifacts; no mandatory per-Step report or source archive.
-
-### 3. Child selection
-
-```mermaid
-flowchart TD
-  R{"Role?"} -->|Reviewer| F["Select fresh Reviewer; fixed pair and next number"]
-  R -->|Explorer| E{"Same investigation or follow-up; idle; unchanged pair and rules?"}
-  E -->|Yes| U["Select followup; same handle, pair and number"]
-  E -->|Independent request, no Explorer, or changed pair or rules| N["Select fresh Explorer; fixed pair and next number"]
-  E -->|Running or uncertain| W["Wait or resolve native state; no duplicate dispatch"]
-  F --> H["Helper builds assignment and native arguments"]
-  U --> H
-  N --> H
-  H --> V{"Exit zero and complete successful output?"}
-  V -->|No| B["Stop dispatch; resolve helper failure"]
-  V -->|Yes| A["Call native tool with returned arguments unchanged"]
-```
-
-Fresh children receive role, writing, shell and result rules once. Explorer
-reuse sends its new task and needed context/evidence. Embedded writing and shell
-rules satisfy their required reads; unchanged rules stay loaded. Machine-data,
-Python discovery and large-output rules load when the operation needs them.
-Fresh assignments include accepted Decision text or its valid binding-section
-projection; reuse carries current source identities and reads new, changed or
-uncertain Decisions. No context measurement or thresholds. Close finished Reviewers
-only if native close exists. Interruption proves neither termination nor freed
-capacity. Native types are optional; never raise thread limits automatically.
-
-### 4. Questions and planning preparation
-
-```mermaid
-flowchart TD
-  Q["Question, idea, change request or planning preparation"] --> X["Dispatch read-only Explorer through diagram 3"]
-  X --> R["Return relevant facts, proposals and open choices"]
-  R --> M["Main answers user; writes authorized Plan changes"]
-  M --> W["Continue authorized scope"]
-```
-
-Known progress and stop/resume handling need no exploration. A scope-invalidating
-change stops dependent implementation first. Explorer writes no Plan or code;
-Reviewer runs no project tests. All roles follow the current user's language.
+- The chat you're in does the work. It plans, codes, runs the checks and
+  commits, one Step at a time, exactly as the Plan states it.
+- Every Step that changed something gets a fresh, read-only Reviewer. When all
+  Steps are done, another fresh Reviewer checks the whole Work Item against
+  its Acceptance, unless the Work Item has a single Step, whose review then
+  covers the Acceptance.
+- Questions, ideas and change requests that need investigation go to a
+  read-only Explorer. The main chat answers you and updates the Plan. Neither Explorer
+  nor Reviewer writes code or Plan records or runs tests.
+- Calling Workflow allows it to commit accepted Steps and their Plan records,
+  unless you or the project rules say otherwise. A new run needs a clean Git
+  workspace. Workflow won't clean up or commit earlier work to get one.
+- When Codex compacts the chat, Workflow carries on in the same chat from the
+  Plan, Git and the actual results.

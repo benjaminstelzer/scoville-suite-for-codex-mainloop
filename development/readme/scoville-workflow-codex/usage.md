@@ -1,21 +1,13 @@
 ## How to use
 
-With the suite installed in Codex, activate Workflow in this saved project:
+In a saved Codex project:
 
 ```text
 Use $scoville-workflow-for-codex to execute the active Scoville Plan in this saved project.
 ```
 
-Name a Work Item or stopping point to limit scope. Otherwise the main thread
-executes the active Plan. Ask questions or stop during execution. Changed work
-positions are brief; decisions go directly to you. Durable progress, unresolved
-questions and evidence stay in the Plan. Stops and blockers are not completion.
-Questions, change requests and planning preparation go to a read-only Explorer.
-Explorer returns its findings; the main thread answers, writes the Plan and
-implements within authorized scope.
-
-That `$scoville-workflow-for-codex` call is the one way to start or resume it. "Execute the Plan" alone does not.
-
-All roles communicate in the language of your current message unless you request
-another language. Required field names and technical literals stay unchanged;
-Plans follow Plan's record-language rules.
+That call is the only way to start or resume a run - "execute the Plan" on its
+own won't do it. Name a Work Item or a stopping point to limit the scope. You
+can ask questions or stop at any time. Progress and open questions stay in the
+Plan, and a stop isn't completion. Workflow answers in the language of your
+latest message unless you ask for another one.

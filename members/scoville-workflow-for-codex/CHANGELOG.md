@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-23 - A shorter README
+
+I rewrote the README. It now says what the Skill does, how to call it, what it needs and where it stops, and leaves out how the suite is built. The Skill itself is unchanged. One diagram shows the run. The three detail diagrams are gone, and the procedure they showed is in the Skill and its references.
+
 ## 2026-11-23 - A test independent of the machine's temporary folder
 
 One test assertion required that the machine's temporary folder is not a private sandbox folder, so the test fails where it runs inside such a folder, as in Codex's Windows sandbox. I removed it; the detection stays tested with fixed paths, and the shipped helpers behave as before.

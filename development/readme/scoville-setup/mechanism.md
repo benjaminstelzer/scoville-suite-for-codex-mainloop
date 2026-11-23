@@ -1,9 +1,10 @@
 ## How it works
 
-1. Resolve this project's settings with consumer defaults.
-2. Validate only the requested changed section.
-3. Save a valid change atomically; preserve unrelated settings.
-
-Cleanup is the sole old-Workflow migration operation. It resolves effective
-legacy pairs, asks for ambiguous choices and validates the whole candidate
-before one save. It creates no agents or Plan changes.
+- Showing the settings changes nothing and creates no file.
+- It saves a change only when you ask and leaves unrelated settings alone.
+  An invalid value is rejected before anything is written.
+- Settings live in `.scoville/config.json` in the project: advisers and
+  Claude limits for Ask, and the three model and reasoning pairs for Workflow.
+  Setup sets the reasoning levels low, medium, high and xhigh.
+- It changes settings between runs. It doesn't start Workflow, agents or
+  tests, and it can't change the model your chat runs on.

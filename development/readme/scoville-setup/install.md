@@ -1,6 +1,6 @@
 ## Install
 
-Setup comes with the Codex Suite and isn't available on its own.
-Install the complete suite from [its own packages]({{ include: suite.repository }}/tree/main/packages).
-Partial installations aren't supported: every member has to be installed and
-enabled.
+Setup comes with [Scoville Suite for Codex Mainloop]({{ include: suite.repository }})
+and isn't available on its own. Install every Skill from
+[the suite's packages]({{ include: suite.repository }}/tree/main/packages) - partial
+installations aren't supported. It needs Python 3.11+.
