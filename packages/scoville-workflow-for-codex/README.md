@@ -4,6 +4,10 @@ Mainloop takes a prepared Plan through implementation, independent review and
 corrections. Your current chat plans, codes and runs checks. Read-only Explorer
 and Reviewer subagents supply investigation and independent review.
 
+Scoville measures chili heat. Workflow keeps one cook at the stove and has
+someone else taste before anything is served. Earlier versions had more cooks.
+The chili did not improve.
+
 Assign a complete Plan or a bounded part. For a tiny fix, coordination may cost
 more than the fix. Workflow is available only through the complete Codex
 Mainloop suite.
@@ -97,10 +101,6 @@ describes the setting. If a start still fails, the affected operation stops,
 reports it and keeps its progress for the next run.
 
 ## Background
-
-Earlier versions delegated more of the work, until coordination became a task
-of its own. So the main chat does the work now, and agents only explore and
-review.
 
 [Operations](https://github.com/benjaminstelzer/scoville-suite-for-codex-mainloop/blob/main/packages/scoville-workflow-for-codex/scoville-workflow-for-codex/references/operations.md) has the full procedure. Sources: the
 [Agent Skills specification](https://agentskills.io/specification) and

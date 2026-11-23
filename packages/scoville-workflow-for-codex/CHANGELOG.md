@@ -2,7 +2,7 @@
 
 ## 2026-11-23 - A shorter README
 
-I rewrote the README. It now says what the Skill does, how to call it, what it needs and where it stops, and leaves out how the suite is built. The Skill itself is unchanged. One diagram shows the run. The three detail diagrams are gone, and the procedure they showed is in the Skill and its references.
+I rewrote the README. It now says what the Skill does, how to call it, what it needs and where it stops, and leaves out how the suite is built. The Skill itself is unchanged. One diagram shows the run. The three detail diagrams are gone, and the procedure they showed is in the Skill and its references. The introduction now explains the name.
 
 ## 2026-11-23 - A test independent of the machine's temporary folder
 
